@@ -10,7 +10,8 @@
    "dependencies": {
       "pg": "^7.3.0",
       "reflect-metadata": "^0.1.10",
-      "typeorm": "0.1.12"
+      "typeorm": "0.1.12",
+      "pgtools": "^0.3.0"
    },
    "scripts": {
       "start": "ts-node src/index.ts"
