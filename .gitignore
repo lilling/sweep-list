@@ -1,1 +1,6 @@
-/.idea/*
+.idea/
+*/node_modules/
+*/build/
+tmp/
+temp/
+/server/dist/

@@ -1,19 +1,25 @@
 {
-   "name": "new-typeorm-project",
-   "version": "0.0.1",
-   "description": "Awesome project developed with TypeORM.",
-   "devDependencies": {
-      "ts-node": "3.3.0",
-      "@types/node": "^8.0.29",
-      "typescript": "2.5.2"
-   },
-   "dependencies": {
-      "pg": "^7.3.0",
-      "reflect-metadata": "^0.1.10",
-      "typeorm": "0.1.12",
-      "pgtools": "^0.3.0"
-   },
-   "scripts": {
-      "start": "ts-node src/index.ts"
-   }
+  "name": "server",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "ts-node index.ts",
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.16.2",
+    "body-parser": "^1.18.2",
+    "typeorm": "^0.1.12",
+    "compression": "^1.7.1",
+    "pg": "^7.4.1",
+    "reflect-metadata": "^0.1.12",
+    "express-force-ssl": "^0.3.2"
+  },
+  "devDependencies": {
+    "ts-node": "3.3.0",
+    "typescript": "2.5.2",
+    "@types/node": "^8.9.1"
+  }
 }
