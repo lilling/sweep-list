@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "ts-node index.ts",
+    "start": "ts-node index.ts"
+
   },
   "author": "",
   "license": "ISC",
@@ -14,12 +15,15 @@
     "typeorm": "^0.1.12",
     "compression": "^1.7.1",
     "pg": "^7.4.1",
+    "pgtools": "^0.3.0",
     "reflect-metadata": "^0.1.12",
+    "config": "^1.29.4",
     "express-force-ssl": "^0.3.2"
   },
   "devDependencies": {
+    "@types/config": "^0.0.34",
+    "@types/node": "^8.9.1",
     "ts-node": "3.3.0",
-    "typescript": "2.5.2",
-    "@types/node": "^8.9.1"
+    "typescript": "2.5.2"
   }
 }
