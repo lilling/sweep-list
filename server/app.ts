@@ -1,4 +1,3 @@
-import 'reflect-metadata';
 import * as bodyParser from 'body-parser';
 import * as express from 'express';
 import * as https from 'https';
