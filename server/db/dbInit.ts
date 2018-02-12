@@ -26,7 +26,7 @@ export class DbInitilizer {
         }).catch(error => {
             console.log(error);
 			if (error.message.includes('sweeps')) {
-				createDb();
+				this.createDb();
 			}
         });
     }

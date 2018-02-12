@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "ts-node index.ts"
+    "start": "node build/index.js"
 
   },
   "author": "",
@@ -23,7 +23,6 @@
   "devDependencies": {
     "@types/config": "^0.0.34",
     "@types/node": "^8.9.1",
-    "ts-node": "3.3.0",
     "typescript": "2.5.2"
   }
 }
