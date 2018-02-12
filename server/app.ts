@@ -6,7 +6,7 @@ import * as http from 'http';
 import * as fs from 'fs';
 import * as compression from 'compression';
 import * as forceSsl from 'express-force-ssl';
-import { DbInitilizer } from './db/dbInit';
+import { DbInitializer } from './db/dbInit';
 //
 
 export class App {
@@ -15,11 +15,10 @@ export class App {
     private server: https.Server;
 
     public static bootstrap(): App {
-        const app = new App();
-        DbInitilizer.initDB();
-        return app;
+        return new App();
     }
     constructor() {
+        DbInitializer.initDB();
         this.initExpress();
         this.middleware();
         this.initRoutes();
@@ -30,8 +29,6 @@ export class App {
     private initExpress(): void {
         this.express = express();
     }
-
-
 
     private middleware(): void {
         this.express.use(forceSsl);
