@@ -1,0 +1,59 @@
+@import '../../sass/variables';
+
+.logo {
+    height: 25%;
+    background: $logo-background;
+}
+
+.login-body {
+    height: 75%;
+    background: $app-background;
+
+    .buttons {
+        padding: 10px;
+        display: grid;
+
+        button:not(.button-link) {
+            margin-bottom: 10px;
+            margin-top: 10px;
+
+            i  {
+                font-size: xx-large;
+
+                &.fa-check {
+                    color: $check-color;
+                    float: right;
+                }
+                &.fa-facebook-f {
+                    color: $facebook-color;
+                }
+
+                &.fa-google {
+                    color: $google-color;
+                }
+
+                &.fa-twitter {
+                    color: $twitter-color;
+                }
+
+                &.fa-linkedin {
+                    color: $linkedin-color;
+                }
+
+                &.fa-pinterest-p {
+                    color: $pintereset-color;
+                }
+            }
+        }
+    }
+
+    .continue-container {
+        text-align: right;
+
+        i {
+            text-decoration: underline;
+            font-weight: bold;
+        }
+    }
+}
+
