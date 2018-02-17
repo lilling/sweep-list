@@ -1,8 +1,8 @@
-@import '../../sass/variables';
+@import '../../sass/styles';
 
 .logo {
-    height: 25%;
-    background: $logo-background;
+    @include header(25%);
+    background: $header-background;
 }
 
 .login-body {
@@ -16,9 +16,15 @@
         button:not(.button-link) {
             margin-bottom: 10px;
             margin-top: 10px;
+            font-family: "Helvetica";
+            font-weight: bold;
 
             i  {
                 font-size: xx-large;
+
+                &.social-icon {
+                    float: left;
+                }
 
                 &.fa-check {
                     color: $check-color;

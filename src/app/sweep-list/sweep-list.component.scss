@@ -1,0 +1,6 @@
+@import '../../sass/styles';
+
+.header {
+  @include header(40px);
+}
+
