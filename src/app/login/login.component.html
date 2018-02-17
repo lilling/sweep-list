@@ -1,7 +1,7 @@
 <div class="logo"> logo</div>
 <div class="login-body">
     <div class="buttons">
-        <button mat-raised-button>
+        <button mat-raised-button (click)="login(LoginCandidate.facebook)">
             <i class="fa fa-facebook-f social-icon"></i>
             Sign in with Facebook
             <i *ngIf="facebook" class="fa fa-check"></i>

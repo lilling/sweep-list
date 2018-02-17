@@ -15,7 +15,7 @@ const SOCIAL_CONFIG = new AuthServiceConfig([
     },
     {
         id: FacebookLoginProvider.PROVIDER_ID,
-        provider: new FacebookLoginProvider('Facebook-App-Id')
+        provider: new FacebookLoginProvider('1940493829534171')
     },
     // {
     //     id: LinkedinLoginProvider.PROVIDER_ID,

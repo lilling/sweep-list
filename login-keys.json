@@ -2,5 +2,9 @@
   "google": {
     "client_id": "482952169588-5h63klrnsp1ns0uu0iq9r8rfi2bgi3n4.apps.googleusercontent.com",
     "secret": "S9g2kUHvjVlUxy-aRBis9TtG"
+  },
+  "facebook": {
+    "client_id": "1940493829534171",
+    "secret": "021ed0b1952127c7ad9df8d0f6db7d97"
   }
 }
