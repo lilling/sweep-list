@@ -1,7 +1,7 @@
 <div class="logo"> logo</div>
 <div class="login-body">
     <div class="buttons">
-        <button mat-raised-button (click)="login(LoginCandidate.facebook)">
+        <button mat-raised-button (click)="login(SocialMedia.facebook)">
             <i class="fa fa-facebook-f social-icon"></i>
             Sign in with Facebook
             <i *ngIf="facebook" class="fa fa-check"></i>
@@ -12,7 +12,7 @@
         <!--Sign in with Twitter-->
         <!--<i *ngIf="twitter" class="fa fa-check"></i>-->
         <!--</button>-->
-        <button mat-raised-button (click)="login(LoginCandidate.google)">
+        <button mat-raised-button (click)="login(SocialMedia.google)">
             <i class="fa fa-google social-icon"></i>
             Sign in with Google
             <i *ngIf="google" class="fa fa-check"></i>
