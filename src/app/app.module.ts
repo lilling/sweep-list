@@ -1,4 +1,5 @@
 import { BrowserModule } from '@angular/platform-browser';
+import { RouterModule } from '@angular/router';
 import { NgModule } from '@angular/core';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 //
@@ -7,6 +8,7 @@ import { LoginComponent } from './login/login.component';
 import { MaterialModule } from './material/material.module';
 import { SocialLoginModule, AuthServiceConfig, GoogleLoginProvider, FacebookLoginProvider } from 'angularx-social-login';
 import { SweepListComponent } from './sweep-list/sweep-list.component';
+import { appRoutes } from './app.routes';
 
 const SOCIAL_CONFIG = new AuthServiceConfig([
     {
@@ -30,13 +32,15 @@ const SOCIAL_CONFIG = new AuthServiceConfig([
         SweepListComponent
     ],
     imports: [
+        RouterModule.forRoot(appRoutes),
         BrowserModule,
         MaterialModule,
         SocialLoginModule.initialize(SOCIAL_CONFIG),
         BrowserAnimationsModule
     ],
     providers: [],
-    bootstrap: [AppComponent]
+    bootstrap: [AppComponent],
+    exports: [RouterModule]
 })
 export class AppModule {
 }
