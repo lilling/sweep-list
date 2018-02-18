@@ -2,12 +2,10 @@
 
 .logo {
     @include header(25%);
-    background: $header-background;
 }
 
 .login-body {
     height: 75%;
-    background: $app-background;
 
     .buttons {
         padding: 10px;
@@ -54,6 +52,7 @@
 
         .button-link:disabled {
             cursor: not-allowed;
+            color: $disabled-color;
         }
     }
 

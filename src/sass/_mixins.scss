@@ -2,7 +2,7 @@
 
 @mixin header($height) {
   color: white;
-  background: $header-background;
+  background: $main-color;
   height: $height;
   font-family: Roboto, sans-serif;
 }
