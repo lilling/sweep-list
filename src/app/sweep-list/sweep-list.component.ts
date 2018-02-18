@@ -6,6 +6,9 @@ import { Component } from '@angular/core';
     styleUrls: ['sweep-list.component.scss']
 })
 export class SweepListComponent {
+    sweeps = ['Boots', 'Clogs', 'Loafers', 'Moccasins', 'Sneakers', 'Clogs', 'Loafers', 'Moccasins', 'Sneakers', 'Clogs', 'Loafers',
+        'Moccasins', 'Sneakers', 'Clogs', 'Loafers', 'Moccasins', 'Sneakers', 'Clogs', 'Loafers', 'Moccasins', 'Sneakers'];
 
-    constructor() {}
+    constructor() {
+    }
 }
