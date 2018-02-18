@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
+//
 import { AuthService, GoogleLoginProvider, FacebookLoginProvider } from 'angularx-social-login';
 
 @Component({
@@ -15,7 +17,7 @@ export class LoginComponent implements OnInit {
     google: boolean;
     LoginCandidate = LoginCandidate;
 
-    constructor(private authService: AuthService) {
+    constructor(private authService: AuthService, private router: Router) {
     }
 
     login(candidate: LoginCandidate) {
@@ -33,6 +35,10 @@ export class LoginComponent implements OnInit {
                 });
                 break;
         }
+    }
+
+    goToList() {
+        this.router.navigate(['/list']);
     }
 
     ngOnInit() {

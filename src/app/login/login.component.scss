@@ -51,6 +51,10 @@
                 }
             }
         }
+
+        .button-link:disabled {
+            cursor: not-allowed;
+        }
     }
 
     .continue-container {

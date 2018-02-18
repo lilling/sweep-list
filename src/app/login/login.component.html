@@ -29,7 +29,7 @@
         <!--</button>-->
 
         <span class="continue-container">
-            <button class="button-link"> skip and continue
+            <button class="button-link" (click)="goToList()" [disabled]="!google && !facebook"> skip and continue
                 <i class="fa fa-angle-right"></i>
             </button>
         </span>
