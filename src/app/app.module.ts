@@ -5,10 +5,11 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 //
 import { AppComponent } from './app.component';
 import { LoginComponent } from './login/login.component';
-import { MaterialModule } from './material/material.module';
+import { MaterialModule } from './material.module';
 import { SocialLoginModule, AuthServiceConfig, GoogleLoginProvider, FacebookLoginProvider } from 'angularx-social-login';
 import { SweepListComponent } from './sweep-list/sweep-list.component';
 import { appRoutes } from './app.routes';
+import { AddSweepComponent } from './add-sweep/add-sweep.component';
 
 const SOCIAL_CONFIG = new AuthServiceConfig([
     {
@@ -27,6 +28,7 @@ const SOCIAL_CONFIG = new AuthServiceConfig([
 
 @NgModule({
     declarations: [
+        AddSweepComponent,
         AppComponent,
         LoginComponent,
         SweepListComponent
@@ -40,7 +42,8 @@ const SOCIAL_CONFIG = new AuthServiceConfig([
     ],
     providers: [],
     bootstrap: [AppComponent],
-    exports: [RouterModule]
+    exports: [RouterModule],
+    entryComponents: [AddSweepComponent]
 })
 export class AppModule {
 }
