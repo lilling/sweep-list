@@ -1,6 +1,6 @@
 export enum SocialMedia {
-    facebook,
     google,
+    facebook,
     twitter,
     linkedin,
     pinterest
