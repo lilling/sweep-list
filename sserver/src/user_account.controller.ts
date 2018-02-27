@@ -1,7 +1,7 @@
 import { Get, Post, Body, Controller, Param } from '@nestjs/common';
 import { user_account, facebook_account, google_account } from './dal/DB';
 import { UserAccountService } from './dal/user_account.service';
-import { SocialUser } from 'angularx-social-login';
+import { SocialUserAndAccount } from './dal/SocialUserAndAccount';
 
 @Controller()
 export class UserController {
@@ -25,8 +25,8 @@ export class UserController {
         return this.UserAccountService.getAll();
     }
 
-/*    @Post('FacebookLogin')
-    FacebookLogin(@Body() facebook_account: SocialUser): Promise<user_account>{
-        \*stub*\return this.UserAccountService.FacebookLogin(facebook_account);
-    }*/
+    @Post('FacebookLogin')
+    FacebookLogin(@Body() facebook_account: SocialUserAndAccount): Promise<user_account>{
+        return this.UserAccountService.FacebookLogin(facebook_account);
+    }
 }

@@ -10,6 +10,7 @@ schemats generate -c postgres://hsrbfqoh:OASQR0O7qDLnHlIBgWcHiD_dKwz4dBoM@hard-p
 schemats generate -c postgres://hsrbfqoh:OASQR0O7qDLnHlIBgWcHiD_dKwz4dBoM@hard-plum.db.elephantsql.com:5432/hsrbfqoh -s sweepimp -o DB3.ts -t payment_package_usage -t payment -t social_media_field
 schemats generate -c postgres://hsrbfqoh:OASQR0O7qDLnHlIBgWcHiD_dKwz4dBoM@hard-plum.db.elephantsql.com:5432/hsrbfqoh -s sweepimp -o DB4.ts -t facebook_account -t google_account -t user_account
 schemats generate -c postgres://hsrbfqoh:OASQR0O7qDLnHlIBgWcHiD_dKwz4dBoM@hard-plum.db.elephantsql.com:5432/hsrbfqoh -s sweepimp -o DB5.ts -t social_media -t log_action -t payment_package
+schemats generate -c postgres://hsrbfqoh:OASQR0O7qDLnHlIBgWcHiD_dKwz4dBoM@hard-plum.db.elephantsql.com:5432/hsrbfqoh -s sweepimp -o DB6.ts -t retired_user_account
  *
  */
 
@@ -393,5 +394,25 @@ export interface payment_package {
     expire_date: payment_packageFields.expire_date;
     created: payment_packageFields.created;
     updated: payment_packageFields.updated;
+
+}
+
+export namespace retired_user_accountFields {
+    export type user_account_id = number;
+    export type first_name = string | null;
+    export type last_name = string | null;
+    export type replacement_user_account_id = number | null;
+    export type created = Date;
+    export type updated = Date;
+
+}
+
+export interface retired_user_account {
+    user_account_id: retired_user_accountFields.user_account_id;
+    first_name: retired_user_accountFields.first_name;
+    last_name: retired_user_accountFields.last_name;
+    replacement_user_account_id: retired_user_accountFields.replacement_user_account_id
+    created: retired_user_accountFields.created;
+    updated: retired_user_accountFields.updated;
 
 }
