@@ -1,7 +1,7 @@
 import { Get, Post, Body, Controller, Param } from '@nestjs/common';
 import { user_account, facebook_account, google_account } from './dal/DB';
 import { UserAccountService } from './dal/user_account.service';
-import { SocialUserAndAccount } from './dal/SocialUserAndAccount';
+import { SocialUserAndAccount, Account } from './dal/SocialUserAndAccount';
 
 @Controller()
 export class UserController {
@@ -18,6 +18,11 @@ export class UserController {
     @Get('user_accounts')
     DBtest(): Promise<user_account[]> {
         return this.UserAccountService.getAll();
+    }
+
+    @Post('CookieLogin')
+    CookieLogin(@Body() user_account: Account): Promise<user_account>{
+        return this.UserAccountService.CookieLogin(user_account);
     }
 
     @Post('SocialMediaLogin')

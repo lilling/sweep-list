@@ -4,3 +4,7 @@ import { user_accountFields } from './DB';
 export declare class SocialUserAndAccount extends SocialUser{
     user_account_id: user_accountFields.user_account_id
 }
+
+export declare class Account{
+    user_account_id: user_accountFields.user_account_id
+}
