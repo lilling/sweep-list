@@ -2,46 +2,36 @@ import { DbGetter } from './DbGetter';
 import { BaseService } from './base.service';
 import { user_account, retired_user_account } from './DB';
 import { SocialUserAndAccount, Account } from './SocialUserAndAccount';
+import { promise } from 'selenium-webdriver';
 
 export class UserAccountService extends BaseService<user_account> {
     constructor() {
         super('user_account');
     }
-    
-    async CookieLoginInner(DB, user_account: Account): Promise<user_account>{
-        let selectUser =
-            `SELECT user_account.*\n` +
-            `  FROM sweepimp.user_account\n` +
-            ` WHERE user_account_id = $<user_account_id>`;
-        let selectRetiredUser =
-            `SELECT retired_user_account.*\n` +
-            `  FROM sweepimp.retired_user_account\n` +
-            ` WHERE user_account_id = $<user_account_id>`;
-        var UserAccount = await DB.oneOrNone(selectUser, user_account);
-        if (!UserAccount){
-            var RetiredUser = await DB.oneOrNone(selectRetiredUser, user_account);
-        }
-        while(!UserAccount){
-            UserAccount = await DB.oneOrNone(selectUser, {user_account_id: RetiredUser.replacement_user_account_id});
-            RetiredUser = await DB.oneOrNone(selectRetiredUser, {user_account_id: RetiredUser.replacement_user_account_id});
-        }
-        return UserAccount;
-    }
 
     async CookieLogin(user_account: Account): Promise<user_account> {
-        console.log('');
-        console.log('');
-        console.log('');
         const db = DbGetter.getDB();
         return db.task('cookie-login', db => {
             return this.CookieLoginInner(db, user_account);
         });
     }
+    
+    async CookieLoginInner(DB, user_account: Account): Promise<user_account>{
+        let q =
+            `SELECT user_account.*\n` +
+            `  FROM sweepimp.user_account\n` +
+            ` WHERE user_account_id = $<user_account_id>;\n` +
+            `SELECT retired_user_account.*\n` +
+            `  FROM sweepimp.retired_user_account\n` +
+            ` WHERE user_account_id = $<user_account_id>`;
+        var UserAccounts = await DB.multi(q, {user_account_id: user_account.user_account_id});
+        while(!UserAccounts[0][0]){
+            UserAccounts = await DB.multi(q, {user_account_id: UserAccounts[1][0].replacement_user_account_id});
+        }
+        return UserAccounts[0][0];
+    }
 
     async SocialMediaLogin(social_media_account: SocialUserAndAccount): Promise<user_account> {
-        console.log('');
-        console.log('');
-        console.log('');
         const db = DbGetter.getDB();
         const provider = social_media_account.provider.toLowerCase();
         let q =
@@ -83,15 +73,10 @@ export class UserAccountService extends BaseService<user_account> {
                     }
                 }
             } else { // new social user
-                if (social_media_account.user_account_id) { // Cookie exists, create FB user on existing user_account_id
-                    return db.tx('new-social-user', db => {
-                        return this.CreateSocialUser(db, social_media_account, provider, false);
-                    });
-                } else {// Cookie does not exist, completely new user. Create new user, FB user and relate them
-                    return db.tx('new-user', db => {
-                        return this.CreateSocialUser(db, social_media_account, provider, true);
-                    });
-                }
+                const txName = social_media_account.user_account_id ? 'new-social-user' : 'new-user';
+                return db.tx(txName, db => {
+                    return this.CreateSocialUser(db, social_media_account, provider, !social_media_account.user_account_id);  
+                });
             }
         } catch (error) {
             console.log('failed to query db', error);
@@ -104,14 +89,28 @@ export class UserAccountService extends BaseService<user_account> {
         var CommonSocialMedias = [];
         for (let i_Provider of validProviders){
             if (i_Provider != provider){
-                let q = `SELECT COUNT(*)\n` +
+/*                let q = 
+                    `SELECT COUNT(*)\n` +
                     `  FROM sweepimp.${i_Provider}_account\n` +
                     ` WHERE user_account_id = $<user_account_id>`;
-                SocialMediaExistsForCookieUser = await DB.one(q, cookieUser);
-                SocialMediaExistsForLoginUser = await DB.one(q, loginUser);
-                if (SocialMediaExistsForCookieUser.count > 0 && SocialMediaExistsForLoginUser.count > 0){
-                    CommonSocialMedias.push(i_Provider);
-                }
+                await promise.all([DB.one(q, cookieUser), DB.one(q, loginUser)]).then(values => {
+                    if (values[0].count > 0 && values[1].count > 0){
+                        CommonSocialMedias.push(i_Provider);
+                    }
+                });*/
+                let q =
+                `SELECT COUNT(*)\n` +
+                `  FROM sweepimp.${i_Provider}_account\n` +
+                ` WHERE user_account_id = $<cookie_user_account_id>;\n` +
+                `SELECT COUNT(*)\n` +
+                `  FROM sweepimp.${i_Provider}_account\n` +
+                ` WHERE user_account_id = $<login_user_account_id>`;
+                await DB.multi(q,{cookie_user_account_id: cookieUser.user_account_id, login_user_account_id: loginUser.user_account_id})
+                    .then(values => {
+                        if (values[0][0].count > 0 && values[1][0].count > 0){
+                            CommonSocialMedias.push(i_Provider);
+                        }
+                    });
             }
         }
         return CommonSocialMedias;
@@ -124,28 +123,37 @@ export class UserAccountService extends BaseService<user_account> {
         for (let i_Provider of validProviders){
             TablesToUpdate.push(i_Provider + '_account');
         }
-        try {
-            await db.tx(mergeType + '-merge', merge => {
-                return this.MergeInner(merge, source, target, TablesToUpdate);
-            });
-            return target;
-        } catch (error) {
-            console.log('failed to query db', error);
-        }
+        await db.tx(mergeType + '-merge', merge => {
+            return this.MergeInner(merge, source, target, TablesToUpdate);
+        });
+        return target;
     }
 
     async MergeInner(merge, source: user_account, target: user_account, TablesToUpdate: string[]) {
+        
         let q =
             `UPDATE sweepimp.$<table_name:name>\n` +
             `   SET user_account_id = $<user_account_id_target>\n` +
             ` WHERE user_account_id = $<user_account_id_source>`;
+        /*
         for (let element of TablesToUpdate) {
-            const data = await merge.none(q, {
+            const data = merge.none(q, {
                 table_name: element,
                 user_account_id_source: source.user_account_id,
                 user_account_id_target: target.user_account_id,
             });
         };
+        */
+        let updates = [];
+        for (let element of TablesToUpdate) {
+            updates.push(merge.none(q, {
+                table_name: element,
+                user_account_id_source: source.user_account_id,
+                user_account_id_target: target.user_account_id,
+            }));
+        };
+        await promise.all(updates);
+        
         q = `INSERT INTO sweepimp.retired_user_account\n` +
             `    (user_account_id, first_name, last_name, replacement_user_account_id, created, updated)\n` +
             `SELECT user_account_id, first_name, last_name, $<user_account_id_target>, created, current_timestamp\n` +
@@ -176,35 +184,25 @@ export class UserAccountService extends BaseService<user_account> {
             ` WHERE user_account_id = $<user_account_id>`;
         var q = (CreateUserAccount ? InsertUserAccount : SelectUserAccount);
         const UserAccount = await DB.one(q, social_media_account);
-        // Check if there are overlapping social medias
-        q =
-            `SELECT COUNT(*)\n` +
-            `  FROM sweepimp.${Provider}_account\n` +
-            ` WHERE user_account_id = $<user_account_id>`;
-        const SameSocialMediaExists = await DB.one(q, UserAccount);
-        if (SameSocialMediaExists.count > 0) {
-            throw new Error(`User already logged on to ${Provider} with another profile!`);
-        } else {
-            social_media_account.user_account_id = UserAccount.user_account_id;
-            q = `INSERT INTO sweepimp.${Provider}_account\n` +
-                `    (${Provider}_account_id, user_account_id, first_name, last_name, email, photo_url, auth_token, id_token, created, updated)\n` +
-                `VALUES\n` +
-                `    ($<id>\n` +
-                `    ,$<user_account_id>\n` +
-                `    ,$<firstName>\n` +
-                `    ,$<lastName>\n` +
-                `    ,$<email>\n` +
-                `    ,$<photoUrl>\n` +
-                `    ,$<authToken>\n` +
-                (Provider == 'google' ?
-                `    ,$<idToken>\n` 
-                :
-                `    ,NULL\n`
-                ) +
-                `    ,current_timestamp\n` +
-                `    ,current_timestamp)`;
-            DB.none(q, social_media_account);
-            return UserAccount;
-        }
+        social_media_account.user_account_id = UserAccount.user_account_id;
+        q = `INSERT INTO sweepimp.${Provider}_account\n` +
+            `    (${Provider}_account_id, user_account_id, first_name, last_name, email, photo_url, auth_token, id_token, created, updated)\n` +
+            `VALUES\n` +
+            `    ($<id>\n` +
+            `    ,$<user_account_id>\n` +
+            `    ,$<firstName>\n` +
+            `    ,$<lastName>\n` +
+            `    ,$<email>\n` +
+            `    ,$<photoUrl>\n` +
+            `    ,$<authToken>\n` +
+            (Provider == 'google' ?
+            `    ,$<idToken>\n` 
+            :
+            `    ,NULL\n`
+            ) +
+            `    ,current_timestamp\n` +
+            `    ,current_timestamp)`;
+        DB.none(q, social_media_account);
+        return UserAccount;
     }
 }
