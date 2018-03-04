@@ -20,10 +20,10 @@ export class UserAccountService extends BaseService<user_account> {
         let q =
             `SELECT user_account.*\n` +
             `  FROM sweepimp.user_account\n` +
-            ` WHERE user_account_id = $<user_account_id>;\n` +
+            ` WHERE user_account_id = $<user_account_id^>;\n` +
             `SELECT retired_user_account.*\n` +
             `  FROM sweepimp.retired_user_account\n` +
-            ` WHERE user_account_id = $<user_account_id>`;
+            ` WHERE user_account_id = $<user_account_id^>`;
         var UserAccounts = await DB.multi(q, {user_account_id: user_account.user_account_id});
         while(!UserAccounts[0][0]){
             UserAccounts = await DB.multi(q, {user_account_id: UserAccounts[1][0].replacement_user_account_id});
@@ -51,7 +51,7 @@ export class UserAccountService extends BaseService<user_account> {
                     // first, let's get the cookie user. notice the filter is on user_account_id, not on id (social media's user id) as before
                     q = `SELECT user_account.*\n` +
                         `  FROM sweepimp.user_account\n` +
-                        ` WHERE user_account_id = $<user_account_id>`;
+                        ` WHERE user_account_id = $<user_account_id^>`;
                     const cookieUser = await db.oneOrNone<user_account>(q, social_media_account);
                     const validProviders = ['facebook', 'google'];
                     const two_minutes = 2 * 60 * 1000;
@@ -92,7 +92,7 @@ export class UserAccountService extends BaseService<user_account> {
 /*                let q = 
                     `SELECT COUNT(*)\n` +
                     `  FROM sweepimp.${i_Provider}_account\n` +
-                    ` WHERE user_account_id = $<user_account_id>`;
+                    ` WHERE user_account_id = $<user_account_id^>`;
                 await promise.all([DB.one(q, cookieUser), DB.one(q, loginUser)]).then(values => {
                     if (values[0].count > 0 && values[1].count > 0){
                         CommonSocialMedias.push(i_Provider);
@@ -101,10 +101,10 @@ export class UserAccountService extends BaseService<user_account> {
                 let q =
                 `SELECT COUNT(*)\n` +
                 `  FROM sweepimp.${i_Provider}_account\n` +
-                ` WHERE user_account_id = $<cookie_user_account_id>;\n` +
+                ` WHERE user_account_id = $<cookie_user_account_id^>;\n` +
                 `SELECT COUNT(*)\n` +
                 `  FROM sweepimp.${i_Provider}_account\n` +
-                ` WHERE user_account_id = $<login_user_account_id>`;
+                ` WHERE user_account_id = $<login_user_account_id^>`;
                 await DB.multi(q,{cookie_user_account_id: cookieUser.user_account_id, login_user_account_id: loginUser.user_account_id})
                     .then(values => {
                         if (values[0][0].count > 0 && values[1][0].count > 0){
@@ -133,8 +133,8 @@ export class UserAccountService extends BaseService<user_account> {
         
         let q =
             `UPDATE sweepimp.$<table_name:name>\n` +
-            `   SET user_account_id = $<user_account_id_target>\n` +
-            ` WHERE user_account_id = $<user_account_id_source>`;
+            `   SET user_account_id = $<user_account_id_target^>\n` +
+            ` WHERE user_account_id = $<user_account_id_source^>`;
         /*
         for (let element of TablesToUpdate) {
             const data = merge.none(q, {
@@ -156,15 +156,15 @@ export class UserAccountService extends BaseService<user_account> {
         
         q = `INSERT INTO sweepimp.retired_user_account\n` +
             `    (user_account_id, first_name, last_name, replacement_user_account_id, created, updated)\n` +
-            `SELECT user_account_id, first_name, last_name, $<user_account_id_target>, created, current_timestamp\n` +
+            `SELECT user_account_id, first_name, last_name, $<user_account_id_target^>, created, current_timestamp\n` +
             `  FROM sweepimp.user_account\n` +
-            ` WHERE user_account_id = $<user_account_id_source>`;
+            ` WHERE user_account_id = $<user_account_id_source^>`;
         merge.none(q, {
             user_account_id_source: source.user_account_id,
             user_account_id_target: target.user_account_id,
         });
         q = `DELETE FROM sweepimp.user_account\n` +
-            ` WHERE user_account_id = $<user_account_id>`;
+            ` WHERE user_account_id = $<user_account_id^>`;
         await merge.none(q, source);
     }
 
@@ -181,7 +181,7 @@ export class UserAccountService extends BaseService<user_account> {
             const SelectUserAccount = 
             `SELECT user_account.*\n` +
             `  FROM sweepimp.user_account\n` +
-            ` WHERE user_account_id = $<user_account_id>`;
+            ` WHERE user_account_id = $<user_account_id^>`;
         var q = (CreateUserAccount ? InsertUserAccount : SelectUserAccount);
         const UserAccount = await DB.one(q, social_media_account);
         social_media_account.user_account_id = UserAccount.user_account_id;
@@ -189,7 +189,7 @@ export class UserAccountService extends BaseService<user_account> {
             `    (${Provider}_account_id, user_account_id, first_name, last_name, email, photo_url, auth_token, id_token, created, updated)\n` +
             `VALUES\n` +
             `    ($<id>\n` +
-            `    ,$<user_account_id>\n` +
+            `    ,$<user_account_id^>\n` +
             `    ,$<firstName>\n` +
             `    ,$<lastName>\n` +
             `    ,$<email>\n` +
