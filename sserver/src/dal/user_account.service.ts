@@ -5,18 +5,20 @@ import { SocialUserAndAccount, Account } from './SocialUserAndAccount';
 import { promise } from 'selenium-webdriver';
 
 export class UserAccountService extends BaseService<user_account> {
+    validProviders = ['facebook', 'google'];
+
     constructor() {
         super('user_account');
     }
 
-    async CookieLogin(user_account: Account): Promise<user_account> {
+    async CookieLogin(id: number): Promise<user_account> {
         const db = DbGetter.getDB();
         return db.task('cookie-login', db => {
-            return this.CookieLoginInner(db, user_account);
+            return this.CookieLoginInner(db, id);
         });
     }
     
-    async CookieLoginInner(DB, user_account: Account): Promise<user_account>{
+    async CookieLoginInner(DB, id: number): Promise<user_account>{
         let q =
             `SELECT user_account.*\n` +
             `  FROM sweepimp.user_account\n` +
@@ -24,11 +26,29 @@ export class UserAccountService extends BaseService<user_account> {
             `SELECT retired_user_account.*\n` +
             `  FROM sweepimp.retired_user_account\n` +
             ` WHERE user_account_id = $<user_account_id^>`;
-        var UserAccounts = await DB.multi(q, {user_account_id: user_account.user_account_id});
+        var UserAccounts = await DB.multi(q, {user_account_id: id});
         while(!UserAccounts[0][0]){
             UserAccounts = await DB.multi(q, {user_account_id: UserAccounts[1][0].replacement_user_account_id});
         }
         return UserAccounts[0][0];
+    }
+
+    async GetSocialMedia(id: number): Promise<string[]>{
+        const db = DbGetter.getDB();
+        var SocialMedias = [];
+        for (let i_Provider of this.validProviders){
+            let q =
+            `SELECT COUNT(*)\n` +
+            `  FROM sweepimp.${i_Provider}_account\n` +
+            ` WHERE user_account_id = $<id^>`;
+            await db.oneOrNone(q,{id: id})
+                .then(values => {
+                    if (values.count > 0){
+                        SocialMedias.push(i_Provider);
+                    }
+                });
+        }
+        return SocialMedias;
     }
 
     async SocialMediaLogin(social_media_account: SocialUserAndAccount): Promise<user_account> {
@@ -53,21 +73,20 @@ export class UserAccountService extends BaseService<user_account> {
                         `  FROM sweepimp.user_account\n` +
                         ` WHERE user_account_id = $<user_account_id^>`;
                     const cookieUser = await db.oneOrNone<user_account>(q, social_media_account);
-                    const validProviders = ['facebook', 'google'];
                     const two_minutes = 2 * 60 * 1000;
                     if (now.getTime() - cookieUser.created.getTime() <= two_minutes) {
                         // Cookie user was created recentley, probably due to login screen press order. Do a simple merge
-                        return this.Merge(cookieUser, loginUser, provider, validProviders, true);
+                        return this.Merge(cookieUser, loginUser, provider, true);
                     } else {
                         // Two users were active for some time. Complicated merge?
-                        const CommonSocialMedias = await this.GetOverlappingSocialMedias(db, cookieUser, loginUser, validProviders, provider);
+                        const CommonSocialMedias = await this.GetOverlappingSocialMedias(db, cookieUser, loginUser, provider);
                         if (CommonSocialMedias.length){
                             throw new Error(`This ${provider} user is already connected to another ${CommonSocialMedias} profile`);
                         } else {
                             return (cookieUser.created > loginUser.created ? // merge newer account into older account
-                                this.Merge(cookieUser, loginUser, provider, validProviders, false)
+                                this.Merge(cookieUser, loginUser, provider, false)
                                 :
-                                this.Merge(loginUser, cookieUser, provider, validProviders, false)
+                                this.Merge(loginUser, cookieUser, provider, false)
                             );
                         }
                     }
@@ -83,11 +102,11 @@ export class UserAccountService extends BaseService<user_account> {
         }
     }
 
-    async GetOverlappingSocialMedias(DB, cookieUser: user_account, loginUser: user_account, validProviders: string[], provider: string): Promise<string[]>{
+    async GetOverlappingSocialMedias(DB, cookieUser: user_account, loginUser: user_account, provider: string): Promise<string[]>{
         var SocialMediaExistsForCookieUser;
         var SocialMediaExistsForLoginUser;
         var CommonSocialMedias = [];
-        for (let i_Provider of validProviders){
+        for (let i_Provider of this.validProviders){
             if (i_Provider != provider){
 /*                let q = 
                     `SELECT COUNT(*)\n` +
@@ -116,11 +135,11 @@ export class UserAccountService extends BaseService<user_account> {
         return CommonSocialMedias;
     }
 
-    async Merge(source: user_account, target: user_account, Provider: string, validProviders: string[], isSimple: boolean): Promise<user_account> {
+    async Merge(source: user_account, target: user_account, Provider: string, isSimple: boolean): Promise<user_account> {
         const db = DbGetter.getDB();
         const mergeType = (isSimple ? 'simple' : 'complicated');
         var TablesToUpdate = (isSimple ? [] : ['user_sweep_display', 'user_sweep', 'user_social_extra', 'payment']);
-        for (let i_Provider of validProviders){
+        for (let i_Provider of this.validProviders){
             TablesToUpdate.push(i_Provider + '_account');
         }
         await db.tx(mergeType + '-merge', merge => {
@@ -134,6 +153,7 @@ export class UserAccountService extends BaseService<user_account> {
         let q =
             `UPDATE sweepimp.$<table_name:name>\n` +
             `   SET user_account_id = $<user_account_id_target^>\n` +
+            `      ,updated         = current_timestamp\n` +
             ` WHERE user_account_id = $<user_account_id_source^>`;
         /*
         for (let element of TablesToUpdate) {
