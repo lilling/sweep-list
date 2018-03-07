@@ -75,7 +75,7 @@ export class UserAccountService extends BaseService<user_account> {
                     const cookieUser = await db.oneOrNone<user_account>(q, social_media_account);
                     const two_minutes = 2 * 60 * 1000;
                     if (now.getTime() - cookieUser.created.getTime() <= two_minutes) {
-                        // Cookie user was created recentley, probably due to login screen press order. Do a simple merge
+                        // Cookie user was created recently, probably due to login screen press order. Do a simple merge
                         return this.Merge(cookieUser, loginUser, provider, true);
                     } else {
                         // Two users were active for some time. Complicated merge?
