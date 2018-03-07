@@ -65,6 +65,7 @@ export namespace sweep_shareFields {
     export type social_media_id = number;
     export type share_date = Date;
     export type share_url = string | null;
+    export type share_id = string | null;
     export type created = Date;
     export type updated = Date;
 
@@ -76,6 +77,7 @@ export interface sweep_share {
     social_media_id: sweep_shareFields.social_media_id;
     share_date: sweep_shareFields.share_date;
     share_url: sweep_shareFields.share_url;
+    share_id: sweep_shareFields.share_id;
     created: sweep_shareFields.created;
     updated: sweep_shareFields.updated;
 

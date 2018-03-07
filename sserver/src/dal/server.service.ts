@@ -1,14 +1,94 @@
 import { DbGetter } from './DbGetter';
 import { BaseService } from './base.service';
 import { user_sweep, user_sweep_display } from './DB';
-import { win, URL } from './OtherClasses';
+import { PostToPublishRaw, PostToPublish } from './OtherClasses';
 import { promise } from 'selenium-webdriver';
+import { SocialMedia } from '../../../src/app/models/social-media.enum';
 
-export class UserSweepService extends BaseService<user_sweep> {
+export class ServerService extends BaseService<PostToPublish> {
     constructor() {
-        super('user_sweep');
+        super('dummy');
     }
 
+    async GetPostsToPublish(): Promise<PostToPublish[]>{
+        const db = DbGetter.getDB();
+//TODO: treat every social media by itself (its own max(share_date))
+        let q =
+            `SELECT us.user_account_id\n` +
+            `      ,us.user_sweep_id\n` +
+            `      ,COALESCE(us.referral_url, us.sweep_url) link\n` +
+            `      ,us.personal_refer_message message\n` +
+            `      ,us.refer_google\n` +
+            `      ,us.refer_facebook\n` +
+//            `      ,us.refer_twitter\n` +
+  //          `      ,us.refer_linkedin\n` +
+    //        `      ,us.refer_pinterest\n` +
+            `  FROM sweepimp.user_sweep us\n` +
+            ` WHERE us.is_referral = true\n` +
+            `   AND us.end_date >= now()\n` +
+            `   AND us.referral_frequency < DATE_PART('day', now() - (SELECT COALESCE(MAX(share_date), now() - interval '1 year')\n` +
+            `                                                           FROM sweepimp.sweep_share ss\n` +
+            `                                                          WHERE ss.user_sweep_id = us.user_sweep_id)\n` +
+            `                                        )`;
+        const RawSweepsToPublish = await db.manyOrNone(q);
+        RawSweepsToPublish.forEach(PostToPublish => {
+            this.ShareSweep(PostToPublish);
+        });
+        return;
+    };
+
+    async ShareSweep(PostToPublish: PostToPublishRaw){
+        const db = DbGetter.getDB();
+        // get the user social media credentials
+        var Providers = [];
+        if (PostToPublish.refer_google){Providers.push('google')};
+        if (PostToPublish.refer_facebook){Providers.push('facebook')};
+//            if (PostToPublish.refer_twitter){Providers.push('twitter')};
+//          if (PostToPublish.refer_linkedin){Providers.push('linkedin')};
+//        if (PostToPublish.refer_pinterest){Providers.push('pinterest')};
+        let allProvidersQuery = ``;
+        Providers.forEach(Provider => {
+            allProvidersQuery = allProvidersQuery +
+                `SELECT '${Provider}' provider, acc.*\n` +
+                `  FROM sweepimp.${Provider}_account acc\n` +
+                ` WHERE user_account_id = $<user_account_id^>;\n`;
+        });
+        let allProvidersCred = await db.multi(allProvidersQuery, PostToPublish);
+//        console.log(PostToPublish);
+  //      console.log(allProvidersCred);
+        let sweepShareDMLs = ``;
+        let shareCount = 0;
+        Providers.forEach(Provider => {
+//TODO: complete share sweep procedure - actually post something
+//        let postID = This.PostSweep();
+            let shareID = Provider + ' ' + PostToPublish.user_sweep_id + ' PostID_Dummy';
+            sweepShareDMLs = sweepShareDMLs +
+                `INSERT INTO sweepimp.sweep_share\n` +
+                `    (user_sweep_id\n` +
+                `    ,social_media_id\n` +
+                `    ,share_date\n` +
+                `    ,share_id\n` +
+                `    ,created\n` +
+                `    ,updated)\n` +
+                `VALUES \n` +
+                `    ($<user_sweep_id^>\n` +
+                `    ,(SELECT social_media_id FROM sweepimp.social_media WHERE social_media_name = '${Provider}')\n` +
+                `    ,current_timestamp\n` +
+                `    ,'${shareID}'\n` +
+                `    ,current_timestamp\n` +
+                `    ,current_timestamp);\n`;
+            shareCount++;
+        });
+        console.log(PostToPublish);
+        sweepShareDMLs = sweepShareDMLs +
+            `UPDATE sweepimp.user_sweep_display\n` +
+            `   SET total_shares = total_shares + ${shareCount}\n` +
+            `      ,updated      = current_timestamp\n` +
+            ` WHERE user_sweep_id = $<user_sweep_id^>\n`;
+        db.multi(sweepShareDMLs, PostToPublish);
+    };
+
+/*
     async GetSweeps(id: number, status: string, year?: number, month?: number): Promise<user_sweep_display[]>{
         const db = DbGetter.getDB();
         let q =
@@ -106,7 +186,7 @@ export class UserSweepService extends BaseService<user_sweep> {
         let inserts = ``;
         sweep_ids.forEach(value => {
             inserts = inserts + 
-                `INSERT INTO sweepimp.sweep_entry\n` +
+                'INSERT INTO sweepimp.sweep_entry\n' +
                 `    (user_sweep_id\n` +
                 `    ,entry_date\n` +
                 `    ,created\n` +
@@ -152,9 +232,7 @@ export class UserSweepService extends BaseService<user_sweep> {
     async ManageSweep(user_sweep: user_sweep): Promise<user_sweep_display>{
         if (user_sweep.user_sweep_id){ // existing sweep - update
             return this.UpdateSweep(user_sweep);
-//TODO: share sweep immediatly is_referral changed to true
         } else { // new sweep - insert
-//TODO: share sweep immediatly if is_referral = true
             return this.InsertSweep(user_sweep);
         }
     }
@@ -309,5 +387,5 @@ export class UserSweepService extends BaseService<user_sweep> {
             `RETURNING *`;
         let UserSweepDisplay = await DB.multi(q, user_sweep);
         return UserSweepDisplay[1][0];
-    }
+    }*/
 }

@@ -13,7 +13,7 @@ const pgConnect = {
 
 export class DbGetter {
     private static db: IDatabase<any>;
-
+//TODO: change monitoring to insert into log table instead
     static getDB() {
         if (!this.db) {
             this.db = pgPromise(pgOptions)(pgConnect);

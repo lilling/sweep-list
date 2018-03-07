@@ -1,21 +1,21 @@
 import { Get, Post, Body, Controller, Param } from '@nestjs/common';
 import { user_sweep, user_sweep_display } from './dal/DB';
-import { UserSweepService } from './dal/user_sweep.service';
-import { win } from './dal/OtherClasses';
+import { ServerService } from './dal/server.service';
+import { PostToPublish } from './dal/OtherClasses';
 
 @Controller()
-export class SweepController {
-    UserSweepService: UserSweepService;
+export class ServerController {
+    ServerService: ServerService;
     constructor() {
-        this.UserSweepService = new UserSweepService();
+        this.ServerService = new ServerService();
     }
 
-    @Get('user_sweep/:id')
-    GetSweep(@Param() params): Promise<user_sweep> {
-        return this.UserSweepService.getItem(params.id, 'user_sweep_id');
+    @Get('posts_to_publish')
+    GetPostsToPublish(): Promise<PostToPublish[]> {
+        return this.ServerService.GetPostsToPublish();
     }
 
-    @Get('live_user_sweeps/:id')
+    /*@Get('live_user_sweeps/:id')
     GetLiveSweeps(@Param() params): Promise<user_sweep_display[]> {
         return this.UserSweepService.GetSweeps(params.id, 'live');
     }
@@ -73,5 +73,5 @@ export class SweepController {
     @Post('sweep')
     ManageSweep(@Body() user_sweep: user_sweep): Promise<user_sweep_display>{
         return this.UserSweepService.ManageSweep(user_sweep);
-    }
+    }*/
 }

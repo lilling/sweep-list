@@ -6,10 +6,20 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AppComponent } from './app.component';
 import { LoginComponent } from './login/login.component';
 import { MaterialModule } from './material.module';
-import { SocialLoginModule, AuthServiceConfig, GoogleLoginProvider, FacebookLoginProvider } from 'angularx-social-login';
+import { SocialLoginModule, AuthServiceConfig, GoogleLoginProvider, FacebookLoginProvider} from 'angularx-social-login';
+//import { LoginOpt } from 'angularx-social-login/src/auth.service';
 import { SweepListComponent } from './sweep-list/sweep-list.component';
 import { appRoutes } from './app.routes';
 import { AddSweepComponent } from './add-sweep/add-sweep.component';
+
+/***
+const fbLoginOptions: LoginOpt = {
+    scope: 'pages_messaging,pages_messaging_subscriptions,email,pages_show_list,manage_pages',
+    return_scopes: true,
+    enable_profile_selector: true
+    };
+    
+/***/
 
 const SOCIAL_CONFIG = new AuthServiceConfig([
     {
@@ -18,7 +28,7 @@ const SOCIAL_CONFIG = new AuthServiceConfig([
     },
     {
         id: FacebookLoginProvider.PROVIDER_ID,
-        provider: new FacebookLoginProvider('1940493829534171')
+        provider: new FacebookLoginProvider('1940493829534171'/*, fbLoginOptions*/)
     },
     // {
     //     id: LinkedinLoginProvider.PROVIDER_ID,
