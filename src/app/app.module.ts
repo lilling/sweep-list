@@ -14,7 +14,7 @@ import { AddSweepComponent } from './add-sweep/add-sweep.component';
 const SOCIAL_CONFIG = new AuthServiceConfig([
     {
         id: GoogleLoginProvider.PROVIDER_ID,
-        provider: new GoogleLoginProvider('482952169588-5h63klrnsp1ns0uu0iq9r8rfi2bgi3n4.apps.googleusercontent.com')
+        provider: new GoogleLoginProvider('1057083499190-heocpiamo4h8ie9vpungc7ae6qg0m2s9.apps.googleusercontent.com')
     },
     {
         id: FacebookLoginProvider.PROVIDER_ID,
