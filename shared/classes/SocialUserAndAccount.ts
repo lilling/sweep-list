@@ -5,6 +5,6 @@ export class SocialUserAndAccount extends SocialUser{
     user_account_id: user_accountFields.user_account_id;
 }
 
-export class Account{
+export class Account {
     user_account_id: user_accountFields.user_account_id;
 }

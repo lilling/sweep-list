@@ -1,7 +1,7 @@
 import { Get, Post, Body, Controller, Param } from '@nestjs/common';
 import { user_sweep, user_sweep_display } from '../../shared/classes/DB';
 import { UserSweepService } from './dal/user_sweep.service';
-import { win } from '../../shared/classes/WinAndURL';
+import { Win } from '../../shared/classes/WinAndURL';
 
 @Controller()
 export class SweepController {
@@ -26,7 +26,7 @@ export class SweepController {
     }
 
     @Get('user_wins/:id')
-    GetWins(@Param() params): Promise<win[]> {
+    GetWins(@Param() params): Promise<Win[]> {
         return this.UserSweepService.GetWins(params.id);
     }
 

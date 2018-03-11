@@ -1,4 +1,4 @@
-export class win {
+export class Win {
     win_year: number;
     win_month: string;
     month_numeric: number;

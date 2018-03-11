@@ -1,7 +1,7 @@
 import { DbGetter } from './DbGetter';
 import { BaseService } from './base.service';
 import { user_sweep, user_sweep_display } from '../../../shared/classes/DB';
-import { win, URL } from '../../../shared/classes/WinAndURL';
+import { win, URL } from '../../../shared/classes';
 
 export class UserSweepService extends BaseService<user_sweep> {
     constructor() {
@@ -42,7 +42,7 @@ export class UserSweepService extends BaseService<user_sweep> {
         return db.manyOrNone(q + where + order_by, { id });
     }
 
-    async GetWins(id: number): Promise<win[]> {
+    async GetWins(id: number): Promise<Win[]> {
         const db = DbGetter.getDB();
         const q =
             `SELECT EXTRACT(YEAR FROM end_date) win_year\n` +

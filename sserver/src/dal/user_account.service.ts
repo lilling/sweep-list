@@ -1,8 +1,6 @@
 import { DbGetter } from './DbGetter';
 import { BaseService } from './base.service';
-import { user_account } from '../../../shared/classes/DB';
-import { SocialUserAndAccount } from '../../../shared/classes/SocialUserAndAccount';
-import { promise } from 'selenium-webdriver';
+import { user_account, SocialUserAndAccount } from '../../../shared/classes';
 
 export class UserAccountService extends BaseService<user_account> {
     validProviders = ['facebook', 'google'];
@@ -161,7 +159,7 @@ export class UserAccountService extends BaseService<user_account> {
                 user_account_id_target: target.user_account_id,
             }));
         }
-        await promise.all(updates);
+        await Promise.all(updates);
 
         q = `INSERT INTO sweepimp.retired_user_account\n` +
             `    (user_account_id, first_name, last_name, replacement_user_account_id, created, updated)\n` +
