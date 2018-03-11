@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
-import { UserController } from './user_account.controller';
-import { SweepController } from './user_sweep.controller';
+import { UserController } from './controllers/user_account.controller';
+import { SweepController } from './controllers/user_sweep.controller';
 
 @Module({
   imports: [],

@@ -1,4 +1,4 @@
-import { DbGetter } from './DbGetter';
+import { DbGetter } from '../dal/DbGetter';
 
 export abstract class BaseService<T> {
     constructor(protected table: string) {}

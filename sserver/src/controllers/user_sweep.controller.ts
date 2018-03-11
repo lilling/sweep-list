@@ -1,7 +1,6 @@
 import { Get, Post, Body, Controller, Param } from '@nestjs/common';
-import { user_sweep, user_sweep_display } from '../../shared/classes/DB';
-import { UserSweepService } from './dal/user_sweep.service';
-import { Win } from '../../shared/classes/WinAndURL';
+import { user_sweep, user_sweep_display, Win } from '../../../shared/classes';
+import { UserSweepService } from '../services/user_sweep.service';
 
 @Controller()
 export class SweepController {

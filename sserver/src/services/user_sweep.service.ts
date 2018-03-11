@@ -1,7 +1,6 @@
-import { DbGetter } from './DbGetter';
+import { DbGetter } from '../dal/DbGetter';
 import { BaseService } from './base.service';
-import { user_sweep, user_sweep_display } from '../../../shared/classes/DB';
-import { win, URL } from '../../../shared/classes';
+import { Win, URL, user_sweep, user_sweep_display } from '../../../shared/classes';
 
 export class UserSweepService extends BaseService<user_sweep> {
     constructor() {

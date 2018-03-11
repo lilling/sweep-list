@@ -1,4 +1,4 @@
-import { DbGetter } from './DbGetter';
+import { DbGetter } from '../dal/DbGetter';
 import { BaseService } from './base.service';
 import { user_account, SocialUserAndAccount } from '../../../shared/classes';
 
