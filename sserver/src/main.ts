@@ -17,6 +17,9 @@ async function bootstrap() {
     const server = express();
     const app = await NestFactory.create(ApplicationModule, server);
     app.use(express.static(path.join(__dirname, '../../dist')));
+    server.get('*', (req, res) => {
+        res.sendFile(path.join(__dirname, '../../dist/index.html'));
+    });
     await app.init();
 
     http.createServer(server).listen(3000);
