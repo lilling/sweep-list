@@ -1,7 +1,7 @@
 import { Get, Post, Body, Controller, Param } from '@nestjs/common';
-import { user_account } from './dal/DB';
+import { user_account } from '../../shared/classes/DB';
 import { UserAccountService } from './dal/user_account.service';
-import { SocialUserAndAccount, Account } from './dal/SocialUserAndAccount';
+import { SocialUserAndAccount, Account } from '../../shared/classes/SocialUserAndAccount';
 
 @Controller()
 export class UserController {

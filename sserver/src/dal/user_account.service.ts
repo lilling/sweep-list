@@ -1,7 +1,7 @@
 import { DbGetter } from './DbGetter';
 import { BaseService } from './base.service';
-import { user_account } from './DB';
-import { SocialUserAndAccount } from './SocialUserAndAccount';
+import { user_account } from '../../../shared/classes/DB';
+import { SocialUserAndAccount } from '../../../shared/classes/SocialUserAndAccount';
 import { promise } from 'selenium-webdriver';
 
 export class UserAccountService extends BaseService<user_account> {
