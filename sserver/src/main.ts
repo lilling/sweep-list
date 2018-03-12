@@ -17,7 +17,7 @@ async function bootstrap() {
     const server = express();
     const app = await NestFactory.create(ApplicationModule, server);
     app.use(express.static(path.join(__dirname, '../../dist')));
-    server.get('*', (req, res) => {
+    server.get(/^\/(?!api).*/, (req, res) => {
         res.sendFile(path.join(__dirname, '../../dist/index.html'));
     });
     await app.init();

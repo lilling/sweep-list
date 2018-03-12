@@ -2,7 +2,7 @@ import { Get, Post, Body, Controller, Param } from '@nestjs/common';
 import { SocialUserAndAccount, Account , user_account } from '../../../shared/classes';
 import { UserAccountService } from '../services/user_account.service';
 
-@Controller()
+@Controller('api/user')
 export class UserController {
     UserAccountService: UserAccountService;
     constructor() {

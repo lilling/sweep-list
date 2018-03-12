@@ -2,7 +2,7 @@ import { Get, Post, Body, Controller, Param } from '@nestjs/common';
 import { user_sweep, user_sweep_display, Win } from '../../../shared/classes';
 import { UserSweepService } from '../services/user_sweep.service';
 
-@Controller()
+@Controller('api/sweep')
 export class SweepController {
     UserSweepService: UserSweepService;
     constructor() {
