@@ -7,22 +7,25 @@ export class UserSweepService extends BaseService<user_sweep> {
         super('user_sweep');
     }
 
-    async GetSweeps(id: number, status: string, year?: number, month?: number): Promise<user_sweep_display[]> {
+    async GetSweeps(id: number, status: string, search?: string, year?: number, month?: number): Promise<user_sweep_display[]> {
         const db = DbGetter.getDB();
         const q =
             `SELECT *\n` +
             `  FROM sweepimp.user_sweep_display\n` +
             ` WHERE user_account_id = $<id^>\n`;
         let where = ``;
+        if (search) {
+            where = where + `   AND upper(sweep_name) like '%' || upper($<search>) || '%'\n`;
+        }
         let order_by = ``;
         switch (status) {
             case 'live': {
-                where = `   AND end_date >= now()\n`;
+                where = where + `   AND end_date >= now()\n`;
                 order_by = `ORDER BY deleted_yn, last_entry_date, end_date desc;`;
                 break;
             }
             case 'ended': {
-                where =
+                where = where +
                     `   AND (  end_date BETWEEN now() - interval '1 month' AND now()\n` +
                     `       OR won_yn = true)\n`
                 ;
@@ -30,7 +33,7 @@ export class UserSweepService extends BaseService<user_sweep> {
                 break;
             }
             case 'won': {
-                where =
+                where = where +
                     `   AND won_yn = true\n` +
                     `   AND EXTRACT(YEAR FROM end_date) = ${year}\n` +
                     (month ? `   AND EXTRACT(MONTH FROM end_date) = ${month}\n` : ``)
@@ -38,7 +41,7 @@ export class UserSweepService extends BaseService<user_sweep> {
                 break;
             }
         }
-        return db.manyOrNone(q + where + order_by, { id });
+        return db.manyOrNone(q + where + order_by, { id, search });
     }
 
     async GetWins(id: number): Promise<Win[]> {

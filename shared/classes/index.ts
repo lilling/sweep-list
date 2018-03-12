@@ -34,3 +34,4 @@ export {
 } from './DB';
 export { Account, SocialUserAndAccount } from './SocialUserAndAccount';
 export { URL, Win } from './WinAndURL';
+export {PostToPublishRaw, PostToPublish} from './Posts'

@@ -19,9 +19,19 @@ export class SweepController {
         return this.UserSweepService.GetSweeps(params.id, 'live');
     }
 
+    @Get('live_user_sweeps/:id/:search')
+    GetLiveSweepsSearch(@Param() params): Promise<user_sweep_display[]> {
+        return this.UserSweepService.GetSweeps(params.id, 'live', params.search);
+    }
+
     @Get('ended_user_sweeps/:id')
     GetEndedSweeps(@Param() params): Promise<user_sweep_display[]> {
         return this.UserSweepService.GetSweeps(params.id, 'ended');
+    }
+
+    @Get('ended_user_sweeps/:id/:search')
+    GetEndedSweepsSearch(@Param() params): Promise<user_sweep_display[]> {
+        return this.UserSweepService.GetSweeps(params.id, 'ended', params.search);
     }
 
     @Get('user_wins/:id')
@@ -31,12 +41,12 @@ export class SweepController {
 
     @Get('won_user_sweeps/:id/:year')
     GetWonSweepsY(@Param() params): Promise<user_sweep_display[]> {
-        return this.UserSweepService.GetSweeps(params.id, 'won', params.year);
+        return this.UserSweepService.GetSweeps(params.id, 'won', undefined, params.year);
     }
 
     @Get('won_user_sweeps/:id/:year/:month')
     GetWonSweepsYM(@Param() params): Promise<user_sweep_display[]> {
-        return this.UserSweepService.GetSweeps(params.id, 'won', params.year, params.month);
+        return this.UserSweepService.GetSweeps(params.id, 'won', undefined, params.year, params.month);
     }
 
     @Get('user_sweep_url/:id')
