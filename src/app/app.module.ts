@@ -10,6 +10,8 @@ import { SocialLoginModule, AuthServiceConfig, GoogleLoginProvider, FacebookLogi
 import { SweepListComponent } from './sweep-list/sweep-list.component';
 import { appRoutes } from './app.routes';
 import { AddSweepComponent } from './add-sweep/add-sweep.component';
+import { HttpClientModule } from '@angular/common/http';
+import { UsersService } from './services/users.service';
 
 const SOCIAL_CONFIG = new AuthServiceConfig([
     {
@@ -36,11 +38,12 @@ const SOCIAL_CONFIG = new AuthServiceConfig([
     imports: [
         RouterModule.forRoot(appRoutes),
         BrowserModule,
+        HttpClientModule,
         MaterialModule,
         SocialLoginModule.initialize(SOCIAL_CONFIG),
         BrowserAnimationsModule
     ],
-    providers: [],
+    providers: [UsersService],
     bootstrap: [AppComponent],
     exports: [RouterModule],
     entryComponents: [AddSweepComponent]

@@ -49,7 +49,8 @@ export class UserAccountService extends BaseService<user_account> {
         return SocialMedias;
     }
 
-    async SocialMediaLogin(social_media_account: SocialUserAndAccount): Promise<user_account> {
+    async SocialMediaLogin(social_media_account_param: SocialUserAndAccount): Promise<user_account> {
+        const social_media_account = new SocialUserAndAccount(social_media_account_param)   ;
         const db = DbGetter.getDB();
         const provider = social_media_account.provider.toLowerCase();
         let q =
