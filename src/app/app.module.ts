@@ -3,10 +3,12 @@ import { RouterModule } from '@angular/router';
 import { NgModule } from '@angular/core';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 //
+import { LocalStorageModule } from 'angular-2-local-storage';
+import { SocialLoginModule, AuthServiceConfig, GoogleLoginProvider, FacebookLoginProvider } from 'angularx-social-login';
+//
 import { AppComponent } from './app.component';
 import { LoginComponent } from './login/login.component';
 import { MaterialModule } from './material.module';
-import { SocialLoginModule, AuthServiceConfig, GoogleLoginProvider, FacebookLoginProvider } from 'angularx-social-login';
 import { SweepListComponent } from './sweep-list/sweep-list.component';
 import { appRoutes } from './app.routes';
 import { AddSweepComponent } from './add-sweep/add-sweep.component';
@@ -37,6 +39,10 @@ const SOCIAL_CONFIG = new AuthServiceConfig([
     ],
     imports: [
         RouterModule.forRoot(appRoutes),
+        LocalStorageModule.withConfig({
+            prefix: 'sweep-imp',
+            storageType: 'localStorage'
+        }),
         BrowserModule,
         HttpClientModule,
         MaterialModule,
