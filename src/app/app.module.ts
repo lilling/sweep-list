@@ -14,6 +14,7 @@ import { appRoutes } from './app.routes';
 import { AddSweepComponent } from './add-sweep/add-sweep.component';
 import { HttpClientModule } from '@angular/common/http';
 import { UsersService } from './services/users.service';
+import { SweepsService } from './services/sweeps.service';
 
 const SOCIAL_CONFIG = new AuthServiceConfig([
     {
@@ -49,7 +50,7 @@ const SOCIAL_CONFIG = new AuthServiceConfig([
         SocialLoginModule.initialize(SOCIAL_CONFIG),
         BrowserAnimationsModule
     ],
-    providers: [UsersService],
+    providers: [UsersService, SweepsService],
     bootstrap: [AppComponent],
     exports: [RouterModule],
     entryComponents: [AddSweepComponent]

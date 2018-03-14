@@ -1,6 +1,12 @@
 import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material';
+//
+import { LocalStorageService } from 'angular-2-local-storage';
+//
 import { AddSweepComponent } from '../add-sweep/add-sweep.component';
+import { SweepsService } from '../services/sweeps.service';
+import { LocalStorageKeys } from '../models/local-storage-keys.enum';
+import { user_sweep_display } from '../../../shared/classes';
 
 @Component({
     selector: 'app-sweep-list',
@@ -8,10 +14,15 @@ import { AddSweepComponent } from '../add-sweep/add-sweep.component';
     styleUrls: ['sweep-list.component.scss']
 })
 export class SweepListComponent {
-    sweeps = ['Boots', 'Clogs', 'Loafers', 'Moccasins', 'Sneakers', 'Clogs', 'Loafers', 'Moccasins', 'Sneakers', 'Clogs', 'Loafers',
-        'Moccasins', 'Sneakers', 'Clogs', 'Loafers', 'Moccasins', 'Sneakers', 'Clogs', 'Loafers', 'Moccasins', 'Sneakers'];
+    sweeps: user_sweep_display[];
 
-    constructor(public dialog: MatDialog) {
+    constructor(public dialog: MatDialog,
+                private sweepsService: SweepsService,
+                private localStorageService: LocalStorageService) {
+        const userAcountId = this.localStorageService.get<string>(LocalStorageKeys.loggedUser);
+        sweepsService.getLiveSweeps(userAcountId).subscribe(liveSweeps => {
+            this.sweeps = liveSweeps;
+        });
     }
 
     addSweep() {

@@ -23,6 +23,20 @@
     max-height: calc(100vh - 40px);
     overflow-y: auto;
 
+    .no-sweeps {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      display: flex;
+      flex-direction: column;
+      align-content: space-around;
+
+      button {
+        background: $main-color;
+        color: $main-color-forgorund;
+      }
+    }
+
     .mat-fab {
       position: fixed;
       bottom: 5px;
