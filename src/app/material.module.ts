@@ -7,15 +7,16 @@ import {
     MatIconModule,
     MatListModule,
     MatSidenavModule,
+    MatInputModule,
     MatMenuModule,
     MatDialogModule
 } from '@angular/material';
 
 @NgModule({
     imports: [MatGridListModule, MatButtonModule, MatCheckboxModule, MatIconModule, MatListModule, MatSidenavModule, MatMenuModule,
-        MatButtonToggleModule, MatDialogModule],
+        MatInputModule, MatButtonToggleModule, MatDialogModule],
     exports: [MatGridListModule, MatButtonModule, MatCheckboxModule, MatIconModule, MatListModule, MatSidenavModule, MatMenuModule,
-        MatButtonToggleModule, MatDialogModule],
+        MatInputModule, MatButtonToggleModule, MatDialogModule],
 })
 export class MaterialModule {
 }

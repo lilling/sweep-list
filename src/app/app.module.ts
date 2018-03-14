@@ -1,3 +1,4 @@
+import { FormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
 import { RouterModule } from '@angular/router';
 import { NgModule } from '@angular/core';
@@ -46,6 +47,7 @@ const SOCIAL_CONFIG = new AuthServiceConfig([
         }),
         BrowserModule,
         HttpClientModule,
+        FormsModule,
         MaterialModule,
         SocialLoginModule.initialize(SOCIAL_CONFIG),
         BrowserAnimationsModule

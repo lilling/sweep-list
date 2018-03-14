@@ -7,7 +7,7 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
   styleUrls: ['add-sweep.component.scss']
 })
 export class AddSweepComponent {
-
+    sweepName: string;
     constructor(
         public dialogRef: MatDialogRef<AddSweepComponent>,
         @Inject(MAT_DIALOG_DATA) public data: any) { }
