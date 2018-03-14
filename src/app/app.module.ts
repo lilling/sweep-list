@@ -6,6 +6,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 //
 import { LocalStorageModule } from 'angular-2-local-storage';
 import { SocialLoginModule, AuthServiceConfig, GoogleLoginProvider, FacebookLoginProvider } from 'angularx-social-login';
+import { AngularDateTimePickerModule } from 'angular2-datetimepicker';
 //
 import { AppComponent } from './app.component';
 import { LoginComponent } from './login/login.component';
@@ -50,6 +51,7 @@ const SOCIAL_CONFIG = new AuthServiceConfig([
         FormsModule,
         MaterialModule,
         SocialLoginModule.initialize(SOCIAL_CONFIG),
+        AngularDateTimePickerModule,
         BrowserAnimationsModule
     ],
     providers: [UsersService, SweepsService],

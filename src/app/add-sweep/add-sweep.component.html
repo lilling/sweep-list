@@ -1,6 +1,23 @@
 <h2 mat-dialog-title>Add Sweep</h2>
 <mat-dialog-content>
-    <input matInput [(ngModel)]="sweepName" placeholder="sweep Name">
+    <form class="form" #f="ngForm" (ngSubmit)="onSubmit(f)">
+        <mat-form-field>
+            <input matInput placeholder="Prize (sweep name)" name="name" ngModel #sweepName="ngModel" required>
+            <mat-error *ngIf="sweepName.errors?.required && sweepName.touched">
+                Name is <strong>required</strong>
+            </mat-error>
+        </mat-form-field>
+
+        <mat-form-field>
+            <input matInput [matDatepicker]="picker" placeholder="End date" name="endDate" ngModel #endDate="ngModel" required
+                   disabled>
+            <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+            <mat-datepicker #picker disabled="false"></mat-datepicker>
+            <mat-error *ngIf="endDate.errors?.required && endDate.touched">
+                End Date is <strong>required</strong>
+            </mat-error>
+        </mat-form-field>
+    </form>
 </mat-dialog-content>
 <mat-dialog-actions>
     <button mat-button mat-dialog-close>No</button>
