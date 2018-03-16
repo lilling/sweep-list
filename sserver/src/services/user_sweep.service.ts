@@ -121,6 +121,7 @@ export class UserSweepService extends BaseService<user_sweep> {
         const update =
             `UPDATE sweepimp.user_sweep_display\n` +
             `   SET total_entries = coalesce(total_entries, 0) + 1\n` +
+            `      ,updated = current_timestamp\n` +
             ` WHERE user_sweep_id IN ($<user_sweep_ids:csv>)`;
         await db.tx(DB => {
             DB.multi(inserts);

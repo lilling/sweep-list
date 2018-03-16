@@ -1,0 +1,1 @@
+export { FacebookExtention } from './FacebookExtention';

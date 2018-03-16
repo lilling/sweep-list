@@ -33,4 +33,9 @@ export class UserController {
     SocialMediaLogin(@Body() social_media_account: SocialUserAndAccount): Promise<user_account>{
         return this.UserAccountService.SocialMediaLogin(social_media_account);
     }
+
+    @Post('extendUserAccounts')
+    extendUserAccounts(){
+        this.UserAccountService.extendUserAccounts();
+    }
 }

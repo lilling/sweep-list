@@ -1,12 +1,16 @@
 import { DbGetter } from '../dal/DbGetter';
 import { BaseService } from './base.service';
 import { user_account, SocialUserAndAccount } from '../../../shared/classes';
+import { FacebookExtention } from '../../classes';
+import { FacebookService } from './facebook.service'
 
 export class UserAccountService extends BaseService<user_account> {
     validProviders = ['facebook', 'google'];
+    FacebookService: FacebookService;
 
     constructor() {
         super('user_account');
+        this.FacebookService = new FacebookService();
     }
 
     async CookieLogin(id: number): Promise<user_account> {
@@ -50,7 +54,7 @@ export class UserAccountService extends BaseService<user_account> {
     }
 
     async SocialMediaLogin(social_media_account_param: SocialUserAndAccount): Promise<user_account> {
-        const social_media_account = new SocialUserAndAccount(social_media_account_param)   ;
+        const social_media_account = new SocialUserAndAccount(social_media_account_param);
         const db = DbGetter.getDB();
         const provider = social_media_account.provider.toLowerCase();
         let q =
@@ -64,6 +68,11 @@ export class UserAccountService extends BaseService<user_account> {
             if (loginUser !== null) { // social media user exists
                 if (!social_media_account.user_account_id || loginUser.user_account_id === social_media_account.user_account_id) {
                     // Cookie matches social media user or no cookie
+                    q = `UPDATE sweepimp.${provider}_account\n` +
+                        `   SET auth_token = $<authToken>\n` +
+                        `      ,updated = current_timestamp\n` +
+                        ` WHERE ${provider}_account_id = $<id>`;
+                        db.none(q, social_media_account);
                     return loginUser;
                 } else {
                     // Cookie exists, but social media user does not match cookie. SHIT! Merge user accounts?
@@ -193,8 +202,19 @@ export class UserAccountService extends BaseService<user_account> {
         let q = (CreateUserAccount ? InsertUserAccount : SelectUserAccount);
         const UserAccount = await DB.one(q, social_media_account);
         social_media_account.user_account_id = UserAccount.user_account_id;
+        switch (Provider){
+            case 'facebook': {
+                const expires = new Date();
+                const extendData = await this.FacebookService.extendAccessToken(social_media_account.authToken);
+                expires.setTime(expires.getTime() + extendData.expiration_seconds * 1000);
+                social_media_account.authToken = extendData.access_token;
+                social_media_account.expiration_date = expires;
+                social_media_account.auth_error = extendData.auth_error;
+                break;
+            }
+        }
         q = `INSERT INTO sweepimp.${Provider}_account\n` +
-            `    (${Provider}_account_id, user_account_id, first_name, last_name, email, photo_url, auth_token, id_token, created, updated)\n` +
+            `    (${Provider}_account_id, user_account_id, first_name, last_name, email, photo_url, auth_token, id_token, expiration_date, auth_error, created, updated)\n` +
             `VALUES\n` +
             `    ($<id>\n` +
             `    ,$<user_account_id^>\n` +
@@ -203,14 +223,57 @@ export class UserAccountService extends BaseService<user_account> {
             `    ,$<email>\n` +
             `    ,$<photoUrl>\n` +
             `    ,$<authToken>\n` +
+            `    ,$<idToken>\n` +
+            `    ,$<expiration_date>\n` +
+            `    ,$<auth_error>\n` +
+            /*
             (Provider === 'google' ?
                     `    ,$<idToken>\n`
                     :
                     `    ,NULL\n`
             ) +
+            */
             `    ,current_timestamp\n` +
             `    ,current_timestamp)`;
         DB.none(q, social_media_account);
         return UserAccount;
+    }
+
+    async extendUserAccounts(){
+        //Get Facebook users to extend
+        const db = DbGetter.getDB();
+        let q =
+            `SELECT facebook_account_id, auth_token, expiration_date\n` +
+            `  FROM sweepimp.facebook_account\n` +
+            ` WHERE DATE_PART('day', expiration_date - (current_date + current_time)) < 2\n` +
+            `    OR expiration_date IS NULL`;
+        let FacebookUsersToExtend = await db.manyOrNone(q);
+        let objectKeysArray = Object.keys(FacebookUsersToExtend);
+        let extentions = [];
+        for(const element in objectKeysArray){
+            const expires = new Date();
+            let extention = await this.FacebookService.extendAccessToken(FacebookUsersToExtend[element].auth_token);
+            expires.setTime(expires.getTime() + extention.expiration_seconds * 1000);
+            extentions.push({
+                facebook_account_id: FacebookUsersToExtend[element].facebook_account_id,
+                auth_token: (extention.access_token ? extention.access_token : FacebookUsersToExtend[element].auth_token),
+                expires: expires,
+                error: extention.auth_error
+            });
+        };
+        console.log(extentions);
+        if (extentions.length > 0) {
+            q = `UPDATE sweepimp.facebook_account\n` +
+                `   SET auth_token      = $<auth_token>\n` +
+                `      ,expiration_date = $<expires>\n` +
+                `      ,auth_error      = $<error>\n` +
+                `      ,updated         = current_timestamp\n` +
+                ` WHERE facebook_account_id = $<facebook_account_id>;\n`;
+            db.task('Extend-Facebook', innerDB => {
+                extentions.forEach(element => {
+                    db.none(q, element);
+                });
+            });
+        }
     }
 }

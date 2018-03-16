@@ -32,6 +32,6 @@ export {
     user_sweep,
     user_sweep_display
 } from './DB';
-export { Account, SocialUserAndAccount } from './SocialUserAndAccount';
+export { Account, SocialUserAndAccount, FBAccount } from './SocialUserAndAccount';
 export { URL, Win } from './WinAndURL';
 export {PostToPublishRaw, PostToPublish} from './Posts'

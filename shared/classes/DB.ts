@@ -274,6 +274,8 @@ export namespace facebook_accountFields {
     export type photo_url = string | null;
     export type auth_token = string | null;
     export type id_token = string | null;
+    export type expiration_date = Date | null;
+    export type auth_error = string | null;
     export type created = Date;
     export type updated = Date;
 
@@ -288,6 +290,8 @@ export interface facebook_account {
     photo_url: facebook_accountFields.photo_url;
     auth_token: facebook_accountFields.auth_token;
     id_token: facebook_accountFields.id_token;
+    expiration_date: facebook_accountFields.expiration_date;
+    auth_error: facebook_accountFields.auth_error;
     created: facebook_accountFields.created;
     updated: facebook_accountFields.updated;
 
@@ -302,6 +306,8 @@ export namespace google_accountFields {
     export type photo_url = string | null;
     export type auth_token = string | null;
     export type id_token = string | null;
+    export type expiration_date = Date | null;
+    export type auth_error = string | null;
     export type created = Date;
     export type updated = Date;
 
@@ -316,6 +322,8 @@ export interface google_account {
     photo_url: google_accountFields.photo_url;
     auth_token: google_accountFields.auth_token;
     id_token: google_accountFields.id_token;
+    expiration_date: google_accountFields.expiration_date;
+    auth_error: google_accountFields.auth_error;
     created: google_accountFields.created;
     updated: google_accountFields.updated;
 

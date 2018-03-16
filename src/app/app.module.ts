@@ -6,13 +6,20 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AppComponent } from './app.component';
 import { LoginComponent } from './login/login.component';
 import { MaterialModule } from './material.module';
-import { SocialLoginModule, AuthServiceConfig, GoogleLoginProvider, FacebookLoginProvider } from 'angularx-social-login';
+import { SocialLoginModule, AuthServiceConfig, GoogleLoginProvider, FacebookLoginProvider, LoginOpt } from 'angularx-social-login';
 import { SweepListComponent } from './sweep-list/sweep-list.component';
 import { appRoutes } from './app.routes';
 import { AddSweepComponent } from './add-sweep/add-sweep.component';
 import { HttpClientModule } from '@angular/common/http';
 import { UsersService } from './services/users.service';
 
+const fbLoginOptions: LoginOpt = {
+    scope: 'public_profile , email, publish_actions',
+    return_scopes: true,
+    enable_profile_selector: true
+  }; // https://developers.facebook.com/docs/reference/javascript/FB.login/v2.11
+
+  
 const SOCIAL_CONFIG = new AuthServiceConfig([
     {
         id: GoogleLoginProvider.PROVIDER_ID,
@@ -20,7 +27,7 @@ const SOCIAL_CONFIG = new AuthServiceConfig([
     },
     {
         id: FacebookLoginProvider.PROVIDER_ID,
-        provider: new FacebookLoginProvider('1940493829534171')
+        provider: new FacebookLoginProvider('1940493829534171', fbLoginOptions)
     },
     // {
     //     id: LinkedinLoginProvider.PROVIDER_ID,
