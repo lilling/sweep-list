@@ -7,4 +7,8 @@ export class BaseService {
     post<T>(url: string, body: any) {
         return this.http.post<T>(`${this.baseUrl}${url}`, body);
     }
+
+    get<T>(url: string) {
+        return this.http.get<T>(`${this.baseUrl}${url}`);
+    }
 }

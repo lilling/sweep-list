@@ -23,17 +23,21 @@
     </span>
     </div>
 
-    <div class="body">
+    <div class="body" *ngIf="sweeps">
         <mat-list>
-            <mat-list-item *ngFor="let message of sweeps">
+            <mat-list-item *ngFor="let sweep of sweeps">
                 <mat-icon matListIcon fontSet="fa" fontIcon="fa-gift"></mat-icon>
-                <h3 matLine> {{message}} </h3>
+                <h3 matLine> {{sweep.sweep_name}} </h3>
                 <p matLine>
-                    <span> {{message}} </span>
+                    <span> {{sweep.created}} </span>
                 </p>
                 <mat-icon>public</mat-icon>
             </mat-list-item>
         </mat-list>
+        <div class="no-sweeps" *ngIf="sweeps.length == 0">
+            <span>you have no sweeps! wanna start?</span>
+            <button mat-raised-button (click)="addSweep()"> Add Sweep </button>
+        </div>
         <button mat-fab (click)="addSweep()">
             <mat-icon aria-label="Example icon-button with a heart icon">add</mat-icon>
         </button>

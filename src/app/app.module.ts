@@ -1,7 +1,12 @@
+import { FormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
 import { RouterModule } from '@angular/router';
 import { NgModule } from '@angular/core';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+//
+import { LocalStorageModule } from 'angular-2-local-storage';
+import { SocialLoginModule, AuthServiceConfig, GoogleLoginProvider, FacebookLoginProvider } from 'angularx-social-login';
+import { AngularDateTimePickerModule } from 'angular2-datetimepicker';
 //
 import { AppComponent } from './app.component';
 import { LoginComponent } from './login/login.component';
@@ -12,6 +17,7 @@ import { appRoutes } from './app.routes';
 import { AddSweepComponent } from './add-sweep/add-sweep.component';
 import { HttpClientModule } from '@angular/common/http';
 import { UsersService } from './services/users.service';
+import { SweepsService } from './services/sweeps.service';
 
 const fbLoginOptions: LoginOpt = {
     scope: 'public_profile , email, publish_actions',
@@ -44,13 +50,19 @@ const SOCIAL_CONFIG = new AuthServiceConfig([
     ],
     imports: [
         RouterModule.forRoot(appRoutes),
+        LocalStorageModule.withConfig({
+            prefix: 'sweep-imp',
+            storageType: 'localStorage'
+        }),
         BrowserModule,
         HttpClientModule,
+        FormsModule,
         MaterialModule,
         SocialLoginModule.initialize(SOCIAL_CONFIG),
+        AngularDateTimePickerModule,
         BrowserAnimationsModule
     ],
-    providers: [UsersService],
+    providers: [UsersService, SweepsService],
     bootstrap: [AppComponent],
     exports: [RouterModule],
     entryComponents: [AddSweepComponent]
