@@ -5,7 +5,6 @@ import { NgModule } from '@angular/core';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 //
 import { LocalStorageModule } from 'angular-2-local-storage';
-import { SocialLoginModule, AuthServiceConfig, GoogleLoginProvider, FacebookLoginProvider } from 'angularx-social-login';
 import { AngularDateTimePickerModule } from 'angular2-datetimepicker';
 //
 import { AppComponent } from './app.component';
