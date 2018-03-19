@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { LocalStorageService } from 'angular-2-local-storage';
 import { AuthService, GoogleLoginProvider, FacebookLoginProvider } from 'angularx-social-login';
 //
-import { SocialMedia } from '../models/social-media.enum';
+import { SocialMedia } from '../../../shared/models/social-media.enum';
 import { UsersService } from '../services/users.service';
 import { LocalStorageKeys } from '../models/local-storage-keys.enum';
 

@@ -1,4 +1,4 @@
-import { SocialMedia } from './social-media.enum';
+import { SocialMedia } from '../../../shared/models/social-media.enum';
 
 export interface ISweep {
     id: number;

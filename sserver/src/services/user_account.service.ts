@@ -3,6 +3,7 @@ import { BaseService } from './base.service';
 import { user_account, SocialUserAndAccount } from '../../../shared/classes';
 import { FacebookExtention } from '../../classes';
 import { FacebookService } from './facebook.service'
+import { SocialMedia }  from '../../../shared/models/social-media.enum'
 
 export class UserAccountService extends BaseService<user_account> {
     validProviders = ['facebook', 'google'];
@@ -32,21 +33,24 @@ export class UserAccountService extends BaseService<user_account> {
         while (!UserAccounts[0][0]) {
             UserAccounts = await DB.multi(q, { user_account_id: UserAccounts[1][0].replacement_user_account_id });
         }
-        return UserAccounts[0][0];
+        const ret = UserAccounts[0][0];
+        ret.expiredSocialMedias = await this.GetSocialMedia(ret.user_account_id, true);
+        return ret;
     }
 
-    async GetSocialMedia(id: number): Promise<string[]> {
+    async GetSocialMedia(id: number, getExpired?: boolean): Promise<string[]> {
         const db = DbGetter.getDB();
         const SocialMedias = [];
         for (const i_Provider of this.validProviders) {
-            const q =
+            let q =
                 `SELECT COUNT(*)\n` +
                 `  FROM sweepimp.${i_Provider}_account\n` +
                 ` WHERE user_account_id = $<id^>`;
+            if (getExpired) {q = q + `\n   AND extract(epoch from (expiration_date - (current_date + current_time))) < 0`}
             await db.oneOrNone(q, { id })
                 .then(values => {
                     if (values.count > 0) {
-                        SocialMedias.push(i_Provider);
+                        SocialMedias.push(SocialMedia[i_Provider]);
                     }
                 });
         }
@@ -72,38 +76,42 @@ export class UserAccountService extends BaseService<user_account> {
                         `   SET auth_token = $<authToken>\n` +
                         `      ,updated = current_timestamp\n` +
                         ` WHERE ${provider}_account_id = $<id>`;
-                        db.none(q, social_media_account);
+                    db.none(q, social_media_account);
+                    loginUser.expiredSocialMedias = await this.GetSocialMedia(loginUser.user_account_id, true);
                     return loginUser;
                 } else {
                     // Cookie exists, but social media user does not match cookie. SHIT! Merge user accounts?
                     // first, let's get the cookie user. notice the filter is on user_account_id, not on id (social media's user id) as before
-                    q = `SELECT user_account.*\n` +
-                        `  FROM sweepimp.user_account\n` +
-                        ` WHERE user_account_id = $<user_account_id^>`;
-                    const cookieUser = await db.oneOrNone<user_account>(q, social_media_account);
+                    const cookieUser = await this.CookieLogin(social_media_account.user_account_id);
                     const two_minutes = 2 * 60 * 1000;
                     if (now.getTime() - cookieUser.created.getTime() <= two_minutes) {
                         // Cookie user was created recently, probably due to login screen press order. Do a simple merge
-                        return this.Merge(cookieUser, loginUser, provider, true);
+                        const mergeUser = this.Merge(cookieUser, loginUser, provider, true);
+                        mergeUser.expiredSocialMedias = await this.GetSocialMedia(mergeUser.user_account_id, true);
+                        return mergeUser;
                     } else {
                         // Two users were active for some time. Complicated merge?
                         const CommonSocialMedias = await this.GetOverlappingSocialMedias(db, cookieUser, loginUser, provider);
                         if (CommonSocialMedias.length) {
                             throw new Error(`This ${provider} user is already connected to another ${CommonSocialMedias} profile`);
                         } else {
-                            return (cookieUser.created > loginUser.created ? // merge newer account into older account
+                            const mergeUser = (cookieUser.created > loginUser.created ? // merge newer account into older account
                                     this.Merge(cookieUser, loginUser, provider, false)
                                     :
                                     this.Merge(loginUser, cookieUser, provider, false)
                             );
+                            mergeUser.expiredSocialMedias = await this.GetSocialMedia(mergeUser.user_account_id, true);
+                            return mergeUser;
                         }
                     }
                 }
             } else { // new social user
                 const txName = social_media_account.user_account_id ? 'new-social-user' : 'new-user';
-                return db.tx(txName, innerDb => {
+                const newUser = db.tx(txName, innerDb => {
                     return this.CreateSocialUser(innerDb, social_media_account, provider, !social_media_account.user_account_id);
                 });
+                newUser.expiredSocialMedias = await this.GetSocialMedia(newUser.user_account_id, true);
+                return newUser;
             }
         } catch (error) {
             console.log('failed to query db', error);
@@ -146,21 +154,11 @@ export class UserAccountService extends BaseService<user_account> {
     }
 
     async MergeInner(merge, source: user_account, target: user_account, TablesToUpdate: string[]) {
-
         let q =
             `UPDATE sweepimp.$<table_name:name>\n` +
             `   SET user_account_id = $<user_account_id_target^>\n` +
             `      ,updated         = current_timestamp\n` +
             ` WHERE user_account_id = $<user_account_id_source^>`;
-        /*
-        for (let element of TablesToUpdate) {
-            const data = merge.none(q, {
-                table_name: element,
-                user_account_id_source: source.user_account_id,
-                user_account_id_target: target.user_account_id,
-            });
-        };
-        */
         const updates = [];
         for (const element of TablesToUpdate) {
             updates.push(merge.none(q, {
@@ -170,7 +168,6 @@ export class UserAccountService extends BaseService<user_account> {
             }));
         }
         await Promise.all(updates);
-
         q = `INSERT INTO sweepimp.retired_user_account\n` +
             `    (user_account_id, first_name, last_name, replacement_user_account_id, created, updated)\n` +
             `SELECT user_account_id, first_name, last_name, $<user_account_id_target^>, created, current_timestamp\n` +
@@ -226,13 +223,6 @@ export class UserAccountService extends BaseService<user_account> {
             `    ,$<idToken>\n` +
             `    ,$<expiration_date>\n` +
             `    ,$<auth_error>\n` +
-            /*
-            (Provider === 'google' ?
-                    `    ,$<idToken>\n`
-                    :
-                    `    ,NULL\n`
-            ) +
-            */
             `    ,current_timestamp\n` +
             `    ,current_timestamp)`;
         DB.none(q, social_media_account);

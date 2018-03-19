@@ -344,6 +344,7 @@ export interface user_account {
     last_name: user_accountFields.last_name;
     created: user_accountFields.created;
     updated: user_accountFields.updated;
+    expiredSocialMedias?: string[];
 
 }
 
