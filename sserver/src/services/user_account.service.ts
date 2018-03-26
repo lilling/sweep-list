@@ -197,6 +197,11 @@ export class UserAccountService extends BaseService<user_account> {
             `  FROM sweepimp.user_account\n` +
             ` WHERE user_account_id = $<user_account_id^>`;
         let q = (CreateUserAccount ? InsertUserAccount : SelectUserAccount);
+        // Split name into firstName and lastName
+        if (social_media_account.name) {
+            social_media_account.firstName = social_media_account.name.substr(0, social_media_account.name.indexOf(' '));
+            social_media_account.lastName = social_media_account.name.substr(social_media_account.name.indexOf(' '));
+        }
         const UserAccount = await DB.one(q, social_media_account);
         social_media_account.user_account_id = UserAccount.user_account_id;
         switch (Provider){
