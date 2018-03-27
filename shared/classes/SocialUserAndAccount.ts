@@ -1,7 +1,7 @@
 import { SocialUser } from 'angularx-social-login';
 import { user_accountFields, facebook_accountFields } from './DB';
 
-export class SocialUserAndAccount extends SocialUser{
+export class SocialUserAndAccount extends SocialUser {
     user_account_id: user_accountFields.user_account_id;
     expiration_date: facebook_accountFields.expiration_date;
     auth_error: facebook_accountFields.auth_error;
