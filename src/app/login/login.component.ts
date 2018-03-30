@@ -32,6 +32,7 @@ export class LoginComponent implements OnInit {
         switch (candidate) {
             case SocialMedia.facebook:
                 this.authService.signIn(FacebookLoginProvider.PROVIDER_ID).then(data => {
+                    console.log(data);
                     this.usersService.login({ ...data, user_account_id: undefined, expiration_date: undefined, auth_error: undefined }).subscribe(inner => {
                         this.facebook = true;
                         this.localStorageService.set(LocalStorageKeys.loggedUser, inner.user_account_id);
@@ -40,6 +41,7 @@ export class LoginComponent implements OnInit {
                 break;
             case SocialMedia.google:
                 this.authService.signIn(GoogleLoginProvider.PROVIDER_ID).then(data => {
+                    console.log(data);
                     this.usersService.login({ ...data, user_account_id: undefined , expiration_date: undefined, auth_error: undefined}).subscribe(inner => {
                         this.google = true;
                         this.localStorageService.set(LocalStorageKeys.loggedUser, inner.user_account_id);

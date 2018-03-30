@@ -1,10 +1,14 @@
 import { DbGetter } from '../dal/DbGetter';
 import { BaseService } from './base.service';
-import { Win, URL, user_sweep, user_sweep_display } from '../../../shared/classes';
+import { Win, URL, user_sweep, user_sweep_display, payment_package } from '../../../shared/classes';
+import { PaymentService } from './payment.service'
 
 export class UserSweepService extends BaseService<user_sweep> {
+    PaymentService: PaymentService;
+
     constructor() {
         super('user_sweep');
+        this.PaymentService = new PaymentService();
     }
 
     async GetSweeps(id: number, status: string, search?: string, year?: number, month?: number): Promise<user_sweep_display[]> {
@@ -152,18 +156,52 @@ export class UserSweepService extends BaseService<user_sweep> {
     }
 
     async ManageSweep(user_sweep: user_sweep): Promise<user_sweep_display> {
-        if (user_sweep.user_sweep_id) { // existing sweep - update
-            return this.UpdateSweep(user_sweep);
-        } else { // new sweep - insert
-            return this.InsertSweep(user_sweep);
+        if (await this.CheckSweepLimit(user_sweep)){
+            if (user_sweep.user_sweep_id) { // existing sweep - update
+                return this.UpdateSweep(user_sweep);
+            } else { // new sweep - insert
+                return this.InsertSweep(user_sweep);
+            }
+        } else {
+            //TODO: return error
         }
     }
 
     async InsertSweep(user_sweep: user_sweep): Promise<user_sweep_display> {
         const db = DbGetter.getDB();
-        return db.tx('new-sweep', innerDb => {
-            return this.InsertSweepInner(innerDb, user_sweep);
-        });
+            return db.tx('new-sweep', innerDb => {
+                return this.InsertSweepInner(innerDb, user_sweep);
+            });
+    }
+
+    async CheckSweepLimit(user_sweep: user_sweep): Promise<boolean>{
+        const db = DbGetter.getDB();
+        const paymentPackage = await this.PaymentService.getCurrentPackage(user_sweep.user_account_id);
+        if (!paymentPackage) {
+            // user not paid
+            console.log('User does not an active payment plan');
+            return false;
+        }
+        var q = 
+            `SELECT SUM(CASE WHEN DATE_PART('day', now() - created) <= 0 THEN 1 ELSE 0 END) daily_sweeps\n` +
+            `      ,SUM(CASE WHEN (DATE_PART('year', now()) - DATE_PART('year', created)) * 12\n` +
+            `                   + (DATE_PART('month', now()) - DATE_PART('month', created)) <= 0 THEN 1 ELSE 0 END) monthly_sweeps\n` +
+            `  FROM sweepimp.user_sweep\n` +
+            ` WHERE user_account_id = $<user_account_id^>\n` +
+            `   AND end_date >= now();`;
+        // TODO: prevent update of existing sweep to live if exceeded allowed # of sweeps
+        const doneSweeps = await db.oneOrNone(q, user_sweep);
+        if (doneSweeps){
+            if (doneSweeps.daily_sweeps >= paymentPackage.max_daily_sweeps){
+                console.log('User daily sweeps reached plan maxinum (' + paymentPackage.max_daily_sweeps.toString() + ')');
+                return false;
+            }
+            if (doneSweeps.monthly_sweeps >= paymentPackage.max_monthly_live_sweeps){
+                console.log('User monthly live sweeps reached plan maxinum (' + paymentPackage.max_monthly_live_sweeps.toString() + ')');
+                return false;
+            }
+        }
+        return true;
     }
 
     async UpdateSweep(user_sweep: user_sweep): Promise<user_sweep_display> {
