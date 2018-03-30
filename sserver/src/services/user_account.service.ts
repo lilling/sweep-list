@@ -86,7 +86,7 @@ export class UserAccountService extends BaseService<user_account> {
                     const two_minutes = 2 * 60 * 1000;
                     if (now.getTime() - cookieUser.created.getTime() <= two_minutes) {
                         // Cookie user was created recently, probably due to login screen press order. Do a simple merge
-                        const mergeUser = this.Merge(cookieUser, loginUser, provider, true);
+                        const mergeUser = await this.Merge(cookieUser, loginUser, provider, true);
                         mergeUser.expiredSocialMedias = await this.GetSocialMedia(mergeUser.user_account_id, true);
                         return mergeUser;
                     } else {
@@ -95,11 +95,9 @@ export class UserAccountService extends BaseService<user_account> {
                         if (CommonSocialMedias.length) {
                             throw new Error(`This ${provider} user is already connected to another ${CommonSocialMedias} profile`);
                         } else {
-                            const mergeUser = (cookieUser.created > loginUser.created ? // merge newer account into older account
-                                    this.Merge(cookieUser, loginUser, provider, false)
-                                    :
-                                    this.Merge(loginUser, cookieUser, provider, false)
-                            );
+                            const isCookieNewer = cookieUser.created > loginUser.created;
+                            const [userSource, userTarget] = isCookieNewer ? [cookieUser, loginUser] : [loginUser, cookieUser];
+                            const mergeUser = await this.Merge(userSource, userTarget, provider, false);
                             mergeUser.expiredSocialMedias = await this.GetSocialMedia(mergeUser.user_account_id, true);
                             return mergeUser;
                         }
@@ -107,7 +105,7 @@ export class UserAccountService extends BaseService<user_account> {
                 }
             } else { // new social user
                 const txName = social_media_account.user_account_id ? 'new-social-user' : 'new-user';
-                const newUser = db.tx(txName, innerDb => {
+                const newUser = await db.tx(txName, innerDb => {
                     return this.CreateSocialUser(innerDb, social_media_account, provider, !social_media_account.user_account_id);
                 });
                 newUser.expiredSocialMedias = await this.GetSocialMedia(newUser.user_account_id, true);
