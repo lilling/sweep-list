@@ -32,18 +32,20 @@ export class LoginComponent implements OnInit {
         switch (candidate) {
             case SocialMedia.facebook:
                 this.authService.signIn(FacebookLoginProvider.PROVIDER_ID).then(data => {
-                    this.usersService.login({ ...data, user_account_id: undefined, expiration_date: undefined, auth_error: undefined }).subscribe(inner => {
-                        this.facebook = true;
-                        this.localStorageService.set(LocalStorageKeys.loggedUser, inner.user_account_id);
-                    });
+                    this.usersService.login({ ...data, user_account_id: undefined, expiration_date: undefined, auth_error: undefined })
+                        .subscribe(inner => {
+                            this.facebook = true;
+                            this.localStorageService.set(LocalStorageKeys.loggedUser, inner.user_account_id);
+                        });
                 });
                 break;
             case SocialMedia.google:
                 this.authService.signIn(GoogleLoginProvider.PROVIDER_ID).then(data => {
-                    this.usersService.login({ ...data, user_account_id: undefined , expiration_date: undefined, auth_error: undefined}).subscribe(inner => {
-                        this.google = true;
-                        this.localStorageService.set(LocalStorageKeys.loggedUser, inner.user_account_id);
-                    });
+                    this.usersService.login({ ...data, user_account_id: undefined, expiration_date: undefined, auth_error: undefined })
+                        .subscribe(inner => {
+                            this.google = true;
+                            this.localStorageService.set(LocalStorageKeys.loggedUser, inner.user_account_id);
+                        });
                 });
                 break;
         }
@@ -54,9 +56,7 @@ export class LoginComponent implements OnInit {
     }
 
     ngOnInit() {
-        const cachedUserId = this.localStorageService.get(LocalStorageKeys.loggedUser);
-
-        if (cachedUserId) {
+        if (this.localStorageService.get(LocalStorageKeys.loggedUser)) {
             this.goToList();
         }
     }

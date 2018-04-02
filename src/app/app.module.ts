@@ -17,6 +17,7 @@ import { AddSweepComponent } from './add-sweep/add-sweep.component';
 import { HttpClientModule } from '@angular/common/http';
 import { UsersService } from './services/users.service';
 import { SweepsService } from './services/sweeps.service';
+import { PositiveValidatorDirective } from './add-sweep/positive.validator';
 
 const fbLoginOptions: LoginOpt = {
     scope: 'public_profile , email, publish_actions',
@@ -24,7 +25,6 @@ const fbLoginOptions: LoginOpt = {
     enable_profile_selector: true
   }; // https://developers.facebook.com/docs/reference/javascript/FB.login/v2.11
 
-  
 const SOCIAL_CONFIG = new AuthServiceConfig([
     {
         id: GoogleLoginProvider.PROVIDER_ID,
@@ -45,7 +45,8 @@ const SOCIAL_CONFIG = new AuthServiceConfig([
         AddSweepComponent,
         AppComponent,
         LoginComponent,
-        SweepListComponent
+        SweepListComponent,
+        PositiveValidatorDirective
     ],
     imports: [
         RouterModule.forRoot(appRoutes),

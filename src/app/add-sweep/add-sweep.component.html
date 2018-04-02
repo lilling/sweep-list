@@ -1,25 +1,104 @@
-<h2 mat-dialog-title>Add Sweep</h2>
 <mat-dialog-content>
-    <form class="form" #f="ngForm" (ngSubmit)="onSubmit(f)">
-        <mat-form-field>
-            <input matInput placeholder="Prize (sweep name)" name="name" ngModel #sweepName="ngModel" required>
-            <mat-error *ngIf="sweepName.errors?.required && sweepName.touched">
-                Name is <strong>required</strong>
-            </mat-error>
-        </mat-form-field>
+    <form class="form" #addSweepForm="ngForm">
+        <ng-container *ngIf="step === 1">
+            <h2 mat-dialog-title>New Sweep</h2>
+            <mat-form-field>
+                <input matInput placeholder="Prize (sweep name)" name="name" id="name" [(ngModel)]="newSweep.name" required #name="ngModel">
+                <mat-error *ngIf="name.invalid && (name.dirty || name.touched) && name.errors.required">
+                    Name is required.
+                </mat-error>
+            </mat-form-field>
+            <mat-form-field>
+                <input matInput [matDatepicker]="picker" placeholder="End date" id="endDate" name="endDate" [(ngModel)]="newSweep.endDate"
+                       required disabled #endDate="ngModel">
+                <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                <mat-datepicker #picker disabled="false"></mat-datepicker>
+                <mat-error *ngIf="endDate.invalid && (endDate.dirty || endDate.touched) && endDate.errors.required">
+                    End date is required.
+                </mat-error>
+            </mat-form-field>
+        </ng-container>
+        <ng-container *ngIf="step === 2">
+            <mat-slide-toggle [checked]="newSweep.isRecurring" [labelPosition]="'before'" [color]="'primary'"
+                              (change)="newSweep.isRecurring= $event.checked">
+                Recurring Entry
+            </mat-slide-toggle>
+            <mat-form-field>
+                <input matInput placeholder="sweep url" name="siteUrl" id="siteUrl" [(ngModel)]="newSweep.url" required #url="ngModel"
+                       [disabled]="!newSweep.isRecurring">
+                <mat-icon matSuffix>public</mat-icon>
+                <mat-error *ngIf="url.invalid && (url.dirty || url.touched) && url.errors.required">
+                    url is required.
+                </mat-error>
+            </mat-form-field>
+            <span>
+                <span>Every </span>
+                <input matInput type="number" placeholder="XX" required [disabled]="!newSweep.isRecurring" name="recurringDuration"
+                       appPositive
+                       [(ngModel)]="newSweep.recurringDuration" #recurringDuration="ngModel">
+                <span>days</span>
+            </span>
+            <ng-container *ngIf="recurringDuration.invalid && (recurringDuration.dirty || recurringDuration.touched)">
+                <mat-error *ngIf="recurringDuration.errors.required">
+                    Duration is required.
+                </mat-error>
+                <mat-error *ngIf="recurringDuration.errors.positive">
+                    Duration must be positive.
+                </mat-error>
+            </ng-container>
+        </ng-container>
+        <ng-container *ngIf="step === 3">
+            <mat-slide-toggle [checked]="newSweep.isShare" [labelPosition]="'before'" [color]="'primary'"
+                              (change)="newSweep.isShare = $event.checked">
+                Share On My Social Media
+            </mat-slide-toggle>
+            <mat-form-field>
+                <input matInput placeholder="My Url" name="shareSiteUrl" id="shareSiteUrl" [(ngModel)]="newSweep.url" required
+                       #url="ngModel" [disabled]="!newSweep.isShare">
+                <mat-icon matSuffix>public</mat-icon>
+                <mat-error *ngIf="url.invalid && (url.dirty || url.touched) && url.errors.required">
+                    url is required.
+                </mat-error>
+            </mat-form-field>
+            <mat-form-field>
+                <input matInput placeholder="Message with post" name="messageWithPost" id="messageWithPost"
+                       [(ngModel)]="newSweep.messageWithPost" [disabled]="!newSweep.isShare">
+            </mat-form-field>
+            <span>
+                <span>Share every </span>
+                <input matInput type="number" name="shareDuration" placeholder="XX" required [(ngModel)]="newSweep.shareDuration"
+                       appPositive
+                       [disabled]="!newSweep.isShare" #shareDuration="ngModel">
+                <span> days on:</span>
+            </span>
+            <div class="icons-holder">
+                <i class="fa fa-google social-icon" [ngClass]="{'logged': loggedSocialMedias.includes(SocialMedia.google)}"
+                   (click)="login(SocialMedia.google)"></i>
+                <i class="fa fa-facebook-f social-icon" [ngClass]="{'logged': loggedSocialMedias.includes(SocialMedia.facebook)}"
+                   (click)="login(SocialMedia.facebook)"></i>
+            </div>
 
-        <mat-form-field>
-            <input matInput [matDatepicker]="picker" placeholder="End date" name="endDate" ngModel #endDate="ngModel" required
-                   disabled>
-            <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-            <mat-datepicker #picker disabled="false"></mat-datepicker>
-            <mat-error *ngIf="endDate.errors?.required && endDate.touched">
-                End Date is <strong>required</strong>
-            </mat-error>
-        </mat-form-field>
+            <ng-container *ngIf="shareDuration.invalid && (shareDuration.dirty || shareDuration.touched)">
+                <mat-error *ngIf="shareDuration.errors.required">
+                    Duration is required.
+                </mat-error>
+                <mat-error *ngIf="shareDuration.errors.positive">
+                    Duration must be positive.
+                </mat-error>
+            </ng-container>
+        </ng-container>
+        <ng-container *ngIf="step === 4">
+            <h2 mat-dialog-title>New Sweep Added!</h2>
+            <h2 mat-dialog-title>What do you want to do?</h2>
+        </ng-container>
     </form>
 </mat-dialog-content>
 <mat-dialog-actions>
-    <button mat-button mat-dialog-close>No</button>
-    <button mat-button [mat-dialog-close]="true">Yes</button>
+    <button mat-button *ngIf="1 < step && step < 4" (click)="back()">Back</button>
+    <button mat-raised-button color="primary" *ngIf="step < 3" (click)="next()" [disabled]="isNextDisabled()">Next</button>
+    <button mat-raised-button color="primary" *ngIf="step === 3" (click)="addSweep()" [disabled]="isNextDisabled()">Submit</button>
+    <ng-container *ngIf="step === 4">
+        <button mat-button (click)="dialogRef.close()">I'm done</button>
+        <button mat-raised-button color="primary" (click)="clear()">Add one more</button>
+    </ng-container>
 </mat-dialog-actions>
