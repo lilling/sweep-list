@@ -21,6 +21,15 @@
   display: flex;
   flex-direction: column;
 
+  .social-media-radio-group {
+    display: inline-flex;
+    flex-direction: column;
+
+    .social-media-radio-button {
+      margin: 5px;
+    }
+  }
+
   .icons-holder {
     display: flex;
     justify-content: space-evenly;
@@ -28,12 +37,21 @@
     margin: 10px;
 
     i {
-      &.fa-facebook-f.logged {
-        color: $facebook-color;
-      }
+      &.fa-facebook-f {
+        cursor: pointer;
 
-      &.fa-google.logged {
-        color: $google-color;
+        &.logged {
+          cursor: default;
+          color: $facebook-color;
+        }
+      }
+      &.fa-google {
+        cursor: pointer;
+
+        &.logged {
+          cursor: default;
+          color: $google-color;
+        }
       }
     }
   }

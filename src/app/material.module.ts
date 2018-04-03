@@ -13,16 +13,16 @@ import {
     MatFormFieldModule,
     MatDatepickerModule,
     MatNativeDateModule,
-    MatSlideToggleModule
+    MatSlideToggleModule, MatRadioModule
 } from '@angular/material';
 
 @NgModule({
     imports: [MatGridListModule, MatButtonModule, MatCheckboxModule, MatIconModule, MatListModule, MatSidenavModule, MatMenuModule,
         MatButtonToggleModule, MatDialogModule, MatInputModule, MatFormFieldModule, MatDatepickerModule, MatNativeDateModule,
-        MatSlideToggleModule],
+        MatSlideToggleModule, MatRadioModule],
     exports: [MatGridListModule, MatButtonModule, MatCheckboxModule, MatIconModule, MatListModule, MatSidenavModule, MatMenuModule,
         MatButtonToggleModule, MatDialogModule, MatInputModule, MatFormFieldModule, MatDatepickerModule, MatNativeDateModule,
-        MatSlideToggleModule]
+        MatSlideToggleModule, MatRadioModule]
 })
 export class MaterialModule {
 }
