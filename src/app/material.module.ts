@@ -13,7 +13,8 @@ import {
     MatFormFieldModule,
     MatDatepickerModule,
     MatNativeDateModule,
-    MatSlideToggleModule, MatRadioModule
+    MatSlideToggleModule,
+    MatRadioModule
 } from '@angular/material';
 
 @NgModule({

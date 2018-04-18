@@ -22,10 +22,14 @@
         </mat-menu>
     </span>
     </div>
+    <div class="body" *ngIf="sweeps$ | async">
+        <ng-container *ngIf="isSweepsLoading$ | async">
+            <div class="blocker"></div>
+            <i class="fa fa-spinner fa-spin centered"></i>
+        </ng-container>
 
-    <div class="body" *ngIf="sweeps">
         <mat-list>
-            <mat-list-item *ngFor="let sweep of sweeps">
+            <mat-list-item *ngFor="let sweep of sweeps$ | async">
                 <mat-icon matListIcon fontSet="fa" fontIcon="fa-gift"></mat-icon>
                 <h3 matLine> {{sweep.sweep_name}} </h3>
                 <p matLine>
@@ -34,7 +38,7 @@
                 <mat-icon>public</mat-icon>
             </mat-list-item>
         </mat-list>
-        <div class="no-sweeps" *ngIf="sweeps.length == 0">
+        <div class="no-sweeps" *ngIf="!(isSweepsLoading$ | async) && (sweeps$ | async).length == 0">
             <span>you have no sweeps! wanna start?</span>
             <button mat-raised-button (click)="addSweep()"> Add Sweep </button>
         </div>

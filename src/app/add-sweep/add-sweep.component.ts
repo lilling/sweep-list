@@ -1,12 +1,15 @@
 import { Component, Inject } from '@angular/core';
+//
+import {Store} from '@ngrx/store';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
-import { UsersService } from '../services/users.service';
 import { LocalStorageService } from 'angular-2-local-storage';
+//
+import { UsersService } from '../services/users.service';
 import { LocalStorageKeys } from '../models/local-storage-keys.enum';
 import { SocialMedia } from '../../../shared/models/social-media.enum';
 import { FacebookLoginProvider, GoogleLoginProvider, AuthService } from 'angularx-social-login';
-import { user_sweep } from '../../../shared/classes/DB';
-import { SweepsService } from '../services/sweeps.service';
+import { user_sweep } from '../../../shared/classes';
+import * as fromStore from '../store';
 
 @Component({
     selector: 'app-add-sweep',
@@ -24,13 +27,13 @@ export class AddSweepComponent {
 
     constructor(public dialogRef: MatDialogRef<AddSweepComponent>,
                 private usersService: UsersService,
-                private sweepsService: SweepsService,
+                private store: Store<fromStore.IAppState>,
                 private authService: AuthService,
                 private localStorageService: LocalStorageService,
                 @Inject(MAT_DIALOG_DATA) public data: any) {
         this.userAccountId = this.localStorageService.get<number>(LocalStorageKeys.loggedUser);
-        this.usersService.getUserSocialAccounts(this.userAccountId).subscribe(data => {
-            this.loggedSocialMedias = data;
+        this.usersService.getUserSocialAccounts(this.userAccountId).subscribe(socialMedias => {
+            this.loggedSocialMedias = socialMedias;
         });
         this.clear();
     }
@@ -76,11 +79,8 @@ export class AddSweepComponent {
     }
 
     addSweep() {
-        console.log(this.newSweep);
-        this.sweepsService.addOrUpdateSweep(this.newSweep).subscribe(data => {
-            console.log(data);
-            this.next();
-        });
+        this.store.dispatch(new fromStore.AddSweep(this.newSweep));
+        this.next();
     }
 
     isNextDisabled() {
@@ -88,10 +88,13 @@ export class AddSweepComponent {
             case 1:
                 return !this.newSweep.end_date || !this.newSweep.sweep_name;
             case 2:
-                return this.newSweep.is_frequency && (!this.newSweep.frequency_days || !this.newSweep.frequency_url || this.newSweep.frequency_days < 0);
+                return this.newSweep.is_frequency &&
+                    (!this.newSweep.frequency_days || !this.newSweep.frequency_url || this.newSweep.frequency_days < 0);
             case 3:
-                return this.newSweep.is_referral && (!this.newSweep.referral_frequency || !this.newSweep.referral_url || this.newSweep.referral_frequency < 0 ||
-                    (!this.newSweep.refer_google && !this.newSweep.refer_facebook && !this.newSweep.refer_linkedin && !this.newSweep.refer_pinterest && !this.newSweep.refer_twitter));
+                return this.newSweep.is_referral &&
+                    (!this.newSweep.referral_frequency || !this.newSweep.referral_url || this.newSweep.referral_frequency < 0 ||
+                    (!this.newSweep.refer_google && !this.newSweep.refer_facebook && !this.newSweep.refer_linkedin &&
+                        !this.newSweep.refer_pinterest && !this.newSweep.refer_twitter));
             case 4:
                 return this.thankReferrer && (!this.newSweep.thanks_to || this.newSweep.thanks_social_media_id === undefined);
         }
