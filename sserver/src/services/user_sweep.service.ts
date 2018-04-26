@@ -89,11 +89,14 @@ export class UserSweepService extends BaseService<user_sweep> {
     async GetSweepURLs(id: number): Promise<string[]> {
         const db = DbGetter.getDB();
         const q =
-            `SELECT user_sweep_id\n` +
-            `      ,sweep_url\n` +
-            `  FROM sweepimp.user_sweep_display\n` +
-            ` WHERE user_account_id = $<id^>\n` +
-            `   AND end_date >= now()\n`;
+            `SELECT us.user_sweep_id\n` +
+            `      ,coalesce(us.frequency_url, us.sweep_url) sweep_url\n` +
+            `  FROM sweepimp.user_sweep         us\n` +
+            `  JOIN sweepimp.user_sweep_display usd USING (user_sweep_id)\n` +
+            ` WHERE us.user_account_id = $<id^>\n` +
+            `   AND us.end_date >= now()\n` +
+            `   AND (  usd.last_entry_date is null\n` +
+            `       OR usd.last_entry_date < current_date - interval '1 DAY' * us.frequency_days)`;
         const sweeps = [];
         const urls = [];
         const result = await db.manyOrNone<URL>(q, { id });
@@ -101,35 +104,41 @@ export class UserSweepService extends BaseService<user_sweep> {
             sweeps.push(value.user_sweep_id);
             urls.push(value.sweep_url);
         });
-        await this.ManageEntry(sweeps);
-        // TODO: why returns URLs when ManageEntry is with error (force an error by adding a space in a query)?
+        if (result.length > 0){
+            try {
+                await this.ManageEntry(sweeps);
+            } catch(err) {
+                urls.splice(0,urls.length);
+                console.log('Error in ManageEntry');
+            }
+        }
         return urls;
     }
 
     async ManageEntry(sweep_ids: number[]) {
         const db = DbGetter.getDB();
-        let inserts = ``;
+        let insert =
+            'INSERT INTO sweepimp.sweep_entry\n' +
+            `    (user_sweep_id\n` +
+            `    ,entry_date\n` +
+            `    ,created\n` +
+            `    ,updated)\n`;
         sweep_ids.forEach(value => {
-            inserts = inserts +
-                'INSERT INTO sweepimp.sweep_entry\n' +
-                `    (user_sweep_id\n` +
-                `    ,entry_date\n` +
-                `    ,created\n` +
-                `    ,updated)\n` +
-                `VALUES \n` +
-                `    (${value}\n` +
-                `    ,current_timestamp\n` +
-                `    ,current_timestamp\n` +
-                `    ,current_timestamp);\n`;
+            insert = insert +
+                `SELECT ${value}, current_timestamp, current_timestamp, current_timestamp\n` +
+                `UNION ALL\n`;
         });
+        // replace last UNION ALL\n with a ;
+        insert = insert.replace(new RegExp(`UNION ALL\n$`), ';');
         const update =
             `UPDATE sweepimp.user_sweep_display\n` +
             `   SET total_entries = coalesce(total_entries, 0) + 1\n` +
+            `      ,last_entry_date = current_timestamp\n` +
             `      ,updated = current_timestamp\n` +
             ` WHERE user_sweep_id IN ($<user_sweep_ids:csv>)`;
-        await db.tx(DB => {
-            DB.multi(inserts);
-            DB.none(update, { user_sweep_ids: sweep_ids });
+        await db.tx('entry', async DB => {
+            await DB.one(insert);
+            await DB.one(update, { user_sweep_ids: sweep_ids });
         });
     }
 
@@ -192,11 +201,11 @@ export class UserSweepService extends BaseService<user_sweep> {
         // TODO: prevent update of existing sweep to live if exceeded allowed # of sweeps
         const doneSweeps = await db.oneOrNone(q, user_sweep);
         if (doneSweeps){
-            if (doneSweeps.daily_sweeps >= paymentPackage.max_daily_sweeps){
+            if (Number(doneSweeps.daily_sweeps) >= paymentPackage.max_daily_sweeps){
                 console.log('User daily sweeps reached plan maxinum (' + paymentPackage.max_daily_sweeps.toString() + ')');
                 return false;
             }
-            if (doneSweeps.monthly_sweeps >= paymentPackage.max_monthly_live_sweeps){
+            if (Number(doneSweeps.monthly_sweeps) >= paymentPackage.max_monthly_live_sweeps){
                 console.log('User monthly live sweeps reached plan maxinum (' + paymentPackage.max_monthly_live_sweeps.toString() + ')');
                 return false;
             }
