@@ -4,8 +4,6 @@ import { RouterModule } from '@angular/router';
 import { NgModule } from '@angular/core';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 //
-import { StoreModule } from '@ngrx/store';
-import {EffectsModule} from '@ngrx/effects';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { LocalStorageModule } from 'angular-2-local-storage';
 import { AngularDateTimePickerModule } from 'angular2-datetimepicker';
@@ -22,8 +20,6 @@ import { HttpClientModule } from '@angular/common/http';
 import { UsersService } from './services/users.service';
 import { SweepsService } from './services/sweeps.service';
 import { PositiveValidatorDirective } from './add-sweep/positive.validator';
-import {reducers} from './store';
-import {Effects} from './store/effects';
 
 const fbLoginOptions: LoginOpt = {
     scope: 'public_profile , email, publish_actions',
@@ -63,8 +59,6 @@ const SOCIAL_CONFIG = new AuthServiceConfig([
         BrowserModule,
         HttpClientModule,
         FormsModule,
-        StoreModule.forRoot(reducers),
-        EffectsModule.forRoot([Effects]),
         StoreDevtoolsModule.instrument({
             maxAge: 25, // Retains last 25 states
             logOnly: environment.production // Restrict extension to log-only mode

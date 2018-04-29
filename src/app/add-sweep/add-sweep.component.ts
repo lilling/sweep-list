@@ -1,6 +1,5 @@
 import { Component, Inject } from '@angular/core';
 //
-import {Store} from '@ngrx/store';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { LocalStorageService } from 'angular-2-local-storage';
 //
@@ -9,7 +8,6 @@ import { LocalStorageKeys } from '../models/local-storage-keys.enum';
 import { SocialMedia } from '../../../shared/models/social-media.enum';
 import { FacebookLoginProvider, GoogleLoginProvider, AuthService } from 'angularx-social-login';
 import { user_sweep } from '../../../shared/classes';
-import * as fromStore from '../store';
 
 @Component({
     selector: 'app-add-sweep',
@@ -27,7 +25,6 @@ export class AddSweepComponent {
 
     constructor(public dialogRef: MatDialogRef<AddSweepComponent>,
                 private usersService: UsersService,
-                private store: Store<fromStore.IAppState>,
                 private authService: AuthService,
                 private localStorageService: LocalStorageService,
                 @Inject(MAT_DIALOG_DATA) public data: any) {
@@ -79,7 +76,6 @@ export class AddSweepComponent {
     }
 
     addSweep() {
-        this.store.dispatch(new fromStore.AddSweep(this.newSweep));
         this.next();
     }
 
