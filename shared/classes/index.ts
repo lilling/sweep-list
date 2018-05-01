@@ -32,4 +32,4 @@ export {
 } from './DB';
 export { Account, SocialUserAndAccount, FBAccount } from './SocialUserAndAccount';
 export { URL, Win } from './WinAndURL';
-export {PostToPublishRaw, PostToPublish} from './Posts'
+export { PostToPublishRaw, PostToPublish } from './Posts';

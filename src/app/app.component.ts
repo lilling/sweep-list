@@ -1,11 +1,53 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+//
+import * as _ from 'lodash';
+import { NgRedux } from '@angular-redux/store';
+import { createLogger } from 'redux-logger';
+import { combineEpics, createEpicMiddleware } from 'redux-observable';
+//
+import { AppState, rootReducer, INITIAL_STATE } from './state/store';
+import { BaseEpic } from './state/models/base-epic';
+import { compose } from 'redux';
 
 @Component({
   selector: 'app-root',
   templateUrl: 'app.component.html',
   styleUrls: ['app.component.scss']
 })
-export class AppComponent {
+export class AppComponent implements OnInit {
 
-  constructor() {}
+  constructor(private ngRedux: NgRedux<AppState>) {}
+
+  ngOnInit() {
+      const middlewares = [];
+      const composeEnhancers =
+          typeof window === 'object' &&
+          window['__REDUX_DEVTOOLS_EXTENSION_COMPOSE__']
+          // && this.config.getEnv('env') === 'development'
+              ?
+              window['__REDUX_DEVTOOLS_EXTENSION_COMPOSE__']({
+                  // Specify extension’s options like name, actionsBlacklist, actionsCreators, serialize...
+              }) : compose;
+      const rootEpicMiddleware = combineEpics(...this.getEpics());
+      const epicMiddleware = createEpicMiddleware(rootEpicMiddleware);
+      const logger = createLogger();
+      middlewares.push(logger);
+      middlewares.push(epicMiddleware);
+
+      const enhancer = composeEnhancers(
+          // other store enhancers if any
+      );
+      this.ngRedux.configureStore( // reducer, initState, middleware, enhancers
+          rootReducer,
+          INITIAL_STATE,
+          middlewares,
+          enhancer
+      );
+  }
+
+    private getEpics = (): any[] => {
+        const epicClasses: BaseEpic[] = [
+        ];
+        return _.flatten(epicClasses.map(epicClass => epicClass.getEpics()));
+    }
 }
