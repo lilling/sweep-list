@@ -52,6 +52,7 @@ const SOCIAL_CONFIG = new AuthServiceConfig([
         PositiveValidatorDirective
     ],
     imports: [
+        StateModule,
         NgReduxModule,
         RouterModule.forRoot(appRoutes),
         LocalStorageModule.withConfig({
@@ -61,7 +62,6 @@ const SOCIAL_CONFIG = new AuthServiceConfig([
         BrowserModule,
         HttpClientModule,
         FormsModule,
-        StateModule,
         MaterialModule,
         SocialLoginModule.initialize(SOCIAL_CONFIG),
         AngularDateTimePickerModule,

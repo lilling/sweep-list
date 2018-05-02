@@ -8,6 +8,7 @@ import { combineEpics, createEpicMiddleware } from 'redux-observable';
 import { AppState, rootReducer, INITIAL_STATE } from './state/store';
 import { BaseEpic } from './state/models/base-epic';
 import { compose } from 'redux';
+import { LoginEpics } from './state/login/login.epics';
 
 @Component({
   selector: 'app-root',
@@ -16,7 +17,8 @@ import { compose } from 'redux';
 })
 export class AppComponent implements OnInit {
 
-  constructor(private ngRedux: NgRedux<AppState>) {}
+  constructor(private ngRedux: NgRedux<AppState>,
+              private loginEpics: LoginEpics) {}
 
   ngOnInit() {
       const middlewares = [];
@@ -47,6 +49,7 @@ export class AppComponent implements OnInit {
 
     private getEpics = (): any[] => {
         const epicClasses: BaseEpic[] = [
+            this.loginEpics
         ];
         return _.flatten(epicClasses.map(epicClass => epicClass.getEpics()));
     }
