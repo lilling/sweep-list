@@ -36,10 +36,5 @@ export class LoginEpics extends BaseEpic {
                             }));
                     });
             });
-        // return this.usersService.login({ ...user, user_account_id: undefined, expiration_date: undefined, auth_error: undefined })
-        //     .map(res => {
-        //         return { type: LoginActions.LOGIN_COMPLETED, payload: res };
-        //     })
-        //     .catch(err => of(generateError(err, LoginActions.LOGIN_COMPLETED)));
     }
 }
