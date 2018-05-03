@@ -50,28 +50,17 @@ export class LoginComponent implements OnInit {
 
     login(candidate: SocialMedia) {
         this.socialMediaSelected = candidate;
+        let id = '';
         switch (candidate) {
             case SocialMedia.facebook:
-                this.loginActions.login(FacebookLoginProvider.PROVIDER_ID);
-                // this.authService.signIn(FacebookLoginProvider.PROVIDER_ID).then(data => {
-                //     this.usersService.login({ ...data, user_account_id: undefined, expiration_date: undefined, auth_error: undefined })
-                //         .subscribe(inner => {
-                //             this.facebook = true;
-                //             this.localStorageService.set(LocalStorageKeys.loggedUser, inner.user_account_id);
-                //         });
-                // });
+                id = FacebookLoginProvider.PROVIDER_ID;
                 break;
             case SocialMedia.google:
-                this.loginActions.login(GoogleLoginProvider.PROVIDER_ID);
-                // this.authService.signIn(GoogleLoginProvider.PROVIDER_ID).then(data => {
-                //     this.usersService.login({ ...data, user_account_id: undefined, expiration_date: undefined, auth_error: undefined })
-                //         .subscribe(inner => {
-                //             this.google = true;
-                //             this.localStorageService.set(LocalStorageKeys.loggedUser, inner.user_account_id);
-                //         });
-                // });
+                id = GoogleLoginProvider.PROVIDER_ID;
                 break;
         }
+
+        this.loginActions.login({ id, fromCache: false });
     }
 
     goToList() {
@@ -79,7 +68,9 @@ export class LoginComponent implements OnInit {
     }
 
     ngOnInit() {
+        const id = this.localStorageService.get<string>(LocalStorageKeys.loggedUser);
         if (this.localStorageService.get(LocalStorageKeys.loggedUser)) {
+            this.loginActions.login({ id, fromCache: true });
             this.goToList();
         }
     }

@@ -21,4 +21,8 @@ export class UsersService extends BaseService {
     getUserSocialAccounts(id: number): Observable<SocialMedia[]> {
         return this.get(`user_social_medias/${id}`);
     }
+
+    getUser(id: number): Observable<user_account> {
+        return this.get<user_account>(`user_accounts/${id}`);
+    }
 }

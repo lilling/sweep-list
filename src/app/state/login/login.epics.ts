@@ -21,10 +21,20 @@ export class LoginEpics extends BaseEpic {
     }
 
     @Epic
-    login(action$: ActionsObservable<TypedAction<string>>) {
+    login(action$: ActionsObservable<TypedAction<{ id: string, fromCache: boolean }>>) {
         return action$.ofType(LoginActions.LOGIN)
             .switchMap(action => {
-                return fromPromise(this.authService.signIn(action.payload))
+
+                if (action.payload.fromCache) {
+                    return this.usersService.getUser(+action.payload.id).pipe(
+                        map(res => {
+                            return { type: LoginActions.LOGIN_COMPLETED, payload: res };
+                        }),
+                        catchError(err => {
+                            return of(generateError(err, LoginActions.LOGIN_COMPLETED));
+                        }));
+                }
+                return fromPromise(this.authService.signIn(action.payload.id))
                     .switchMap(user => {
                         const userAccount = { ...user, user_account_id: undefined, expiration_date: undefined, auth_error: undefined };
                         return this.usersService.login(userAccount).pipe(
