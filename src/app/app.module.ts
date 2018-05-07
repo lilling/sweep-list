@@ -20,6 +20,7 @@ import { UsersService } from './services/users.service';
 import { SweepsService } from './services/sweeps.service';
 import { PositiveValidatorDirective } from './add-sweep/positive.validator';
 import { StateModule } from './state.module';
+import { AuthGuard } from './services/auth-guard.service';
 
 const fbLoginOptions: LoginOpt = {
     scope: 'public_profile , email, publish_actions',
@@ -62,7 +63,7 @@ const SOCIAL_CONFIG = new AuthServiceConfig([
         AngularDateTimePickerModule,
         BrowserAnimationsModule
     ],
-    providers: [UsersService, SweepsService],
+    providers: [UsersService, SweepsService, AuthGuard],
     bootstrap: [AppComponent],
     exports: [RouterModule],
     entryComponents: [AddSweepComponent]
