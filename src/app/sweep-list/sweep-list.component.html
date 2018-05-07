@@ -35,7 +35,7 @@
                 <p matLine>
                     <span> {{sweep.created | date:'yyyy-MM-dd HH:mm'}} </span>
                 </p>
-                <mat-icon>public</mat-icon>
+                <mat-icon class="clickable" (click)="openUrl(sweep.frequency_url)">public</mat-icon>
             </mat-list-item>
         </mat-list>
         <div class="no-sweeps" *ngIf="!(isSweepsLoading$ | async) && (sweeps$ | async).length == 0">

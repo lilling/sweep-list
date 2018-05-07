@@ -37,4 +37,14 @@ export class SweepListComponent implements OnInit {
     addSweep() {
         this.dialog.open(AddSweepComponent);
     }
+
+    openUrl(urlToOpen: string) {
+        let url: string = '';
+        if (!/^http[s]?:\/\//.test(urlToOpen)) {
+            url += 'http://';
+        }
+
+        url += urlToOpen;
+        window.open(url, '_blank');
+    }
 }
