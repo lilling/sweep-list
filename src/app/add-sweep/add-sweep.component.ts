@@ -1,7 +1,6 @@
 import { Component, Inject } from '@angular/core';
 //
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
-import { LocalStorageService } from 'angular-2-local-storage';
 //
 import { UsersService } from '../services/users.service';
 import { LocalStorageKeys } from '../models/local-storage-keys.enum';
@@ -26,9 +25,8 @@ export class AddSweepComponent {
     constructor(public dialogRef: MatDialogRef<AddSweepComponent>,
                 private usersService: UsersService,
                 private authService: AuthService,
-                private localStorageService: LocalStorageService,
                 @Inject(MAT_DIALOG_DATA) public data: any) {
-        this.userAccountId = this.localStorageService.get<number>(LocalStorageKeys.loggedUser);
+        this.userAccountId = +localStorage.getItem(LocalStorageKeys.loggedUser);
         this.usersService.getUserSocialAccounts(this.userAccountId).subscribe(socialMedias => {
             this.loggedSocialMedias = socialMedias;
         });

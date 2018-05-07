@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 //
-import { LocalStorageService } from 'angular-2-local-storage';
 import { AuthService, GoogleLoginProvider, FacebookLoginProvider } from 'angularx-social-login';
 //
 import { SocialMedia } from '../../../shared/models/social-media.enum';
@@ -30,11 +29,10 @@ export class LoginComponent implements OnInit {
                 private ngRedux: NgRedux<AppState>,
                 private router: Router,
                 private loginActions: LoginActions,
-                private usersService: UsersService,
-                private localStorageService: LocalStorageService) {
+                private usersService: UsersService) {
         this.ngRedux.select(state => state.loginState.user).subscribe(user => {
             if (user) {
-                this.localStorageService.set(LocalStorageKeys.loggedUser, user.user_account_id);
+                localStorage.setItem(LocalStorageKeys.loggedUser, user.user_account_id.toString());
 
                 switch (this.socialMediaSelected) {
                     case SocialMedia.facebook:
@@ -68,8 +66,8 @@ export class LoginComponent implements OnInit {
     }
 
     ngOnInit() {
-        const id = this.localStorageService.get<string>(LocalStorageKeys.loggedUser);
-        if (this.localStorageService.get(LocalStorageKeys.loggedUser)) {
+        const id = localStorage.getItem(LocalStorageKeys.loggedUser);
+        if (id) {
             this.loginActions.login({ id, fromCache: true });
             this.goToList();
         }

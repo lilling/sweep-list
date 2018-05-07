@@ -4,7 +4,6 @@ import { RouterModule } from '@angular/router';
 import { NgModule } from '@angular/core';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 //
-import { LocalStorageModule } from 'angular-2-local-storage';
 import { AngularDateTimePickerModule } from 'angular2-datetimepicker';
 import { NgReduxModule } from '@angular-redux/store';
 import { environment } from '../environments/environment'; // Angular CLI environemnt
@@ -55,10 +54,6 @@ const SOCIAL_CONFIG = new AuthServiceConfig([
         StateModule,
         NgReduxModule,
         RouterModule.forRoot(appRoutes),
-        LocalStorageModule.withConfig({
-            prefix: 'sweep-imp',
-            storageType: 'localStorage'
-        }),
         BrowserModule,
         HttpClientModule,
         FormsModule,

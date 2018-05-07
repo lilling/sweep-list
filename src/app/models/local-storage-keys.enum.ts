@@ -1,3 +1,3 @@
 export enum LocalStorageKeys {
-    loggedUser = 'loggedUser'
+    loggedUser = 'sweep-imp.loggedUser'
 }
