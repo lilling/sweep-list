@@ -68,7 +68,6 @@ export class LoginComponent implements OnInit {
     ngOnInit() {
         const id = localStorage.getItem(LocalStorageKeys.loggedUser);
         if (id) {
-            this.loginActions.login({ id, fromCache: true });
             this.goToList();
         }
     }
