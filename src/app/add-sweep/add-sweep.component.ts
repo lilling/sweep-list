@@ -7,6 +7,7 @@ import { LocalStorageKeys } from '../models/local-storage-keys.enum';
 import { SocialMedia } from '../../../shared/models/social-media.enum';
 import { FacebookLoginProvider, GoogleLoginProvider, AuthService } from 'angularx-social-login';
 import { user_sweep } from '../../../shared/classes';
+import { SweepsActions } from '../state/sweeps/sweeps.actions';
 
 @Component({
     selector: 'app-add-sweep',
@@ -24,6 +25,7 @@ export class AddSweepComponent {
 
     constructor(public dialogRef: MatDialogRef<AddSweepComponent>,
                 private usersService: UsersService,
+                private sweepsActions: SweepsActions,
                 private authService: AuthService,
                 @Inject(MAT_DIALOG_DATA) public data: any) {
         this.userAccountId = +localStorage.getItem(LocalStorageKeys.loggedUser);
@@ -74,6 +76,7 @@ export class AddSweepComponent {
     }
 
     addSweep() {
+        this.sweepsActions.addSweep(this.newSweep);
         this.next();
     }
 

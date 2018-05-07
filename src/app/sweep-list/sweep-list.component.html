@@ -33,7 +33,7 @@
                 <mat-icon matListIcon fontSet="fa" fontIcon="fa-gift"></mat-icon>
                 <h3 matLine> {{sweep.sweep_name}} </h3>
                 <p matLine>
-                    <span> {{sweep.created}} </span>
+                    <span> {{sweep.created | date:'yyyy-MM-dd HH:mm'}} </span>
                 </p>
                 <mat-icon>public</mat-icon>
             </mat-list-item>

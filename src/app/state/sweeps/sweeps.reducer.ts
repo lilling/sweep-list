@@ -17,6 +17,22 @@ export function sweepsReducer(state: SweepsState = INITIAL_SWEEPS_STATE, action:
                 isSweepsLoading: false
             };
         }
+        case SweepsActions.ADD_SWEEP: {
+            return {
+                ...state,
+                isSweepsLoading: true
+            };
+        }
+        case SweepsActions.ADD_SWEEP_COMPLETED: {
+            return {
+                ...state,
+                sweeps: [
+                    ...state.sweeps,
+                    action.payload
+                ],
+                isSweepsLoading: false
+            };
+        }
         default:
             return state;
     }
