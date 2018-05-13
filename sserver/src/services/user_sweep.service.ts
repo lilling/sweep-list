@@ -2,6 +2,7 @@ import { DbGetter } from '../dal/DbGetter';
 import { BaseService } from './base.service';
 import { Win, URL, user_sweep, user_sweep_display, payment_package } from '../../../shared/classes';
 import { PaymentService } from './payment.service'
+import { HttpException, HttpStatus } from '@nestjs/common';
 
 export class UserSweepService extends BaseService<user_sweep> {
     PaymentService: PaymentService;
@@ -144,24 +145,19 @@ export class UserSweepService extends BaseService<user_sweep> {
 
     async ToggleSweepState(column: string, id: number, state: boolean): Promise<user_sweep_display> {
         const db = DbGetter.getDB();
-        return db.tx((state ? '' : 'un') + column.replace('_yn', '') + '-sweep', innerDb => {
-            return this.ToggleSweepStateInner(innerDb, column, id, state);
-        });
-    }
-
-    async ToggleSweepStateInner(DB, column: string, id: number, state: boolean): Promise<user_sweep_display> {
-        const q =
-            `UPDATE sweepimp.user_sweep\n` +
-            `   SET $<column:name> = $<state_yn>\n` +
-            `      ,updated = current_timestamp\n` +
-            ` WHERE user_sweep_id = $<user_sweep_id^>;\n` +
-            `UPDATE sweepimp.user_sweep_display\n` +
-            `   SET $<column:name> = $<state_yn>\n` +
-            `      ,updated = current_timestamp\n` +
-            ` WHERE user_sweep_id = $<user_sweep_id^>\n` +
-            `RETURNING *`;
-        const UserSweepDisplay = await DB.multi(q, { column, state_yn: state, user_sweep_id: id });
-        return UserSweepDisplay[1][0];
+        // build new sweep
+        const new_user_sweep = await this.getItem(id, 'user_sweep_id');
+        switch (column){
+            case 'deleted_yn': {
+                new_user_sweep.deleted_yn = state;
+                break;
+            }
+            case 'won_yn': {
+                new_user_sweep.won_yn = state;
+                break;
+            }
+        }
+        return this.ManageSweep(new_user_sweep);
     }
 
     async ManageSweep(user_sweep: user_sweep): Promise<user_sweep_display> {
@@ -171,8 +167,6 @@ export class UserSweepService extends BaseService<user_sweep> {
             } else { // new sweep - insert
                 return this.InsertSweep(user_sweep);
             }
-        } else {
-            //TODO: return error
         }
     }
 
@@ -183,13 +177,15 @@ export class UserSweepService extends BaseService<user_sweep> {
             });
     }
 
-    async CheckSweepLimit(user_sweep: user_sweep): Promise<boolean>{
+    async CheckSweepLimit(new_user_sweep: user_sweep): Promise<boolean>{
         const db = DbGetter.getDB();
-        const paymentPackage = await this.PaymentService.getCurrentPackage(user_sweep.user_account_id);
+        const paymentPackage = await this.PaymentService.getCurrentPackage(new_user_sweep.user_account_id);
+        const now = new Date();
+        var sweepRevive = 0;
         if (!paymentPackage) {
-            // user not paid
+            // user did not pay
             console.log('User does not an active payment plan');
-            return false;
+            throw new HttpException('User does not an active payment plan', HttpStatus.FORBIDDEN);
         }
         var q = 
             `SELECT SUM(CASE WHEN DATE_PART('day', now() - created) <= 0 THEN 1 ELSE 0 END) daily_sweeps\n` +
@@ -197,17 +193,27 @@ export class UserSweepService extends BaseService<user_sweep> {
             `                   + (DATE_PART('month', now()) - DATE_PART('month', created)) <= 0 THEN 1 ELSE 0 END) monthly_sweeps\n` +
             `  FROM sweepimp.user_sweep\n` +
             ` WHERE user_account_id = $<user_account_id^>\n` +
+            `   AND deleted_yn = false\n` +
             `   AND end_date >= now();`;
-        // TODO: prevent update of existing sweep to live if exceeded allowed # of sweeps
-        const doneSweeps = await db.oneOrNone(q, user_sweep);
-        if (doneSweeps){
-            if (Number(doneSweeps.daily_sweeps) >= paymentPackage.max_daily_sweeps){
-                console.log('User daily sweeps reached plan maxinum (' + paymentPackage.max_daily_sweeps.toString() + ')');
-                return false;
+        const liveSweeps = await db.oneOrNone(q, new_user_sweep);
+        // prevent sweep update to live if # of sweeps exceeded max
+        if (new_user_sweep.user_sweep_id) { // existing sweep - update
+            const existing_user_sweep = await this.getItem(new_user_sweep.user_sweep_id, 'user_sweep_id');
+            if ((existing_user_sweep.deleted_yn && !new_user_sweep.deleted_yn) ||
+                (existing_user_sweep.end_date < now && new_user_sweep.end_date > now)
+                ){
+                sweepRevive = 1;
             }
-            if (Number(doneSweeps.monthly_sweeps) >= paymentPackage.max_monthly_live_sweeps){
+        }
+        if (liveSweeps){
+            // live sweeps are calculated before the insert, but update is taken into account => add 1 to max sweeps when updating
+            if ((Number(liveSweeps.daily_sweeps) + sweepRevive) >= (Number(paymentPackage.max_daily_sweeps) + Number(new_user_sweep.user_sweep_id ? 1 : 0))){
+                console.log('User daily sweeps reached plan maxinum (' + paymentPackage.max_daily_sweeps.toString() + ')');
+                throw new HttpException('User daily sweeps reached plan maxinum (' + paymentPackage.max_daily_sweeps.toString() + ')', HttpStatus.FORBIDDEN);
+            }
+            if ((Number(liveSweeps.monthly_sweeps) + sweepRevive) >= paymentPackage.max_monthly_live_sweeps){
                 console.log('User monthly live sweeps reached plan maxinum (' + paymentPackage.max_monthly_live_sweeps.toString() + ')');
-                return false;
+                throw new HttpException('User monthly live sweeps reached plan maxinum (' + paymentPackage.max_monthly_live_sweeps.toString() + ')', HttpStatus.FORBIDDEN);
             }
         }
         return true;
@@ -215,9 +221,18 @@ export class UserSweepService extends BaseService<user_sweep> {
 
     async UpdateSweep(user_sweep: user_sweep): Promise<user_sweep_display> {
         const db = DbGetter.getDB();
+        const old_user_sweep = await this.getItem(user_sweep.user_sweep_id, 'user_sweep_id');
         return db.tx('update-sweep', innerDb => {
-            return this.UpdateSweepInner(innerDb, user_sweep);
+            return this.UpdateSweepInner(innerDb, user_sweep, old_user_sweep);
         });
+    }
+
+    async UpdateSweepInner(DB, user_sweep: user_sweep, old_user_sweep: user_sweep): Promise<user_sweep_display> {
+        const ChangedColumns = this.GetChangedColumns(user_sweep, old_user_sweep);
+        //case each line
+        const q = this.BuildUpdateString(ChangedColumns);
+        const UserSweepDisplay = await DB.multi(q, user_sweep);
+        return UserSweepDisplay[1][0];
     }
 
     async InsertSweepInner(DB, user_sweep: user_sweep): Promise<user_sweep_display> {
@@ -316,45 +331,113 @@ export class UserSweepService extends BaseService<user_sweep> {
         return DB.one(q, UserSweep);
     }
 
-    async UpdateSweepInner(DB, user_sweep: user_sweep): Promise<user_sweep_display> {
-        const q =
-            `UPDATE sweepimp.user_sweep\n` +
-            `   SET sweep_name             = $<sweep_name>\n` +
-            `      ,sweep_url              = $<sweep_url>\n` +
-            `      ,end_date               = $<end_date>\n` +
-            `      ,is_frequency           = $<is_frequency>\n` +
-            `      ,frequency_url          = $<frequency_url>\n` +
-            `      ,frequency_days         = $<frequency_days>\n` +
-            `      ,is_referral            = $<is_referral>\n` +
-            `      ,referral_url           = $<referral_url>\n` +
-            `      ,referral_frequency     = $<referral_frequency>\n` +
-            `      ,personal_refer_message = $<personal_refer_message>\n` +
-            `      ,refer_facebook         = $<refer_facebook>\n` +
-            `      ,refer_twitter          = $<refer_twitter>\n` +
-            `      ,refer_google           = $<refer_google>\n` +
-            `      ,refer_linkedin         = $<refer_linkedin>\n` +
-            `      ,refer_pinterest        = $<refer_pinterest>\n` +
-            `      ,thanks_to              = $<thanks_to>\n` +
-            `      ,thanks_social_media_id = $<thanks_social_media_id>\n` +
-            `      ,won_yn                 = $<won_yn>\n` +
-            `      ,prize_value            = $<prize_value>\n` +
-            `      ,updated                = current_timestamp\n` +
-            ` WHERE user_sweep_id = $<user_sweep_id^>;\n` +
-            `UPDATE sweepimp.user_sweep_display\n` +
-            `   SET sweep_name             = $<sweep_name>\n` +
-            `      ,sweep_url              = $<sweep_url>\n` +
-            `      ,end_date               = $<end_date>\n` +
-            `      ,is_frequency           = $<is_frequency>\n` +
-            `      ,frequency_url          = $<frequency_url>\n` +
-            `      ,is_referral            = $<is_referral>\n` +
-            `      ,referral_url           = $<referral_url>\n` +
-            `      ,thanks_to              = $<thanks_to>\n` +
-            `      ,thanks_social_media_id = $<thanks_social_media_id>\n` +
-            `      ,won_yn                 = $<won_yn>\n` +
-            `      ,updated                = current_timestamp\n` +
-            ` WHERE user_sweep_id = $<user_sweep_id^>\n` +
-            `RETURNING *`;
-        const UserSweepDisplay = await DB.multi(q, user_sweep);
-        return UserSweepDisplay[1][0];
+    GetChangedColumns(new_user_sweep: user_sweep, old_user_sweep: user_sweep): any{
+        var retObj = {
+            sweep_name: false,
+            sweep_url: false,
+            end_date: false,
+            is_frequency: false,
+            frequency_url: false,
+            frequency_days: false,
+            is_referral: false,
+            referral_url: false,
+            referral_frequency: false,
+            personal_refer_message: false,
+            refer_facebook: false,
+            refer_twitter: false,
+            refer_google: false,
+            refer_linkedin: false,
+            refer_pinterest: false,
+            thanks_to: false,
+            thanks_social_media_id: false,
+            won_yn: false,
+            prize_value: false,
+            deleted_yn: false,
+        };
+        if (new_user_sweep.sweep_name != old_user_sweep.sweep_name){retObj.sweep_name = true}
+        if (new_user_sweep.sweep_url != old_user_sweep.sweep_url){retObj.sweep_url = true}
+		if (new_user_sweep.end_date.getTime() != old_user_sweep.end_date.getTime()){retObj.end_date = true}
+		if (new_user_sweep.is_frequency != old_user_sweep.is_frequency){retObj.is_frequency = true}
+		if (new_user_sweep.frequency_url != old_user_sweep.frequency_url){retObj.frequency_url = true}
+		if (new_user_sweep.frequency_days != old_user_sweep.frequency_days){retObj.frequency_days = true}
+		if (new_user_sweep.is_referral != old_user_sweep.is_referral){retObj.is_referral = true}
+		if (new_user_sweep.referral_url != old_user_sweep.referral_url){retObj.referral_url = true}
+		if (new_user_sweep.referral_frequency != old_user_sweep.referral_frequency){retObj.referral_frequency = true}
+		if (new_user_sweep.personal_refer_message != old_user_sweep.personal_refer_message){retObj.personal_refer_message = true}
+		if (new_user_sweep.refer_facebook != old_user_sweep.refer_facebook){retObj.refer_facebook = true}
+		if (new_user_sweep.refer_twitter != old_user_sweep.refer_twitter){retObj.refer_twitter = true}
+		if (new_user_sweep.refer_google != old_user_sweep.refer_google){retObj.refer_google = true}
+		if (new_user_sweep.refer_linkedin != old_user_sweep.refer_linkedin){retObj.refer_linkedin = true}
+		if (new_user_sweep.refer_pinterest != old_user_sweep.refer_pinterest){retObj.refer_pinterest = true}
+		if (new_user_sweep.thanks_to != old_user_sweep.thanks_to){retObj.thanks_to = true}
+		if (new_user_sweep.thanks_social_media_id != old_user_sweep.thanks_social_media_id){retObj.thanks_social_media_id = true}
+		if (new_user_sweep.won_yn != old_user_sweep.won_yn){retObj.won_yn = true}
+		if (new_user_sweep.prize_value != old_user_sweep.prize_value){retObj.prize_value = true}
+        if (new_user_sweep.deleted_yn != old_user_sweep.deleted_yn){retObj.deleted_yn = true}
+        return retObj;
     }
+
+    BuildUpdateString(ChangedColumns): string{
+        var q = ``;
+        var UserSweepColumns = `updated                = current_timestamp\n`;
+        var UserSweepDisplayColumns = `updated                = current_timestamp\n`;
+        if (ChangedColumns.sweep_name){
+            UserSweepColumns = UserSweepColumns + `      ,sweep_name             = $<sweep_name>\n`;
+            UserSweepDisplayColumns = UserSweepDisplayColumns + `      ,sweep_name             = $<sweep_name>\n`;
+        }
+        if (ChangedColumns.end_date){
+            UserSweepColumns = UserSweepColumns + `      ,end_date               = $<end_date>\n`;
+            UserSweepDisplayColumns = UserSweepDisplayColumns + `      ,end_date               = $<end_date>\n`;
+        }
+        if (ChangedColumns.is_frequency){
+            UserSweepColumns = UserSweepColumns + `      ,is_frequency           = $<is_frequency>\n`;
+            UserSweepDisplayColumns = UserSweepDisplayColumns + `      ,is_frequency           = $<is_frequency>\n`;
+        }
+        if (ChangedColumns.frequency_url){
+            UserSweepColumns = UserSweepColumns + `      ,frequency_url          = $<frequency_url>\n`;
+            UserSweepDisplayColumns = UserSweepDisplayColumns + `      ,frequency_url          = $<frequency_url>\n`;
+        }
+        if (ChangedColumns.frequency_days){UserSweepColumns = UserSweepColumns + `      ,frequency_days         = $<frequency_days>\n`;}
+        if (ChangedColumns.is_referral){
+            UserSweepColumns = UserSweepColumns + `      ,is_referral            = $<is_referral>\n`;
+            UserSweepDisplayColumns = UserSweepDisplayColumns + `      ,is_referral            = $<is_referral>\n`;
+        }
+        if (ChangedColumns.referral_url){
+            UserSweepColumns = UserSweepColumns + `      ,referral_url           = $<referral_url>\n`;
+            UserSweepDisplayColumns = UserSweepDisplayColumns + `      ,referral_url           = $<referral_url>\n`;
+        }
+        if (ChangedColumns.referral_frequency){UserSweepColumns = UserSweepColumns + `      ,referral_frequency     = $<referral_frequency>\n`;}
+        if (ChangedColumns.personal_refer_message){UserSweepColumns = UserSweepColumns + `      ,personal_refer_message = $<personal_refer_message>\n`;}
+        if (ChangedColumns.refer_facebook){UserSweepColumns = UserSweepColumns + `      ,refer_facebook         = $<refer_facebook>\n`;}
+        if (ChangedColumns.refer_twitter){UserSweepColumns = UserSweepColumns + `      ,refer_twitter          = $<refer_twitter>\n`;}
+        if (ChangedColumns.refer_google){UserSweepColumns = UserSweepColumns + `      ,refer_google           = $<refer_google>\n`;}
+        if (ChangedColumns.refer_linkedin){UserSweepColumns = UserSweepColumns + `      ,refer_linkedin         = $<refer_linkedin>\n`;}
+        if (ChangedColumns.refer_pinterest){UserSweepColumns = UserSweepColumns + `      ,refer_pinterest        = $<refer_pinterest>\n`;}
+        if (ChangedColumns.refer_pinterest){UserSweepColumns = UserSweepColumns + `      ,refer_pinterest        = $<refer_pinterest>\n`;}
+        if (ChangedColumns.thanks_to){
+            UserSweepColumns = UserSweepColumns + `      ,thanks_to              = $<thanks_to>\n`;
+            UserSweepDisplayColumns = UserSweepDisplayColumns + `      ,thanks_to              = $<thanks_to>\n`;
+        }
+        if (ChangedColumns.thanks_social_media_id){
+            UserSweepColumns = UserSweepColumns + `      ,thanks_social_media_id = $<thanks_social_media_id>\n`;
+            UserSweepDisplayColumns = UserSweepDisplayColumns + `      ,thanks_social_media_id = $<thanks_social_media_id>\n`;
+        }
+        if (ChangedColumns.won_yn){
+            UserSweepColumns = UserSweepColumns + `      ,won_yn                 = $<won_yn>\n`;
+            UserSweepDisplayColumns = UserSweepDisplayColumns + `      ,won_yn                 = $<won_yn>\n`;
+        }
+        if (ChangedColumns.prize_value){UserSweepColumns = UserSweepColumns + `      ,prize_value            = $<prize_value>\n`;}
+        if (ChangedColumns.deleted_yn){
+            UserSweepColumns = UserSweepColumns + `      ,deleted_yn             = $<deleted_yn>\n`;
+            UserSweepDisplayColumns = UserSweepDisplayColumns + `      ,deleted_yn             = $<deleted_yn>\n`;
+        }
+        return (
+        `UPDATE sweepimp.user_sweep\n` +
+        `   SET ` + UserSweepColumns +
+        ` WHERE user_sweep_id = $<user_sweep_id^>;\n` +
+        `UPDATE sweepimp.user_sweep_display\n` +
+        `   SET ` + UserSweepDisplayColumns +
+        ` WHERE user_sweep_id = $<user_sweep_id^>\n` +
+        `RETURNING *`);
+    };
 }
