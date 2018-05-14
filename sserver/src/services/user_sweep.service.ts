@@ -26,7 +26,7 @@ export class UserSweepService extends BaseService<user_sweep> {
         switch (status) {
             case 'live': {
                 where = where + `   AND end_date >= now()\n`;
-                order_by = `ORDER BY deleted_yn, last_entry_date, end_date desc;`;
+                order_by = `ORDER BY deleted_yn, last_entry_date, end_date desc, user_sweep_id;`;
                 break;
             }
             case 'ended': {
@@ -34,7 +34,7 @@ export class UserSweepService extends BaseService<user_sweep> {
                     `   AND (  end_date BETWEEN now() - interval '1 month' AND now()\n` +
                     `       OR won_yn = true)\n`
                 ;
-                order_by = `ORDER BY deleted_yn, end_date desc;`;
+                order_by = `ORDER BY deleted_yn, end_date desc, user_sweep_id;`;
                 break;
             }
             case 'won': {
@@ -43,6 +43,7 @@ export class UserSweepService extends BaseService<user_sweep> {
                     `   AND EXTRACT(YEAR FROM end_date) = ${year}\n` +
                     (month ? `   AND EXTRACT(MONTH FROM end_date) = ${month}\n` : ``)
                 ;
+                order_by = `ORDER BY end_date, user_sweep_id;`;
                 break;
             }
         }
