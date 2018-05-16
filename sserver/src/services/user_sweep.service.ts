@@ -1,6 +1,6 @@
 import { DbGetter } from '../dal/DbGetter';
 import { BaseService } from './base.service';
-import { Win, URL, user_sweep, user_sweep_display, payment_package } from '../../../shared/classes';
+import { Win, URL, user_sweep, user_sweep_display, payment_package, Search } from '../../../shared/classes';
 import { PaymentService } from './payment.service'
 import { HttpException, HttpStatus } from '@nestjs/common';
 
@@ -12,14 +12,20 @@ export class UserSweepService extends BaseService<user_sweep> {
         this.PaymentService = new PaymentService();
     }
 
-    async GetSweeps(id: number, status: string, search?: string, year?: number, month?: number): Promise<user_sweep_display[]> {
+    async GetSweeps(user_sweep_search: Search, status: string): Promise<user_sweep_display[]> {
+        console.log(user_sweep_search);
         const db = DbGetter.getDB();
         const q =
             `SELECT *\n` +
             `  FROM sweepimp.user_sweep_display\n` +
-            ` WHERE user_account_id = $<id^>\n`;
+            ` WHERE user_account_id = $<user_account_id^>\n`;
         let where = ``;
-        if (search) {
+        //let filter = ``;
+        console.log(`user_sweep_search.deleted_yn: ` + user_sweep_search.deleted_yn);
+        console.log(`user_sweep_search.last_entry_date: ` + user_sweep_search.last_entry_date);
+        console.log(`user_sweep_search.end_date: ` + user_sweep_search.end_date);
+        console.log(`user_sweep_search.user_sweep_id: ` + user_sweep_search.user_sweep_id);
+        if (user_sweep_search.search) {
             where = where + `   AND upper(sweep_name) like '%' || upper($<search>) || '%'\n`;
         }
         let order_by = ``;
@@ -40,14 +46,14 @@ export class UserSweepService extends BaseService<user_sweep> {
             case 'won': {
                 where = where +
                     `   AND won_yn = true\n` +
-                    `   AND EXTRACT(YEAR FROM end_date) = ${year}\n` +
-                    (month ? `   AND EXTRACT(MONTH FROM end_date) = ${month}\n` : ``)
+                    `   AND EXTRACT(YEAR FROM end_date) = $<year^>\n` +
+                    (user_sweep_search.month ? `   AND EXTRACT(MONTH FROM end_date) = $<month^>\n` : ``)
                 ;
                 order_by = `ORDER BY end_date, user_sweep_id;`;
                 break;
             }
         }
-        return db.manyOrNone(q + where + order_by, { id, search });
+        return db.manyOrNone(q + where + order_by, user_sweep_search);
     }
 
     async GetWins(id: number): Promise<Win[]> {
@@ -80,7 +86,7 @@ export class UserSweepService extends BaseService<user_sweep> {
         const db = DbGetter.getDB();
         const q =
             `SELECT user_sweep_id\n` +
-            `      ,sweep_url\n` +
+            `      ,coalesce(us.frequency_url, us.sweep_url) sweep_url\n` +
             `  FROM sweepimp.user_sweep\n` +
             ` WHERE user_sweep_id = $<id^>`;
         const result = await db.oneOrNone<Promise<URL>>(q, { id });

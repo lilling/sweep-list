@@ -1,5 +1,5 @@
 import { Get, Post, Body, Controller, Param } from '@nestjs/common';
-import { user_sweep, user_sweep_display, Win } from '../../../shared/classes';
+import { user_sweep, user_sweep_display, Win, Search } from '../../../shared/classes';
 import { UserSweepService } from '../services/user_sweep.service';
 
 @Controller('api/sweep')
@@ -14,39 +14,24 @@ export class SweepController {
         return this.UserSweepService.getItem(params.id, 'user_sweep_id');
     }
 
-    @Get('live_user_sweeps/:id')
-    GetLiveSweeps(@Param() params): Promise<user_sweep_display[]> {
-        return this.UserSweepService.GetSweeps(params.id, 'live');
+    @Post('live_user_sweeps')
+    GetLiveSweeps(@Body() user_sweep_search: Search): Promise<user_sweep_display[]> {
+        return this.UserSweepService.GetSweeps(user_sweep_search, 'live');
     }
 
-    @Get('live_user_sweeps/:id/:search')
-    GetLiveSweepsSearch(@Param() params): Promise<user_sweep_display[]> {
-        return this.UserSweepService.GetSweeps(params.id, 'live', params.search);
+    @Post('ended_user_sweeps')
+    GetEndedSweeps(@Body() user_sweep_search: Search): Promise<user_sweep_display[]> {
+        return this.UserSweepService.GetSweeps(user_sweep_search, 'ended');
     }
 
-    @Get('ended_user_sweeps/:id')
-    GetEndedSweeps(@Param() params): Promise<user_sweep_display[]> {
-        return this.UserSweepService.GetSweeps(params.id, 'ended');
-    }
-
-    @Get('ended_user_sweeps/:id/:search')
-    GetEndedSweepsSearch(@Param() params): Promise<user_sweep_display[]> {
-        return this.UserSweepService.GetSweeps(params.id, 'ended', params.search);
+    @Post('won_user_sweeps')
+    GetWonSweepsY(@Body() user_sweep_search: Search): Promise<user_sweep_display[]> {
+        return this.UserSweepService.GetSweeps(user_sweep_search, 'won');
     }
 
     @Get('user_wins/:id')
     GetWins(@Param() params): Promise<Win[]> {
         return this.UserSweepService.GetWins(params.id);
-    }
-
-    @Get('won_user_sweeps/:id/:year')
-    GetWonSweepsY(@Param() params): Promise<user_sweep_display[]> {
-        return this.UserSweepService.GetSweeps(params.id, 'won', undefined, params.year);
-    }
-
-    @Get('won_user_sweeps/:id/:year/:month')
-    GetWonSweepsYM(@Param() params): Promise<user_sweep_display[]> {
-        return this.UserSweepService.GetSweeps(params.id, 'won', undefined, params.year, params.month);
     }
 
     @Get('user_sweep_url/:id')
