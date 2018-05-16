@@ -13,8 +13,12 @@ export function sweepsReducer(state: SweepsState = INITIAL_SWEEPS_STATE, action:
         case SweepsActions.GET_USER_SWEEPS_COMPLETED: {
             return {
                 ...state,
-                sweeps: action.payload,
-                isSweepsLoading: false
+                sweeps: [
+                    ...state.sweeps,
+                    ...action.payload
+                ],
+                isSweepsLoading: false,
+                isAllSweepsLoaded: action.payload.length === 0
             };
         }
         case SweepsActions.ADD_SWEEP: {
