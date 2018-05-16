@@ -15,3 +15,13 @@
 .clickable {
   cursor: pointer;
 }
+
+::ng-deep .mat-slide-toggle.mat-primary.mat-checked:not(.mat-disabled) {
+  .mat-slide-toggle-thumb {
+    background-color: $main-color;
+  }
+
+  .mat-slide-toggle-bar {
+    background-color: $main-color-opacity;
+  }
+}
