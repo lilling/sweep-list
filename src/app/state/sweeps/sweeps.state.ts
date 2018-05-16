@@ -7,5 +7,5 @@ export interface SweepsState {
 
 export const INITIAL_SWEEPS_STATE: SweepsState = {
     sweeps: [],
-    isSweepsLoading: false,
+    isSweepsLoading: true,
 };
