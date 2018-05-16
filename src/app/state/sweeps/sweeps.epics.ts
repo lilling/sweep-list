@@ -10,7 +10,7 @@ import { Epic } from '../models/epic.decorator';
 import { SweepsActions } from './sweeps.actions';
 import { generateError } from '../models/error';
 import { SweepsService } from '../../services/sweeps.service';
-import { user_sweep } from '../../../../shared/classes';
+import { user_sweep, user_sweep_display } from '../../../../shared/classes';
 
 @Injectable()
 export class SweepsEpics extends BaseEpic {
@@ -20,7 +20,7 @@ export class SweepsEpics extends BaseEpic {
     }
 
     @Epic
-    getUserSweeps(action$: ActionsObservable<TypedAction<string>>) {
+    getUserSweeps(action$: ActionsObservable<TypedAction<{userId: string, lastSweep?: user_sweep_display}>>) {
         return action$.ofType(SweepsActions.GET_USER_SWEEPS)
             .switchMap(action => {
                 return this.sweepsService.getLiveSweeps(action.payload).pipe(
