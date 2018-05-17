@@ -29,7 +29,6 @@ export class SweepListComponent implements OnInit {
     }
 
     ngOnInit() {
-
         this.subscriptions = {
             user: this.ngRedux.select(state => state.loginState.user).subscribe(user => {
                 this.loggedUser = user;
