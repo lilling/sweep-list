@@ -36,6 +36,9 @@ export class AddSweepComponent {
     }
 
     next() {
+        if (this.step === 2 && this.newSweep.is_frequency) {
+            this.newSweep.referral_url = this.newSweep.frequency_url;
+        }
         ++this.step;
     }
 
