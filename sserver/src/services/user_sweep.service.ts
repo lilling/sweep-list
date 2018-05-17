@@ -1,6 +1,6 @@
 import { DbGetter } from '../dal/DbGetter';
 import { BaseService } from './base.service';
-import { Win, URL, user_sweep, user_sweep_display, payment_package } from '../../../shared/classes';
+import { Win, URL, user_sweep, user_sweep_display, payment_package, Search } from '../../../shared/classes';
 import { PaymentService } from './payment.service'
 import { HttpException, HttpStatus } from '@nestjs/common';
 
@@ -12,21 +12,40 @@ export class UserSweepService extends BaseService<user_sweep> {
         this.PaymentService = new PaymentService();
     }
 
-    async GetSweeps(id: number, status: string, search?: string, year?: number, month?: number): Promise<user_sweep_display[]> {
+    async GetSweeps(user_sweep_search: Search, status: string): Promise<user_sweep_display[]> {
         const db = DbGetter.getDB();
+        console.log(user_sweep_search);
+        //console.log(new Date(user_sweep_search.last_entry_date.toString()).getTime().toString());
+        var lastSweep = ``;
+        if (user_sweep_search.lastUserSweep) {
+            lastSweep = (user_sweep_search.lastUserSweep.deleted_yn ? 2 : 1).toString()
+                    + (user_sweep_search.lastUserSweep.last_entry_date ? new Date(user_sweep_search.lastUserSweep.last_entry_date).getTime().toString() : `0000000000000`)
+                    + (user_sweep_search.lastUserSweep.end_date ? (9999999999999 - new Date(user_sweep_search.lastUserSweep.end_date.toString()).getTime()).toString() : `9999999999999`)
+                    + (user_sweep_search.lastUserSweep.user_sweep_id ? user_sweep_search.lastUserSweep.user_sweep_id : 0).toString()
+                    ;
+        } else {
+            lastSweep = `0`;
+        }
+        console.log(`lastSweep:` + lastSweep);
         const q =
             `SELECT *\n` +
             `  FROM sweepimp.user_sweep_display\n` +
-            ` WHERE user_account_id = $<id^>\n`;
+            ` WHERE user_account_id = $<user_account_id^>\n`;
         let where = ``;
-        if (search) {
-            where = where + `   AND upper(sweep_name) like '%' || upper($<search>) || '%'\n`;
+        //let filter = ``;
+        if (user_sweep_search.nameSearch) {
+            where = where + `   AND upper(sweep_name) like '%' || upper($<nameSearch>) || '%'\n`;
         }
         let order_by = ``;
         switch (status) {
             case 'live': {
-                where = where + `   AND end_date >= now()\n`;
-                order_by = `ORDER BY deleted_yn, last_entry_date, end_date desc, user_sweep_id;`;
+                where = where + 
+                    `   AND end_date >= now()\n` +
+                    `   AND (case deleted_yn when false then 1 else 2 end :: text\n` +
+                    `     || coalesce((EXTRACT(EPOCH FROM last_entry_date) * 1000) :: text, '0000000000000')\n` +
+                    `     || (9999999999999 - (coalesce((EXTRACT(EPOCH FROM end_date) * 1000) :: text, '0000000000000') :: numeric)) :: text\n` +
+                    `     || user_sweep_id :: text) :: numeric > ` + lastSweep + `\n`;
+                order_by = `ORDER BY deleted_yn, last_entry_date, end_date desc, user_sweep_id\n`;
                 break;
             }
             case 'ended': {
@@ -34,20 +53,21 @@ export class UserSweepService extends BaseService<user_sweep> {
                     `   AND (  end_date BETWEEN now() - interval '1 month' AND now()\n` +
                     `       OR won_yn = true)\n`
                 ;
-                order_by = `ORDER BY deleted_yn, end_date desc, user_sweep_id;`;
+                order_by = `ORDER BY deleted_yn, end_date desc, user_sweep_id\n`;
                 break;
             }
             case 'won': {
                 where = where +
                     `   AND won_yn = true\n` +
-                    `   AND EXTRACT(YEAR FROM end_date) = ${year}\n` +
-                    (month ? `   AND EXTRACT(MONTH FROM end_date) = ${month}\n` : ``)
+                    `   AND EXTRACT(YEAR FROM end_date) = $<dateSearch.year^>\n` +
+                    (user_sweep_search.dateSearch.month ? `   AND EXTRACT(MONTH FROM end_date) = $<dateSearch.month^>\n` : ``)
                 ;
-                order_by = `ORDER BY end_date, user_sweep_id;`;
+                order_by = `ORDER BY end_date, user_sweep_id\n`;
                 break;
             }
         }
-        return db.manyOrNone(q + where + order_by, { id, search });
+        order_by = order_by + `LIMIT 20;`
+        return db.manyOrNone(q + where + order_by, user_sweep_search);
     }
 
     async GetWins(id: number): Promise<Win[]> {
@@ -80,7 +100,7 @@ export class UserSweepService extends BaseService<user_sweep> {
         const db = DbGetter.getDB();
         const q =
             `SELECT user_sweep_id\n` +
-            `      ,sweep_url\n` +
+            `      ,coalesce(us.frequency_url, us.sweep_url) sweep_url\n` +
             `  FROM sweepimp.user_sweep\n` +
             ` WHERE user_sweep_id = $<id^>`;
         const result = await db.oneOrNone<Promise<URL>>(q, { id });
@@ -333,7 +353,7 @@ export class UserSweepService extends BaseService<user_sweep> {
     }
 
     GetChangedColumns(new_user_sweep: user_sweep, old_user_sweep: user_sweep): any{
-        var retObj = {
+        const retObj = {
             sweep_name: false,
             sweep_url: false,
             end_date: false,
@@ -355,26 +375,14 @@ export class UserSweepService extends BaseService<user_sweep> {
             prize_value: false,
             deleted_yn: false,
         };
-        if (new_user_sweep.sweep_name != old_user_sweep.sweep_name){retObj.sweep_name = true}
-        if (new_user_sweep.sweep_url != old_user_sweep.sweep_url){retObj.sweep_url = true}
-		if (new_user_sweep.end_date.getTime() != old_user_sweep.end_date.getTime()){retObj.end_date = true}
-		if (new_user_sweep.is_frequency != old_user_sweep.is_frequency){retObj.is_frequency = true}
-		if (new_user_sweep.frequency_url != old_user_sweep.frequency_url){retObj.frequency_url = true}
-		if (new_user_sweep.frequency_days != old_user_sweep.frequency_days){retObj.frequency_days = true}
-		if (new_user_sweep.is_referral != old_user_sweep.is_referral){retObj.is_referral = true}
-		if (new_user_sweep.referral_url != old_user_sweep.referral_url){retObj.referral_url = true}
-		if (new_user_sweep.referral_frequency != old_user_sweep.referral_frequency){retObj.referral_frequency = true}
-		if (new_user_sweep.personal_refer_message != old_user_sweep.personal_refer_message){retObj.personal_refer_message = true}
-		if (new_user_sweep.refer_facebook != old_user_sweep.refer_facebook){retObj.refer_facebook = true}
-		if (new_user_sweep.refer_twitter != old_user_sweep.refer_twitter){retObj.refer_twitter = true}
-		if (new_user_sweep.refer_google != old_user_sweep.refer_google){retObj.refer_google = true}
-		if (new_user_sweep.refer_linkedin != old_user_sweep.refer_linkedin){retObj.refer_linkedin = true}
-		if (new_user_sweep.refer_pinterest != old_user_sweep.refer_pinterest){retObj.refer_pinterest = true}
-		if (new_user_sweep.thanks_to != old_user_sweep.thanks_to){retObj.thanks_to = true}
-		if (new_user_sweep.thanks_social_media_id != old_user_sweep.thanks_social_media_id){retObj.thanks_social_media_id = true}
-		if (new_user_sweep.won_yn != old_user_sweep.won_yn){retObj.won_yn = true}
-		if (new_user_sweep.prize_value != old_user_sweep.prize_value){retObj.prize_value = true}
-        if (new_user_sweep.deleted_yn != old_user_sweep.deleted_yn){retObj.deleted_yn = true}
+
+        Object.keys(retObj).forEach(key => {
+            if (new_user_sweep[key] instanceof Date) {
+                retObj[key] = new_user_sweep[key].getTime() !== old_user_sweep[key].getTime();
+            } else {
+                retObj[key] = new_user_sweep[key] !== old_user_sweep[key];
+            }
+        });
         return retObj;
     }
 

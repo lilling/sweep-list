@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { NgRedux } from '@angular-redux/store';
 //
 import { AppState } from '../store';
-import { user_sweep } from '../../../../shared/classes';
+import { user_sweep, user_sweep_display } from '../../../../shared/classes';
 
 @Injectable()
 export class SweepsActions {
@@ -19,8 +19,8 @@ export class SweepsActions {
     constructor(private ngRedux: NgRedux<AppState>) {
     }
 
-    getUserSweeps(userId: string) {
-        this.ngRedux.dispatch({ type: SweepsActions.GET_USER_SWEEPS, payload: userId });
+    getUserSweeps(user_account_id: string, lastUserSweep?: user_sweep_display) {
+        this.ngRedux.dispatch({ type: SweepsActions.GET_USER_SWEEPS, payload: { user_account_id, lastUserSweep } });
     }
 
     addSweep(sweep: user_sweep) {
