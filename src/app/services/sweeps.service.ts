@@ -14,7 +14,9 @@ export class SweepsService extends BaseService {
     }
 
     getLiveSweeps(data: {userId: string, lastSweep?: user_sweep_display}): Observable<user_sweep_display[]> {
-        const body: any = {};
+        const body: any = {
+            user_account_id: data.userId
+        };
         if (data.lastSweep) {
             body.deleted_yn = data.lastSweep.deleted_yn;
             body.last_entry_date = data.lastSweep.last_entry_date;

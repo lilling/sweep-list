@@ -343,7 +343,7 @@ export class UserSweepService extends BaseService<user_sweep> {
     }
 
     GetChangedColumns(new_user_sweep: user_sweep, old_user_sweep: user_sweep): any{
-        var retObj = {
+        const retObj = {
             sweep_name: false,
             sweep_url: false,
             end_date: false,
@@ -365,26 +365,14 @@ export class UserSweepService extends BaseService<user_sweep> {
             prize_value: false,
             deleted_yn: false,
         };
-        if (new_user_sweep.sweep_name != old_user_sweep.sweep_name){retObj.sweep_name = true}
-        if (new_user_sweep.sweep_url != old_user_sweep.sweep_url){retObj.sweep_url = true}
-		if (new_user_sweep.end_date.getTime() != old_user_sweep.end_date.getTime()){retObj.end_date = true}
-		if (new_user_sweep.is_frequency != old_user_sweep.is_frequency){retObj.is_frequency = true}
-		if (new_user_sweep.frequency_url != old_user_sweep.frequency_url){retObj.frequency_url = true}
-		if (new_user_sweep.frequency_days != old_user_sweep.frequency_days){retObj.frequency_days = true}
-		if (new_user_sweep.is_referral != old_user_sweep.is_referral){retObj.is_referral = true}
-		if (new_user_sweep.referral_url != old_user_sweep.referral_url){retObj.referral_url = true}
-		if (new_user_sweep.referral_frequency != old_user_sweep.referral_frequency){retObj.referral_frequency = true}
-		if (new_user_sweep.personal_refer_message != old_user_sweep.personal_refer_message){retObj.personal_refer_message = true}
-		if (new_user_sweep.refer_facebook != old_user_sweep.refer_facebook){retObj.refer_facebook = true}
-		if (new_user_sweep.refer_twitter != old_user_sweep.refer_twitter){retObj.refer_twitter = true}
-		if (new_user_sweep.refer_google != old_user_sweep.refer_google){retObj.refer_google = true}
-		if (new_user_sweep.refer_linkedin != old_user_sweep.refer_linkedin){retObj.refer_linkedin = true}
-		if (new_user_sweep.refer_pinterest != old_user_sweep.refer_pinterest){retObj.refer_pinterest = true}
-		if (new_user_sweep.thanks_to != old_user_sweep.thanks_to){retObj.thanks_to = true}
-		if (new_user_sweep.thanks_social_media_id != old_user_sweep.thanks_social_media_id){retObj.thanks_social_media_id = true}
-		if (new_user_sweep.won_yn != old_user_sweep.won_yn){retObj.won_yn = true}
-		if (new_user_sweep.prize_value != old_user_sweep.prize_value){retObj.prize_value = true}
-        if (new_user_sweep.deleted_yn != old_user_sweep.deleted_yn){retObj.deleted_yn = true}
+
+        Object.keys(retObj).forEach(key => {
+            if (new_user_sweep[key] instanceof Date) {
+                retObj[key] = new_user_sweep[key].getTime() !== old_user_sweep[key].getTime();
+            } else {
+                retObj[key] = new_user_sweep[key] !== old_user_sweep[key];
+            }
+        });
         return retObj;
     }
 
