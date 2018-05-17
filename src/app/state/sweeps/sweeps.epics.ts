@@ -20,7 +20,7 @@ export class SweepsEpics extends BaseEpic {
     }
 
     @Epic
-    getUserSweeps(action$: ActionsObservable<TypedAction<{userId: string, lastSweep?: user_sweep_display}>>) {
+    getUserSweeps(action$: ActionsObservable<TypedAction<{user_account_id: string, lastUserSweep?: user_sweep_display}>>) {
         return action$.ofType(SweepsActions.GET_USER_SWEEPS)
             .switchMap(action => {
                 return this.sweepsService.getLiveSweeps(action.payload).pipe(

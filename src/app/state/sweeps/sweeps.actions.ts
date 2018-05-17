@@ -19,8 +19,8 @@ export class SweepsActions {
     constructor(private ngRedux: NgRedux<AppState>) {
     }
 
-    getUserSweeps(userId: string, lastSweep?: user_sweep_display) {
-        this.ngRedux.dispatch({ type: SweepsActions.GET_USER_SWEEPS, payload: {userId, lastSweep} });
+    getUserSweeps(user_account_id: string, lastUserSweep?: user_sweep_display) {
+        this.ngRedux.dispatch({ type: SweepsActions.GET_USER_SWEEPS, payload: { user_account_id, lastUserSweep } });
     }
 
     addSweep(sweep: user_sweep) {
