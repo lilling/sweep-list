@@ -16,11 +16,16 @@ export class UserSweepService extends BaseService<user_sweep> {
         const db = DbGetter.getDB();
         console.log(user_sweep_search);
         //console.log(new Date(user_sweep_search.last_entry_date.toString()).getTime().toString());
-        const lastSweep = (user_sweep_search.lastUserSweep.deleted_yn ? 1 : 0).toString()
-                        + (user_sweep_search.lastUserSweep.last_entry_date ? new Date(user_sweep_search.lastUserSweep.last_entry_date).getTime().toString() : `0000000000000`)
-                        + (user_sweep_search.lastUserSweep.end_date ? (9999999999999 - new Date(user_sweep_search.lastUserSweep.end_date.toString()).getTime()).toString() : `9999999999999`)
-                        + (user_sweep_search.lastUserSweep.user_sweep_id ? 1 : 0).toString()
-                        ;
+        var lastSweep = ``;
+        if (user_sweep_search.lastUserSweep) {
+            lastSweep = (user_sweep_search.lastUserSweep.deleted_yn ? 1 : 0).toString()
+                    + (user_sweep_search.lastUserSweep.last_entry_date ? new Date(user_sweep_search.lastUserSweep.last_entry_date).getTime().toString() : `0000000000000`)
+                    + (user_sweep_search.lastUserSweep.end_date ? (9999999999999 - new Date(user_sweep_search.lastUserSweep.end_date.toString()).getTime()).toString() : `9999999999999`)
+                    + (user_sweep_search.lastUserSweep.user_sweep_id ? 1 : 0).toString()
+                    ;
+        } else {
+            lastSweep = `0`;
+        }
         console.log(`lastSweep:` + lastSweep);
         const q =
             `SELECT *\n` +
