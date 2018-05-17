@@ -13,26 +13,29 @@ export class UserSweepService extends BaseService<user_sweep> {
     }
 
     async GetSweeps(user_sweep_search: Search, status: string): Promise<user_sweep_display[]> {
-        console.log(user_sweep_search);
         const db = DbGetter.getDB();
+        console.log(user_sweep_search);
+        //console.log(new Date(user_sweep_search.last_entry_date.toString()).getTime().toString());
+        const lastSweep = (user_sweep_search.lastUserSweep.deleted_yn ? 1 : 0).toString()
+                        + (user_sweep_search.lastUserSweep.last_entry_date ? new Date(user_sweep_search.lastUserSweep.last_entry_date).getTime().toString() : `0000000000000`)
+                        + (user_sweep_search.lastUserSweep.end_date ? (9999999999999 - new Date(user_sweep_search.lastUserSweep.end_date.toString()).getTime()).toString() : `9999999999999`)
+                        + (user_sweep_search.lastUserSweep.user_sweep_id ? 1 : 0).toString()
+                        ;
+        console.log(`lastSweep:` + lastSweep);
         const q =
             `SELECT *\n` +
             `  FROM sweepimp.user_sweep_display\n` +
             ` WHERE user_account_id = $<user_account_id^>\n`;
         let where = ``;
         //let filter = ``;
-        console.log(`user_sweep_search.deleted_yn: ` + user_sweep_search.deleted_yn);
-        console.log(`user_sweep_search.last_entry_date: ` + user_sweep_search.last_entry_date);
-        console.log(`user_sweep_search.end_date: ` + user_sweep_search.end_date);
-        console.log(`user_sweep_search.user_sweep_id: ` + user_sweep_search.user_sweep_id);
-        if (user_sweep_search.search) {
+        if (user_sweep_search.nameSearch) {
             where = where + `   AND upper(sweep_name) like '%' || upper($<search>) || '%'\n`;
         }
         let order_by = ``;
         switch (status) {
             case 'live': {
                 where = where + `   AND end_date >= now()\n`;
-                order_by = `ORDER BY deleted_yn, last_entry_date, end_date desc, user_sweep_id;`;
+                order_by = `ORDER BY deleted_yn, last_entry_date, end_date desc, user_sweep_id\n`;
                 break;
             }
             case 'ended': {
@@ -40,19 +43,20 @@ export class UserSweepService extends BaseService<user_sweep> {
                     `   AND (  end_date BETWEEN now() - interval '1 month' AND now()\n` +
                     `       OR won_yn = true)\n`
                 ;
-                order_by = `ORDER BY deleted_yn, end_date desc, user_sweep_id;`;
+                order_by = `ORDER BY deleted_yn, end_date desc, user_sweep_id\n`;
                 break;
             }
             case 'won': {
                 where = where +
                     `   AND won_yn = true\n` +
                     `   AND EXTRACT(YEAR FROM end_date) = $<year^>\n` +
-                    (user_sweep_search.month ? `   AND EXTRACT(MONTH FROM end_date) = $<month^>\n` : ``)
+                    (user_sweep_search.dateSearch.month ? `   AND EXTRACT(MONTH FROM end_date) = $<month^>\n` : ``)
                 ;
-                order_by = `ORDER BY end_date, user_sweep_id;`;
+                order_by = `ORDER BY end_date, user_sweep_id\n`;
                 break;
             }
         }
+        order_by = order_by + `;`
         return db.manyOrNone(q + where + order_by, user_sweep_search);
     }
 

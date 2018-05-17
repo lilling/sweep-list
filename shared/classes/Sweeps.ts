@@ -1,3 +1,5 @@
+import { user_sweep_display } from './DB';
+
 export class Win {
     win_year: number;
     win_month: string;
@@ -12,11 +14,10 @@ export class URL {
 
 export class Search {
     user_account_id: number;
-    user_sweep_id?: number;
-    deleted_yn?: boolean;
-    last_entry_date?: Date;
-    end_date: Date;
-    search?: string;
-    year?: number;
-    month?: number;
+    lastUserSweep?: Partial<user_sweep_display>;
+    nameSearch?: string;
+    dateSearch?: {
+        year: number;
+        month?: number;
+    }
 }
