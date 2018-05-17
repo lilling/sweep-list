@@ -1,7 +1,7 @@
 @import './variables';
 
 @mixin header($height) {
-  color: $main-color-forground;
+  color: $main-color-foreground;
   background: $main-color;
   height: $height;
   font-family: Roboto, sans-serif;
