@@ -14,6 +14,11 @@ export class SweepController {
         return this.UserSweepService.getItem(params.id, 'user_sweep_id');
     }
 
+    @Post('todo_user_sweeps')
+    GetTodoSweeps(@Body() user_sweep_search: Search): Promise<user_sweep_display[]> {
+        return this.UserSweepService.GetSweeps(user_sweep_search, 'todo');
+    }
+
     @Post('live_user_sweeps')
     GetLiveSweeps(@Body() user_sweep_search: Search): Promise<user_sweep_display[]> {
         return this.UserSweepService.GetSweeps(user_sweep_search, 'live');
