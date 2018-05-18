@@ -22,6 +22,7 @@ export namespace user_sweep_displayFields {
     export type end_date = Date;
     export type is_frequency = boolean | null;
     export type frequency_url = string | null;
+    export type frequency_days = number | null;
     export type last_entry_date = Date | null;
     export type total_entries = number | null;
     export type is_referral = boolean | null;
@@ -44,6 +45,7 @@ export interface user_sweep_display {
     end_date: user_sweep_displayFields.end_date;
     is_frequency: user_sweep_displayFields.is_frequency;
     frequency_url: user_sweep_displayFields.frequency_url;
+    frequency_days: user_sweep_displayFields.frequency_days;
     last_entry_date: user_sweep_displayFields.last_entry_date;
     total_entries: user_sweep_displayFields.total_entries;
     is_referral: user_sweep_displayFields.is_referral;

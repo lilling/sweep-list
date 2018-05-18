@@ -17,15 +17,6 @@ export class UserSweepService extends BaseService<user_sweep> {
         console.log(user_sweep_search);
         //console.log(new Date(user_sweep_search.last_entry_date.toString()).getTime().toString());
         var lastSweep = ``;
-        if (user_sweep_search.lastUserSweep) {
-            lastSweep = (user_sweep_search.lastUserSweep.deleted_yn ? 2 : 1).toString()
-                    + (user_sweep_search.lastUserSweep.last_entry_date ? new Date(user_sweep_search.lastUserSweep.last_entry_date).getTime().toString() : `0000000000000`)
-                    + (user_sweep_search.lastUserSweep.end_date ? (9999999999999 - new Date(user_sweep_search.lastUserSweep.end_date.toString()).getTime()).toString() : `9999999999999`)
-                    + (user_sweep_search.lastUserSweep.user_sweep_id ? user_sweep_search.lastUserSweep.user_sweep_id : 0).toString()
-                    ;
-        } else {
-            lastSweep = `0`;
-        }
         console.log(`lastSweep:` + lastSweep);
         const q =
             `SELECT *\n` +
@@ -39,29 +30,57 @@ export class UserSweepService extends BaseService<user_sweep> {
         let order_by = ``;
         switch (status) {
             case 'live': {
+                if (user_sweep_search.lastUserSweep) {
+                    lastSweep = (user_sweep_search.lastUserSweep.deleted_yn ? 2 : 1).toString()
+                            + (user_sweep_search.lastUserSweep.last_entry_date ? new Date(user_sweep_search.lastUserSweep.last_entry_date).getTime().toString() : `0000000000000`)
+                            + (user_sweep_search.lastUserSweep.end_date ? (9999999999999 - new Date(user_sweep_search.lastUserSweep.end_date.toString()).getTime()).toString() : `9999999999999`)
+                            + (user_sweep_search.lastUserSweep.user_sweep_id ? user_sweep_search.lastUserSweep.user_sweep_id : 0).toString()
+                            ;
+                } else {
+                    lastSweep = `0`;
+                }
                 where = where + 
                     `   AND end_date >= now()\n` +
                     `   AND (case deleted_yn when false then 1 else 2 end :: text\n` +
-                    `     || coalesce((EXTRACT(EPOCH FROM last_entry_date) * 1000) :: text, '0000000000000')\n` +
-                    `     || (9999999999999 - (coalesce((EXTRACT(EPOCH FROM end_date) * 1000) :: text, '0000000000000') :: numeric)) :: text\n` +
+                    `     || coalesce(floor(EXTRACT(EPOCH FROM last_entry_date) * 1000) :: text, '0000000000000')\n` +
+                    `     || (9999999999999 - (coalesce(floor(EXTRACT(EPOCH FROM end_date) * 1000) :: text, '0000000000000') :: numeric)) :: text\n` +
                     `     || user_sweep_id :: text) :: numeric > ` + lastSweep + `\n`;
-                order_by = `ORDER BY deleted_yn, last_entry_date, end_date desc, user_sweep_id\n`;
+                order_by = `ORDER BY deleted_yn, frequency_days - ((EXTRACT(EPOCH FROM current_timestamp) - EXTRACT(EPOCH FROM last_entry_date)))/24/60/60 nulls first, end_date desc, user_sweep_id\n`;
                 break;
             }
             case 'ended': {
+                if (user_sweep_search.lastUserSweep) {
+                    lastSweep = (user_sweep_search.lastUserSweep.deleted_yn ? 2 : 1).toString()
+                            + (user_sweep_search.lastUserSweep.end_date ? (9999999999999 - new Date(user_sweep_search.lastUserSweep.end_date.toString()).getTime()).toString() : `9999999999999`)
+                            + (user_sweep_search.lastUserSweep.user_sweep_id ? user_sweep_search.lastUserSweep.user_sweep_id : 0).toString()
+                            ;
+                } else {
+                    lastSweep = `0`;
+                }
                 where = where +
                     `   AND (  end_date BETWEEN now() - interval '1 month' AND now()\n` +
-                    `       OR won_yn = true)\n`
-                ;
+                    `       OR won_yn = true)\n` +
+                    `   AND (case deleted_yn when false then 1 else 2 end :: text\n` +
+                    `     || (9999999999999 - (coalesce(floor(EXTRACT(EPOCH FROM end_date) * 1000) :: text, '0000000000000') :: numeric)) :: text\n` +
+                    `     || user_sweep_id :: text) :: numeric > ` + lastSweep + `\n`
                 order_by = `ORDER BY deleted_yn, end_date desc, user_sweep_id\n`;
                 break;
             }
             case 'won': {
+                if (user_sweep_search.lastUserSweep) {
+                    lastSweep = (user_sweep_search.lastUserSweep.end_date ? new Date(user_sweep_search.lastUserSweep.end_date).getTime().toString() : `0000000000000`)
+                            + (user_sweep_search.lastUserSweep.user_sweep_id ? user_sweep_search.lastUserSweep.user_sweep_id : 0).toString()
+                            ;
+                } else {
+                    lastSweep = `0`;
+                }
                 where = where +
                     `   AND won_yn = true\n` +
+                    `   AND deleted_yn = false\n` +
                     `   AND EXTRACT(YEAR FROM end_date) = $<dateSearch.year^>\n` +
-                    (user_sweep_search.dateSearch.month ? `   AND EXTRACT(MONTH FROM end_date) = $<dateSearch.month^>\n` : ``)
-                ;
+                    (user_sweep_search.dateSearch.month ? `   AND EXTRACT(MONTH FROM end_date) = $<dateSearch.month^>\n` : ``) +
+                    `   AND (coalesce(floor(EXTRACT(EPOCH FROM end_date) * 1000) :: text, '0000000000000')\n` +
+                    `     || user_sweep_id :: text) :: numeric > ` + lastSweep + `\n`;
                 order_by = `ORDER BY end_date, user_sweep_id\n`;
                 break;
             }
@@ -100,7 +119,7 @@ export class UserSweepService extends BaseService<user_sweep> {
         const db = DbGetter.getDB();
         const q =
             `SELECT user_sweep_id\n` +
-            `      ,coalesce(us.frequency_url, us.sweep_url) sweep_url\n` +
+            `      ,coalesce(frequency_url, sweep_url) sweep_url\n` +
             `  FROM sweepimp.user_sweep\n` +
             ` WHERE user_sweep_id = $<id^>`;
         const result = await db.oneOrNone<Promise<URL>>(q, { id });
@@ -159,8 +178,8 @@ export class UserSweepService extends BaseService<user_sweep> {
             `      ,updated = current_timestamp\n` +
             ` WHERE user_sweep_id IN ($<user_sweep_ids:csv>)`;
         await db.tx('entry', async DB => {
-            await DB.one(insert);
-            await DB.one(update, { user_sweep_ids: sweep_ids });
+            await DB.oneOrNone(insert);
+            await DB.oneOrNone(update, { user_sweep_ids: sweep_ids });
         });
     }
 
@@ -317,6 +336,7 @@ export class UserSweepService extends BaseService<user_sweep> {
             `    ,end_date\n` +
             `    ,is_frequency\n` +
             `    ,frequency_url\n` +
+            `    ,frequency_days\n` +
             `    ,last_entry_date\n` +
             `    ,total_entries\n` +
             `    ,is_referral\n` +
@@ -336,6 +356,7 @@ export class UserSweepService extends BaseService<user_sweep> {
             `    ,$<end_date>\n` +
             `    ,$<is_frequency>\n` +
             `    ,$<frequency_url>\n` +
+            `    ,$<frequency_days>\n` +
             `    ,null\n` +
             `    ,null\n` +
             `    ,$<is_referral>\n` +
@@ -383,6 +404,7 @@ export class UserSweepService extends BaseService<user_sweep> {
                 retObj[key] = new_user_sweep[key] !== old_user_sweep[key];
             }
         });
+        console.log(retObj);
         return retObj;
     }
 
@@ -406,7 +428,10 @@ export class UserSweepService extends BaseService<user_sweep> {
             UserSweepColumns = UserSweepColumns + `      ,frequency_url          = $<frequency_url>\n`;
             UserSweepDisplayColumns = UserSweepDisplayColumns + `      ,frequency_url          = $<frequency_url>\n`;
         }
-        if (ChangedColumns.frequency_days){UserSweepColumns = UserSweepColumns + `      ,frequency_days         = $<frequency_days>\n`;}
+        if (ChangedColumns.frequency_days){
+            UserSweepColumns = UserSweepColumns + `      ,frequency_days         = $<frequency_days>\n`;
+            UserSweepDisplayColumns = UserSweepDisplayColumns + `      ,frequency_days         = $<frequency_days>\n`;
+        }
         if (ChangedColumns.is_referral){
             UserSweepColumns = UserSweepColumns + `      ,is_referral            = $<is_referral>\n`;
             UserSweepDisplayColumns = UserSweepDisplayColumns + `      ,is_referral            = $<is_referral>\n`;
@@ -440,6 +465,8 @@ export class UserSweepService extends BaseService<user_sweep> {
             UserSweepColumns = UserSweepColumns + `      ,deleted_yn             = $<deleted_yn>\n`;
             UserSweepDisplayColumns = UserSweepDisplayColumns + `      ,deleted_yn             = $<deleted_yn>\n`;
         }
+        console.log(UserSweepColumns);
+        console.log(UserSweepDisplayColumns);
         return (
         `UPDATE sweepimp.user_sweep\n` +
         `   SET ` + UserSweepColumns +
