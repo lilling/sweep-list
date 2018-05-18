@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material';
+import { Router } from '@angular/router';
 //
 import { Observable } from 'rxjs/Observable';
 import { NgRedux, select } from '@angular-redux/store';
@@ -24,6 +25,7 @@ export class SweepListComponent implements OnInit {
     subscriptions: {[index: string]: Subscription };
 
     constructor(public dialog: MatDialog,
+                private router: Router,
                 private sweepsActions: SweepsActions,
                 private ngRedux: NgRedux<AppState>) {
     }
@@ -73,6 +75,11 @@ export class SweepListComponent implements OnInit {
 
     addSweep() {
         this.dialog.open(AddSweepComponent);
+    }
+
+    editSweep(sweep: user_sweep_display, event) {
+        event.stopPropagation();
+        this.router.navigate(['edit', sweep.user_sweep_id]);
     }
 
     openUrl(urlToOpen: string) {
