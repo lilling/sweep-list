@@ -38,7 +38,7 @@ export class SweepListComponent implements OnInit {
                     this.sweepsActions.getUserSweeps(user.user_account_id.toString());
                 }
             }),
-            sweeps: this.ngRedux.select(state => state.sweepsState.sweeps).subscribe(sweeps => this.sweeps = sweeps)
+            sweeps: this.ngRedux.select(state => state.sweepsState.sweeps).subscribe(sweeps => this.sweeps = sweeps.array)
         };
 
 

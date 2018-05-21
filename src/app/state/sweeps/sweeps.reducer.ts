@@ -1,6 +1,7 @@
 import { TypedAction } from '../models/typed-action';
 import { INITIAL_SWEEPS_STATE, SweepsState } from './sweeps.state';
 import { SweepsActions } from './sweeps.actions';
+import { user_sweep_display } from '../../../../shared/classes';
 
 export function sweepsReducer(state: SweepsState = INITIAL_SWEEPS_STATE, action: TypedAction<any>) {
     switch (action.type) {
@@ -11,12 +12,11 @@ export function sweepsReducer(state: SweepsState = INITIAL_SWEEPS_STATE, action:
             };
         }
         case SweepsActions.GET_USER_SWEEPS_COMPLETED: {
+            const newSweeps: user_sweep_display[] = action.payload;
+            const relevantSweeps = state.sweeps.deleteItems(newSweeps.map(sweep => sweep.user_sweep_id));
             return {
                 ...state,
-                sweeps: [
-                    ...state.sweeps,
-                    ...action.payload
-                ],
+                sweeps: relevantSweeps.addItems(newSweeps),
                 isSweepsLoading: false,
                 isAllSweepsLoaded: action.payload.length === 0
             };
@@ -30,10 +30,7 @@ export function sweepsReducer(state: SweepsState = INITIAL_SWEEPS_STATE, action:
         case SweepsActions.ADD_SWEEP_COMPLETED: {
             return {
                 ...state,
-                sweeps: [
-                    ...state.sweeps,
-                    action.payload
-                ],
+                sweeps: state.sweeps.addItem(action.payload),
                 isSweepsLoading: false
             };
         }

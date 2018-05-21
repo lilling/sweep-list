@@ -1,16 +1,11 @@
-import { Component, Inject, OnInit } from '@angular/core';
-//
-import { MatDialogRef, MAT_DIALOG_DATA, MatIconRegistry } from '@angular/material';
-//
-import { UsersService } from '../services/users.service';
-import { LocalStorageKeys } from '../models/local-storage-keys.enum';
-import { SocialMedia } from '../../../shared/models/social-media.enum';
-import { FacebookLoginProvider, GoogleLoginProvider, AuthService } from 'angularx-social-login';
-import { user_sweep } from '../../../shared/classes';
-import { SweepsActions } from '../state/sweeps/sweeps.actions';
-import { AppState } from '../state/store';
-import { NgRedux } from '@angular-redux/store';
+import { Component, OnInit } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
+import { Router } from '@angular/router';
+//
+import { MatIconRegistry } from '@angular/material';
+import { NgRedux } from '@angular-redux/store';
+//
+import { AppState } from '../state/store';
 
 @Component({
     selector: 'app-edit-sweep',
@@ -20,7 +15,10 @@ import { DomSanitizer } from '@angular/platform-browser';
 export class EditSweepComponent implements OnInit {
 
     sweep: any;
-    constructor(private ngRedux: NgRedux<AppState>, iconRegistry: MatIconRegistry, sanitizer: DomSanitizer) {
+    constructor(private ngRedux: NgRedux<AppState>,
+                private router: Router,
+                iconRegistry: MatIconRegistry,
+                sanitizer: DomSanitizer) {
         iconRegistry.addSvgIcon(
             'contact-us',
             sanitizer.bypassSecurityTrustResourceUrl('assets/icons/contact-us.svg'));
@@ -28,6 +26,10 @@ export class EditSweepComponent implements OnInit {
 
     ngOnInit() {
         // this.ngRedux.select(state => state.sweepsState.sweeps.filter())
+    }
+
+    back() {
+        this.router.navigate(['./list']);
     }
 
 }
