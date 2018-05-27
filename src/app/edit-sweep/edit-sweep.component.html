@@ -38,14 +38,10 @@
             <mat-accordion [multi]="true">
                 <mat-expansion-panel #frequencyPanel [disabled]="!sweep.is_frequency">
                     <mat-expansion-panel-header>
-                        <mat-panel-title>
-                            Recurring entry
-                        </mat-panel-title>
-                        <mat-panel-description>
-                            <mat-slide-toggle [checked]="sweep.is_frequency" [color]="'primary'" (click)="$event.stopPropagation()"
-                                              (change)="changeIsFrequency($event, frequencyPanel)">
-                            </mat-slide-toggle>
-                        </mat-panel-description>
+                        Recurring entry
+                        <mat-slide-toggle [checked]="sweep.is_frequency" [color]="'primary'" (click)="$event.stopPropagation()"
+                                          (change)="changeIsFrequency($event, frequencyPanel)">
+                        </mat-slide-toggle>
                     </mat-expansion-panel-header>
                     <div class="mat-expansion-panel-body">
                         <mat-form-field>
@@ -63,20 +59,71 @@
                                    [(ngModel)]="sweep.frequency_days" #recurringDuration="ngModel">
                             <span>days</span>
                         </span>
+                        <ng-container *ngIf="recurringDuration.invalid && (recurringDuration.dirty || recurringDuration.touched)">
+                            <mat-error *ngIf="recurringDuration.errors.required">
+                                Duration is required.
+                            </mat-error>
+                            <mat-error *ngIf="recurringDuration.errors.positive">
+                                Duration must be positive.
+                            </mat-error>
+                        </ng-container>
                     </div>
                 </mat-expansion-panel>
-                <mat-expansion-panel #referralPanel>
+                <mat-expansion-panel #referralPanel [disabled]="!sweep.is_referral">
                     <mat-expansion-panel-header>
-                        <mat-panel-title>
-                            Share on social media
-                        </mat-panel-title>
-                        <mat-panel-description>
-                            <mat-slide-toggle [checked]="sweep.is_referral" [color]="'primary'" (click)="$event.stopPropagation()"
-                                              (change)="changeIsReferral($event, referralPanel)">
-                            </mat-slide-toggle>
-                        </mat-panel-description>
+                        Share on social media
+                        <mat-slide-toggle [checked]="sweep.is_referral" [color]="'primary'" (click)="$event.stopPropagation()"
+                                          (change)="changeIsReferral($event, referralPanel)">
+                        </mat-slide-toggle>
                     </mat-expansion-panel-header>
-                    <p>I'm visible because I am open</p>
+                    <div class="mat-expansion-panel-body">
+                        <mat-form-field>
+                            <input matInput placeholder="My Url" name="shareSiteUrl" id="shareSiteUrl" [(ngModel)]="sweep.referral_url"
+                                   required
+                                   #url="ngModel" [disabled]="!sweep.is_referral">
+                            <mat-icon matSuffix>public</mat-icon>
+                            <mat-error *ngIf="url.invalid && (url.dirty || url.touched) && url.errors.required">
+                                url is required.
+                            </mat-error>
+                        </mat-form-field>
+                        <mat-form-field>
+                            <input matInput placeholder="Message with post" name="messageWithPost" id="messageWithPost"
+                                   [(ngModel)]="sweep.personal_refer_message" [disabled]="!sweep.is_referral">
+                        </mat-form-field>
+                        <span>
+                            <span>Share every </span>
+                            <input matInput type="number" name="shareDuration" placeholder="XX" required
+                                   [(ngModel)]="sweep.referral_frequency"
+                                   appPositive [disabled]="!sweep.is_referral" #shareDuration="ngModel">
+                            <span> days on:</span>
+                        </span>
+                        <div class="icons-holder">
+                            <i class="fa fa-google social-icon" [ngClass]="{'logged': loggedSocialMedias?.includes(SocialMedia.google)}"
+                               (click)="login(SocialMedia.google)"></i>
+                            <mat-slide-toggle [checked]="sweep.refer_google" [color]="'primary'"
+                                              [disabled]="!loggedSocialMedias?.includes(SocialMedia.google)"
+                                              (change)="sweep.refer_google = $event.checked">
+                            </mat-slide-toggle>
+                        </div>
+                        <div class="icons-holder">
+                            <i class="fa fa-facebook-f social-icon"
+                               [ngClass]="{'logged': loggedSocialMedias?.includes(SocialMedia.facebook)}"
+                               (click)="login(SocialMedia.facebook)"></i>
+                            <mat-slide-toggle [checked]="sweep.refer_facebook" [color]="'primary'"
+                                              [disabled]="!loggedSocialMedias?.includes(SocialMedia.facebook)"
+                                              (change)="sweep.refer_facebook = $event.checked">
+                            </mat-slide-toggle>
+                        </div>
+
+                        <ng-container *ngIf="shareDuration.invalid && (shareDuration.dirty || shareDuration.touched)">
+                            <mat-error *ngIf="shareDuration.errors.required">
+                                Duration is required.
+                            </mat-error>
+                            <mat-error *ngIf="shareDuration.errors.positive">
+                                Duration must be positive.
+                            </mat-error>
+                        </ng-container>
+                    </div>
                 </mat-expansion-panel>
             </mat-accordion>
         </form>
