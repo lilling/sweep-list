@@ -23,6 +23,21 @@
     max-height: calc(100vh - 40px);
     overflow-y: auto;
 
+    .form {
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+
+      .mat-expansion-panel-body {
+        display: flex;
+        flex-direction: column;
+
+        input[type="number"] {
+          width: 35px;
+        }
+      }
+    }
+
     .blocker {
       position: fixed;
       top: 0;

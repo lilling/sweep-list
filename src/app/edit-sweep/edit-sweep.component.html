@@ -1,4 +1,4 @@
-<div class="container">
+<div *ngIf="sweep" class="container">
     <div class="header">
         <span>
             <button mat-icon-button (click)="back()">
@@ -14,6 +14,72 @@
                 <mat-icon fontSet="fa" fontIcon="fa-check"></mat-icon>
             </button>
         </span>
+    </div>
+    <div class="body">
+        <form class="form" #editSweepForm="ngForm">
+            <mat-form-field>
+                <input matInput placeholder="Prize (sweep name)" name="name" id="name" [(ngModel)]="sweep.sweep_name" required
+                       #name="ngModel">
+                <mat-error *ngIf="name.invalid && (name.dirty || name.touched) && name.errors.required">
+                    Name is required.
+                </mat-error>
+            </mat-form-field>
+            <mat-form-field>
+                <input #calInput matInput [matDatepicker]="picker" placeholder="End date" id="endDate" name="endDate"
+                       [(ngModel)]="sweep.end_date" (click)="openCalendar(picker, calInput)"
+                       required #endDate="ngModel">
+                <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                <mat-datepicker #picker></mat-datepicker>
+                <mat-error *ngIf="endDate.invalid && (endDate.dirty || endDate.touched) && endDate.errors.required">
+                    End date is required.
+                </mat-error>
+            </mat-form-field>
+
+            <mat-accordion [multi]="true">
+                <mat-expansion-panel #frequencyPanel [disabled]="!sweep.is_frequency">
+                    <mat-expansion-panel-header>
+                        <mat-panel-title>
+                            Recurring entry
+                        </mat-panel-title>
+                        <mat-panel-description>
+                            <mat-slide-toggle [checked]="sweep.is_frequency" [color]="'primary'" (click)="$event.stopPropagation()"
+                                              (change)="changeIsFrequency($event, frequencyPanel)">
+                            </mat-slide-toggle>
+                        </mat-panel-description>
+                    </mat-expansion-panel-header>
+                    <div class="mat-expansion-panel-body">
+                        <mat-form-field>
+                            <input matInput placeholder="my url" name="siteUrl" id="siteUrl" [(ngModel)]="sweep.frequency_url" required
+                                   #url="ngModel">
+                            <mat-icon matSuffix>public</mat-icon>
+                            <mat-error *ngIf="url.invalid && (url.dirty || url.touched) && url.errors.required">
+                                url is required.
+                            </mat-error>
+                        </mat-form-field>
+                        <span>
+                            <span>Every </span>
+                            <input matInput type="number" placeholder="XX" required [disabled]="!sweep.is_frequency" name="recurringDuration"
+                                   appPositive
+                                   [(ngModel)]="sweep.frequency_days" #recurringDuration="ngModel">
+                            <span>days</span>
+                        </span>
+                    </div>
+                </mat-expansion-panel>
+                <mat-expansion-panel #referralPanel>
+                    <mat-expansion-panel-header>
+                        <mat-panel-title>
+                            Share on social media
+                        </mat-panel-title>
+                        <mat-panel-description>
+                            <mat-slide-toggle [checked]="sweep.is_referral" [color]="'primary'" (click)="$event.stopPropagation()"
+                                              (change)="changeIsReferral($event, referralPanel)">
+                            </mat-slide-toggle>
+                        </mat-panel-description>
+                    </mat-expansion-panel-header>
+                    <p>I'm visible because I am open</p>
+                </mat-expansion-panel>
+            </mat-accordion>
+        </form>
     </div>
     <!--<div class="body">-->
     <!--<ng-container *ngIf="isSweepsLoading$ | async">-->

@@ -10,11 +10,11 @@
             </mat-form-field>
             <mat-form-field>
                 <input matInput [matDatepicker]="picker" placeholder="End date" id="endDate" name="endDate" [(ngModel)]="newSweep.end_date"
-                       required disabled #endDate="ngModel">
+                       required #endDate="ngModel">
                 <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-                <mat-datepicker #picker disabled="false"></mat-datepicker>
+                <mat-datepicker #picker></mat-datepicker>
                 <mat-error *ngIf="endDate.invalid && (endDate.dirty || endDate.touched) && endDate.errors.required">
-                    End date is required.
+                    End date is required or invalid.
                 </mat-error>
             </mat-form-field>
         </ng-container>

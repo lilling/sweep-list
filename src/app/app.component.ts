@@ -12,6 +12,7 @@ import { LoginEpics } from './state/login/login.epics';
 import { SweepsEpics } from './state/sweeps/sweeps.epics';
 import { LoginActions } from './state/login/login.actions';
 import { LocalStorageKeys } from './models/local-storage-keys.enum';
+import { SweepsActions } from './state/sweeps/sweeps.actions';
 
 @Component({
     selector: 'app-root',
@@ -31,6 +32,7 @@ export class AppComponent implements OnInit {
     constructor(private ngRedux: NgRedux<AppState>,
                 private loginEpics: LoginEpics,
                 private loginActions: LoginActions,
+                private sweepsActions: SweepsActions,
                 private sweepsEpics: SweepsEpics) {
     }
 
@@ -63,6 +65,7 @@ export class AppComponent implements OnInit {
         const id = localStorage.getItem(LocalStorageKeys.loggedUser);
         if (id) {
             this.loginActions.login({id, fromCache: true});
+            this.sweepsActions.getUserSweeps(id);
         }
     }
 }
