@@ -1,7 +1,7 @@
-import { user_sweep_display } from '../../../../shared/classes';
+import { user_sweep } from '../../../../shared/classes';
 
 export interface SweepsState {
-    sweeps: user_sweep_display[];
+    sweeps: user_sweep[];
     isSweepsLoading: boolean;
     isAllSweepsLoaded: boolean;
 }

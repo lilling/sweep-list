@@ -6,7 +6,7 @@ import { NgRedux, select } from '@angular-redux/store';
 import { Subscription } from 'rxjs/Subscription';
 //
 import { AddSweepComponent } from '../add-sweep/add-sweep.component';
-import { user_sweep_display, user_account } from '../../../shared/classes';
+import { user_sweep, user_account } from '../../../shared/classes';
 import { AppState } from '../state/store';
 import { SweepsActions } from '../state/sweeps/sweeps.actions';
 
@@ -19,7 +19,7 @@ export class SweepListComponent implements OnInit {
     @select((state: AppState) => state.sweepsState.isSweepsLoading)
     isSweepsLoading$: Observable<boolean>;
 
-    sweeps: user_sweep_display[];
+    sweeps: user_sweep[];
     loggedUser: user_account;
     subscriptions: {[index: string]: Subscription };
 

@@ -1,29 +1,7 @@
 /* tslint:disable */
 /*
-example: schemats generate -c postgres://hsrbfqoh:OASQR0O7qDLnHlIBgWcHiD_dKwz4dBoM@hard-plum.db.elephantsql.com:5432/hsrbfqoh -s sweepimp -o DB1.ts -t user_sweep_display
+example: schemats generate -c postgres://hsrbfqoh:OASQR0O7qDLnHlIBgWcHiD_dKwz4dBoM@hard-plum.db.elephantsql.com:5432/hsrbfqoh -s sweepimp -o DB1.ts -t user_sweep
 */
-
-export interface user_sweep_display {
-    user_sweep_id: number;
-    user_account_id: number;
-    sweep_name: string | null;
-    sweep_url: string | null;
-    end_date: Date;
-    is_frequency: boolean | null;
-    frequency_url: string | null;
-    frequency_days: number | null;
-    last_entry_date: Date | null;
-    total_entries: number | null;
-    is_referral: boolean | null;
-    referral_url: string | null;
-    total_shares: number | null;
-    thanks_to: string | null;
-    thanks_social_media_id: number | null;
-    won_yn: boolean | null;
-    deleted_yn: boolean | null;
-    created: Date;
-    updated: Date;
-}
 
 export interface sweep_share {
     sweep_share_id: number;
