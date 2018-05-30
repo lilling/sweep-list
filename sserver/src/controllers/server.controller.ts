@@ -15,7 +15,7 @@ export class ServerController {
     }
 
     /*@Post('sweep')
-    ManageSweep(@Body() user_sweep: user_sweep): Promise<user_sweep_display>{
+    ManageSweep(@Body() user_sweep: user_sweep): Promise<user_sweep>{
         return this.UserSweepService.ManageSweep(user_sweep);
     }*/
 }

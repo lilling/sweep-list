@@ -1,8 +1,8 @@
-import { user_sweep_display } from '../../../../shared/classes';
+import { user_sweep } from '../../../../shared/classes';
 import { HashedArray } from '../../models/hashed-array.class';
 
 export interface SweepsState {
-    sweeps: HashedArray<user_sweep_display>;
+    sweeps: HashedArray<user_sweep>;
     isSweepsLoading: boolean;
     isAllSweepsLoaded: boolean;
 }

@@ -1,6 +1,6 @@
 import { DbGetter } from '../dal/DbGetter';
 import { BaseService } from './base.service';
-import { Win, URL, user_sweep, user_sweep_display, payment_package, Search } from '../../../shared/classes';
+import { Win, URL, user_sweep, payment_package, Search } from '../../../shared/classes';
 import { PaymentService } from './payment.service'
 import { HttpException, HttpStatus } from '@nestjs/common';
 
@@ -12,12 +12,12 @@ export class UserSweepService extends BaseService<user_sweep> {
         this.PaymentService = new PaymentService();
     }
 
-    async GetSweeps(user_sweep_search: Search, status: string): Promise<user_sweep_display[]> {
+    async GetSweeps(user_sweep_search: Search, status: string): Promise<user_sweep[]> {
         const db = DbGetter.getDB();
         var lastSweep = ``;
         const q =
             `SELECT *\n` +
-            `  FROM sweepimp.user_sweep_display\n` +
+            `  FROM sweepimp.user_sweep\n` +
             ` WHERE user_account_id = $<user_account_id^>\n`;
         let where = ``;
         //let filter = ``;
@@ -145,14 +145,13 @@ export class UserSweepService extends BaseService<user_sweep> {
     async GetSweepURLs(id: number): Promise<string[]> {
         const db = DbGetter.getDB();
         const q =
-            `SELECT us.user_sweep_id\n` +
-            `      ,coalesce(us.frequency_url, us.sweep_url) sweep_url\n` +
-            `  FROM sweepimp.user_sweep         us\n` +
-            `  JOIN sweepimp.user_sweep_display usd USING (user_sweep_id)\n` +
-            ` WHERE us.user_account_id = $<id^>\n` +
-            `   AND us.end_date >= now()\n` +
-            `   AND (  usd.last_entry_date is null\n` +
-            `       OR usd.last_entry_date < current_date - interval '1 DAY' * us.frequency_days)`;
+            `SELECT user_sweep_id\n` +
+            `      ,coalesce(frequency_url, sweep_url) sweep_url\n` +
+            `  FROM sweepimp.user_sweep\n` +
+            ` WHERE user_account_id = $<id^>\n` +
+            `   AND end_date >= now()\n` +
+            `   AND (  last_entry_date is null\n` +
+            `       OR last_entry_date < current_date - interval '1 DAY' * frequency_days)`;
         const sweeps = [];
         const urls = [];
         const result = await db.manyOrNone<URL>(q, { id });
@@ -187,7 +186,7 @@ export class UserSweepService extends BaseService<user_sweep> {
         // replace last UNION ALL\n with a ;
         insert = insert.replace(new RegExp(`UNION ALL\n$`), ';');
         const update =
-            `UPDATE sweepimp.user_sweep_display\n` +
+            `UPDATE sweepimp.user_sweep\n` +
             `   SET total_entries = coalesce(total_entries, 0) + 1\n` +
             `      ,last_entry_date = current_timestamp\n` +
             `      ,updated = current_timestamp\n` +
@@ -198,7 +197,7 @@ export class UserSweepService extends BaseService<user_sweep> {
         });
     }
 
-    async ToggleSweepState(column: string, id: number, state: boolean): Promise<user_sweep_display> {
+    async ToggleSweepState(column: string, id: number, state: boolean): Promise<user_sweep> {
         const db = DbGetter.getDB();
         // build new sweep
         const new_user_sweep = await this.getItem(id, 'user_sweep_id');
@@ -215,7 +214,7 @@ export class UserSweepService extends BaseService<user_sweep> {
         return this.ManageSweep(new_user_sweep);
     }
 
-    async ManageSweep(user_sweep: user_sweep): Promise<user_sweep_display> {
+    async ManageSweep(user_sweep: user_sweep): Promise<user_sweep> {
         if (await this.CheckSweepLimit(user_sweep)){
             if (user_sweep.user_sweep_id) { // existing sweep - update
                 return this.UpdateSweep(user_sweep);
@@ -225,7 +224,7 @@ export class UserSweepService extends BaseService<user_sweep> {
         }
     }
 
-    async InsertSweep(user_sweep: user_sweep): Promise<user_sweep_display> {
+    async InsertSweep(user_sweep: user_sweep): Promise<user_sweep> {
         const db = DbGetter.getDB();
             return db.tx('new-sweep', innerDb => {
                 return this.InsertSweepInner(innerDb, user_sweep);
@@ -271,7 +270,7 @@ export class UserSweepService extends BaseService<user_sweep> {
         return true;
     }
 
-    async UpdateSweep(user_sweep: user_sweep): Promise<user_sweep_display> {
+    async UpdateSweep(user_sweep: user_sweep): Promise<user_sweep> {
         const db = DbGetter.getDB();
         const old_user_sweep = await this.getItem(user_sweep.user_sweep_id, 'user_sweep_id');
         return db.tx('update-sweep', innerDb => {
@@ -279,15 +278,15 @@ export class UserSweepService extends BaseService<user_sweep> {
         });
     }
 
-    async UpdateSweepInner(DB, user_sweep: user_sweep, old_user_sweep: user_sweep): Promise<user_sweep_display> {
+    async UpdateSweepInner(DB, user_sweep: user_sweep, old_user_sweep: user_sweep): Promise<user_sweep> {
         const ChangedColumns = this.GetChangedColumns(user_sweep, old_user_sweep);
         //case each line
         const q = this.BuildUpdateString(ChangedColumns);
-        const UserSweepDisplay = await DB.multi(q, user_sweep);
-        return UserSweepDisplay[1][0];
+        const UserSweep = await DB.one(q, user_sweep);
+        return UserSweep;
     }
 
-    async InsertSweepInner(DB, user_sweep: user_sweep): Promise<user_sweep_display> {
+    async InsertSweepInner(DB, user_sweep: user_sweep): Promise<user_sweep> {
         let q =
             `INSERT INTO sweepimp.user_sweep\n` +
             `    (user_account_id\n` +
@@ -297,8 +296,10 @@ export class UserSweepService extends BaseService<user_sweep> {
             `    ,is_frequency\n` +
             `    ,frequency_url\n` +
             `    ,frequency_days\n` +
+            `    ,total_entries\n` +
             `    ,is_referral\n` +
             `    ,referral_url\n` +
+            `    ,total_shares\n` +
             `    ,referral_frequency\n` +
             `    ,personal_refer_message\n` +
             `    ,refer_facebook\n` +
@@ -321,8 +322,10 @@ export class UserSweepService extends BaseService<user_sweep> {
             `    ,$<is_frequency>\n` +
             `    ,$<frequency_url>\n` +
             `    ,$<frequency_days>\n` +
+            `    ,0\n` +
             `    ,$<is_referral>\n` +
             `    ,$<referral_url>\n` +
+            `    ,0\n` +
             `    ,$<referral_frequency>\n` +
             `    ,$<personal_refer_message>\n` +
             `    ,$<refer_facebook>\n` +
@@ -339,50 +342,7 @@ export class UserSweepService extends BaseService<user_sweep> {
             `    ,current_timestamp\n` +
             `    )\n` +
             `    RETURNING *`;
-        const UserSweep = await DB.one(q, user_sweep);
-        q = `INSERT INTO sweepimp.user_sweep_display\n` +
-            `    (user_sweep_id\n` +
-            `    ,user_account_id\n` +
-            `    ,sweep_name\n` +
-            `    ,sweep_url\n` +
-            `    ,end_date\n` +
-            `    ,is_frequency\n` +
-            `    ,frequency_url\n` +
-            `    ,frequency_days\n` +
-            `    ,last_entry_date\n` +
-            `    ,total_entries\n` +
-            `    ,is_referral\n` +
-            `    ,referral_url\n` +
-            `    ,total_shares\n` +
-            `    ,thanks_to\n` +
-            `    ,thanks_social_media_id\n` +
-            `    ,won_yn\n` +
-            `    ,deleted_yn\n` +
-            `    ,created\n` +
-            `    ,updated)\n` +
-            `VALUES \n` +
-            `    ($<user_sweep_id>\n` +
-            `    ,$<user_account_id>\n` +
-            `    ,$<sweep_name>\n` +
-            `    ,$<sweep_url>\n` +
-            `    ,$<end_date>\n` +
-            `    ,$<is_frequency>\n` +
-            `    ,$<frequency_url>\n` +
-            `    ,$<frequency_days>\n` +
-            `    ,null\n` +
-            `    ,null\n` +
-            `    ,$<is_referral>\n` +
-            `    ,$<referral_url>\n` +
-            `    ,null\n` +
-            `    ,$<thanks_to>\n` +
-            `    ,$<thanks_social_media_id>\n` +
-            `    ,false\n` +
-            `    ,false\n` +
-            `    ,current_timestamp\n` +
-            `    ,current_timestamp\n` +
-            `    )\n` +
-            `RETURNING *`;
-        return DB.one(q, UserSweep);
+        return DB.one(q, user_sweep);
     }
 
     GetChangedColumns(new_user_sweep: user_sweep, old_user_sweep: user_sweep): any{
@@ -422,35 +382,13 @@ export class UserSweepService extends BaseService<user_sweep> {
     BuildUpdateString(ChangedColumns): string{
         var q = ``;
         var UserSweepColumns = `updated                = current_timestamp\n`;
-        var UserSweepDisplayColumns = `updated                = current_timestamp\n`;
-        if (ChangedColumns.sweep_name){
-            UserSweepColumns = UserSweepColumns + `      ,sweep_name             = $<sweep_name>\n`;
-            UserSweepDisplayColumns = UserSweepDisplayColumns + `      ,sweep_name             = $<sweep_name>\n`;
-        }
-        if (ChangedColumns.end_date){
-            UserSweepColumns = UserSweepColumns + `      ,end_date               = $<end_date>\n`;
-            UserSweepDisplayColumns = UserSweepDisplayColumns + `      ,end_date               = $<end_date>\n`;
-        }
-        if (ChangedColumns.is_frequency){
-            UserSweepColumns = UserSweepColumns + `      ,is_frequency           = $<is_frequency>\n`;
-            UserSweepDisplayColumns = UserSweepDisplayColumns + `      ,is_frequency           = $<is_frequency>\n`;
-        }
-        if (ChangedColumns.frequency_url){
-            UserSweepColumns = UserSweepColumns + `      ,frequency_url          = $<frequency_url>\n`;
-            UserSweepDisplayColumns = UserSweepDisplayColumns + `      ,frequency_url          = $<frequency_url>\n`;
-        }
-        if (ChangedColumns.frequency_days){
-            UserSweepColumns = UserSweepColumns + `      ,frequency_days         = $<frequency_days>\n`;
-            UserSweepDisplayColumns = UserSweepDisplayColumns + `      ,frequency_days         = $<frequency_days>\n`;
-        }
-        if (ChangedColumns.is_referral){
-            UserSweepColumns = UserSweepColumns + `      ,is_referral            = $<is_referral>\n`;
-            UserSweepDisplayColumns = UserSweepDisplayColumns + `      ,is_referral            = $<is_referral>\n`;
-        }
-        if (ChangedColumns.referral_url){
-            UserSweepColumns = UserSweepColumns + `      ,referral_url           = $<referral_url>\n`;
-            UserSweepDisplayColumns = UserSweepDisplayColumns + `      ,referral_url           = $<referral_url>\n`;
-        }
+        if (ChangedColumns.sweep_name){UserSweepColumns = UserSweepColumns + `      ,sweep_name             = $<sweep_name>\n`;}
+        if (ChangedColumns.end_date){UserSweepColumns = UserSweepColumns + `      ,end_date               = $<end_date>\n`;}
+        if (ChangedColumns.is_frequency){UserSweepColumns = UserSweepColumns + `      ,is_frequency           = $<is_frequency>\n`;}
+        if (ChangedColumns.frequency_url){UserSweepColumns = UserSweepColumns + `      ,frequency_url          = $<frequency_url>\n`;}
+        if (ChangedColumns.frequency_days){UserSweepColumns = UserSweepColumns + `      ,frequency_days         = $<frequency_days>\n`;}
+        if (ChangedColumns.is_referral){UserSweepColumns = UserSweepColumns + `      ,is_referral            = $<is_referral>\n`;}
+        if (ChangedColumns.referral_url){UserSweepColumns = UserSweepColumns + `      ,referral_url           = $<referral_url>\n`;}
         if (ChangedColumns.referral_frequency){UserSweepColumns = UserSweepColumns + `      ,referral_frequency     = $<referral_frequency>\n`;}
         if (ChangedColumns.personal_refer_message){UserSweepColumns = UserSweepColumns + `      ,personal_refer_message = $<personal_refer_message>\n`;}
         if (ChangedColumns.refer_facebook){UserSweepColumns = UserSweepColumns + `      ,refer_facebook         = $<refer_facebook>\n`;}
@@ -459,29 +397,14 @@ export class UserSweepService extends BaseService<user_sweep> {
         if (ChangedColumns.refer_linkedin){UserSweepColumns = UserSweepColumns + `      ,refer_linkedin         = $<refer_linkedin>\n`;}
         if (ChangedColumns.refer_pinterest){UserSweepColumns = UserSweepColumns + `      ,refer_pinterest        = $<refer_pinterest>\n`;}
         if (ChangedColumns.refer_pinterest){UserSweepColumns = UserSweepColumns + `      ,refer_pinterest        = $<refer_pinterest>\n`;}
-        if (ChangedColumns.thanks_to){
-            UserSweepColumns = UserSweepColumns + `      ,thanks_to              = $<thanks_to>\n`;
-            UserSweepDisplayColumns = UserSweepDisplayColumns + `      ,thanks_to              = $<thanks_to>\n`;
-        }
-        if (ChangedColumns.thanks_social_media_id){
-            UserSweepColumns = UserSweepColumns + `      ,thanks_social_media_id = $<thanks_social_media_id>\n`;
-            UserSweepDisplayColumns = UserSweepDisplayColumns + `      ,thanks_social_media_id = $<thanks_social_media_id>\n`;
-        }
-        if (ChangedColumns.won_yn){
-            UserSweepColumns = UserSweepColumns + `      ,won_yn                 = $<won_yn>\n`;
-            UserSweepDisplayColumns = UserSweepDisplayColumns + `      ,won_yn                 = $<won_yn>\n`;
-        }
+        if (ChangedColumns.thanks_to){UserSweepColumns = UserSweepColumns + `      ,thanks_to              = $<thanks_to>\n`;}
+        if (ChangedColumns.thanks_social_media_id){UserSweepColumns = UserSweepColumns + `      ,thanks_social_media_id = $<thanks_social_media_id>\n`;}
+        if (ChangedColumns.won_yn){UserSweepColumns = UserSweepColumns + `      ,won_yn                 = $<won_yn>\n`;}
         if (ChangedColumns.prize_value){UserSweepColumns = UserSweepColumns + `      ,prize_value            = $<prize_value>\n`;}
-        if (ChangedColumns.deleted_yn){
-            UserSweepColumns = UserSweepColumns + `      ,deleted_yn             = $<deleted_yn>\n`;
-            UserSweepDisplayColumns = UserSweepDisplayColumns + `      ,deleted_yn             = $<deleted_yn>\n`;
-        }
+        if (ChangedColumns.deleted_yn){UserSweepColumns = UserSweepColumns + `      ,deleted_yn             = $<deleted_yn>\n`;}
         return (
         `UPDATE sweepimp.user_sweep\n` +
         `   SET ` + UserSweepColumns +
-        ` WHERE user_sweep_id = $<user_sweep_id^>;\n` +
-        `UPDATE sweepimp.user_sweep_display\n` +
-        `   SET ` + UserSweepDisplayColumns +
         ` WHERE user_sweep_id = $<user_sweep_id^>\n` +
         `RETURNING *`);
     };

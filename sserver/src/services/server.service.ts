@@ -1,8 +1,8 @@
 import { DbGetter } from '../dal/DbGetter';
 import { BaseService } from './base.service';
-import { PostToPublishRaw, PostToPublish, user_sweep, user_sweep_display } from '../../../shared/classes';
+import { PostToPublishRaw, PostToPublish, user_sweep } from '../../../shared/classes';
 import { promise } from 'selenium-webdriver';
-import { SocialMedia } from '../../../src/app/models/social-media.enum';
+import { SocialMedia } from '../../../shared/models/social-media.enum';
 import { FacebookService } from './facebook.service'
 
 export class ServerService extends BaseService<PostToPublish> {
@@ -87,7 +87,7 @@ export class ServerService extends BaseService<PostToPublish> {
             }
         });
         sweepShareDMLs = sweepShareDMLs +
-            `UPDATE sweepimp.user_sweep_display\n` +
+            `UPDATE sweepimp.user_sweep\n` +
             `   SET total_shares = total_shares + ${shareCount}\n` +
             `      ,updated      = current_timestamp\n` +
             ` WHERE user_sweep_id = $<user_sweep_id^>\n`;

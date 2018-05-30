@@ -141,7 +141,7 @@ export class UserAccountService extends BaseService<user_account> {
     async Merge(source: user_account, target: user_account, Provider: string, isSimple: boolean): Promise<user_account> {
         const db = DbGetter.getDB();
         const mergeType = (isSimple ? 'simple' : 'complicated');
-        const TablesToUpdate = (isSimple ? [] : ['user_sweep_display', 'user_sweep', 'user_social_extra', 'payment']);
+        const TablesToUpdate = (isSimple ? [] : ['user_sweep', 'user_social_extra', 'payment']);
         for (const i_Provider of this.validProviders) {
             TablesToUpdate.push(i_Provider + '_account');
         }

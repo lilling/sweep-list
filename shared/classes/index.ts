@@ -1,19 +1,4 @@
 export {
-    sweep_entryFields,
-    facebook_accountFields,
-    google_accountFields,
-    log_actionFields,
-    logFields,
-    payment_packageFields,
-    user_sweepFields,
-    user_sweep_displayFields,
-    retired_user_accountFields,
-    paymentFields,
-    social_mediaFields,
-    user_social_extraFields,
-    sweep_shareFields,
-    user_accountFields,
-    social_media_fieldFields,
     facebook_account,
     user_account,
     google_account,
@@ -27,8 +12,7 @@ export {
     sweep_entry,
     sweep_share,
     user_social_extra,
-    user_sweep,
-    user_sweep_display
+    user_sweep
 } from './DB';
 export { Account, SocialUserAndAccount, FBAccount } from './SocialUserAndAccount';
 export { URL, Win, Search } from './Sweeps';
