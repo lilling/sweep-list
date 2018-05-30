@@ -19,8 +19,8 @@
                 Share On My Social Media
             </mat-slide-toggle>
             <app-referral-sweep-data [disabled]="!newSweep.is_referral" [(personalReferMessage)]="newSweep.personal_refer_message"
-                                     [(referralUrl)]="newSweep.referral_url" [referFacebook]="newSweep.refer_facebook"
-                                     [referGoogle]="newSweep.refer_google"
+                                     [(referralUrl)]="newSweep.referral_url" [(referFacebook)]="newSweep.refer_facebook"
+                                     [(referGoogle)]="newSweep.refer_google"
                                      [(referralFrequency)]="newSweep.referral_frequency"></app-referral-sweep-data>
         </ng-container>
         <ng-container *ngIf="step === 4">
@@ -44,7 +44,6 @@
             <mat-error *ngIf="referrerSocialMedia.invalid && (referrerSocialMedia.dirty || referrerSocialMedia.touched) && referrerSocialMedia.errors.required">
                 social media is required.
             </mat-error>
-
         </ng-container>
         <ng-container *ngIf="step === 5">
             <h2 mat-dialog-title>New Sweep Added!</h2>

@@ -19,12 +19,12 @@ export class ReferralSweepDataComponent {
     @Output() referralFrequencyChange = new EventEmitter();
     @Output() referFacebookChange = new EventEmitter();
     @Output() referGoogleChange = new EventEmitter();
+    SocialMedia = SocialMedia;
     private url: string;
     private message: string;
     private frequency: number;
     private google: boolean;
     private facebook: boolean;
-    SocialMedia = SocialMedia;
 
     @Input() get referGoogle() {
         return this.google;
@@ -32,7 +32,7 @@ export class ReferralSweepDataComponent {
 
     set referGoogle(val: boolean) {
         this.google = val;
-        this.referGoogleChange.emit(this.url);
+        this.referGoogleChange.emit(this.google);
     }
 
     @Input() get referFacebook() {
@@ -41,7 +41,7 @@ export class ReferralSweepDataComponent {
 
     set referFacebook(val: boolean) {
         this.facebook = val;
-        this.referFacebookChange.emit(this.url);
+        this.referFacebookChange.emit(this.facebook);
     }
 
     @Input() get referralUrl() {
