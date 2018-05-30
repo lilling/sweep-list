@@ -27,31 +27,8 @@
                                           (change)="changeIsFrequency($event, frequencyPanel)">
                         </mat-slide-toggle>
                     </mat-expansion-panel-header>
-                    <div class="mat-expansion-panel-body">
-                        <mat-form-field>
-                            <input matInput placeholder="my url" name="siteUrl" id="siteUrl" [(ngModel)]="sweep.frequency_url" required
-                                   #url="ngModel">
-                            <mat-icon matSuffix>public</mat-icon>
-                            <mat-error *ngIf="url.invalid && (url.dirty || url.touched) && url.errors.required">
-                                url is required.
-                            </mat-error>
-                        </mat-form-field>
-                        <span>
-                            <span>Every </span>
-                            <input matInput type="number" placeholder="XX" required [disabled]="!sweep.is_frequency" name="recurringDuration"
-                                   appPositive
-                                   [(ngModel)]="sweep.frequency_days" #recurringDuration="ngModel">
-                            <span>days</span>
-                        </span>
-                        <ng-container *ngIf="recurringDuration.invalid && (recurringDuration.dirty || recurringDuration.touched)">
-                            <mat-error *ngIf="recurringDuration.errors.required">
-                                Duration is required.
-                            </mat-error>
-                            <mat-error *ngIf="recurringDuration.errors.positive">
-                                Duration must be positive.
-                            </mat-error>
-                        </ng-container>
-                    </div>
+                    <app-frequency-sweep-data [disabled]="!sweep.is_frequency" [(frequencyUrl)]="sweep.frequency_url"
+                                              [(frequencyDays)]="sweep.frequency_days"></app-frequency-sweep-data>
                 </mat-expansion-panel>
                 <mat-expansion-panel #referralPanel [disabled]="!sweep.is_referral">
                     <mat-expansion-panel-header>

@@ -23,6 +23,7 @@ import { PositiveValidatorDirective } from './add-sweep/positive.validator';
 import { StateModule } from './state.module';
 import { AuthGuard } from './services/auth-guard.service';
 import { BasicSweepDataComponent } from './sweep-data/basic-sweep-data/basic-sweep-data.component';
+import { FrequencySweepDataComponent } from './sweep-data/frequency-sweep-data/frequency-sweep-data.component';
 
 const fbLoginOptions: LoginOpt = {
     scope: 'public_profile , email, publish_actions',
@@ -50,6 +51,7 @@ const SOCIAL_CONFIG = new AuthServiceConfig([
         AddSweepComponent,
         EditSweepComponent,
         BasicSweepDataComponent,
+        FrequencySweepDataComponent,
         AppComponent,
         LoginComponent,
         SweepListComponent,

@@ -7,32 +7,11 @@
         </ng-container>
         <ng-container *ngIf="step === 2">
             <mat-slide-toggle [checked]="newSweep.is_frequency" [labelPosition]="'before'" [color]="'primary'"
-                              (change)="newSweep.is_frequency= $event.checked">
+                              (change)="newSweep.is_frequency = $event.checked">
                 Recurring Entry
             </mat-slide-toggle>
-            <mat-form-field>
-                <input matInput placeholder="sweep url" name="siteUrl" id="siteUrl" [(ngModel)]="newSweep.frequency_url" required #url="ngModel"
-                       [disabled]="!newSweep.is_frequency">
-                <mat-icon matSuffix>public</mat-icon>
-                <mat-error *ngIf="url.invalid && (url.dirty || url.touched) && url.errors.required">
-                    url is required.
-                </mat-error>
-            </mat-form-field>
-            <span>
-                <span>Every </span>
-                <input matInput type="number" placeholder="XX" required [disabled]="!newSweep.is_frequency" name="recurringDuration"
-                       appPositive
-                       [(ngModel)]="newSweep.frequency_days" #recurringDuration="ngModel">
-                <span>days</span>
-            </span>
-            <ng-container *ngIf="recurringDuration.invalid && (recurringDuration.dirty || recurringDuration.touched)">
-                <mat-error *ngIf="recurringDuration.errors.required">
-                    Duration is required.
-                </mat-error>
-                <mat-error *ngIf="recurringDuration.errors.positive">
-                    Duration must be positive.
-                </mat-error>
-            </ng-container>
+            <app-frequency-sweep-data [disabled]="!newSweep.is_frequency" [(frequencyUrl)]="newSweep.frequency_url"
+                                      [(frequencyDays)]="newSweep.frequency_days"></app-frequency-sweep-data>
         </ng-container>
         <ng-container *ngIf="step === 3">
             <mat-slide-toggle [checked]="newSweep.is_referral" [labelPosition]="'before'" [color]="'primary'"
