@@ -77,7 +77,7 @@ export class SweepListComponent implements OnInit {
         this.dialog.open(AddSweepComponent);
     }
 
-    editSweep(sweep: user_sweep_display, event) {
+    editSweep(sweep: user_sweep, event) {
         event.stopPropagation();
         this.router.navigate(['edit', sweep.user_sweep_id]);
     }

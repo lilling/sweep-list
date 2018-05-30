@@ -6,7 +6,7 @@ import { MatIconRegistry, MatSlideToggleChange, MatExpansionPanel } from '@angul
 import { NgRedux } from '@angular-redux/store';
 //
 import { AppState } from '../state/store';
-import { user_sweep_display } from '../../../shared/classes';
+import { user_sweep } from '../../../shared/classes';
 import { LocalStorageKeys } from '../models/local-storage-keys.enum';
 import { UsersService } from '../services/users.service';
 import { SocialMedia } from '../../../shared/models/social-media.enum';
@@ -19,7 +19,7 @@ import { FacebookLoginProvider, GoogleLoginProvider, AuthService } from 'angular
 })
 export class EditSweepComponent implements OnInit {
 
-    sweep: user_sweep_display;
+    sweep: user_sweep;
     userAccountId: number;
     loggedSocialMedias: SocialMedia[];
     SocialMedia = SocialMedia;

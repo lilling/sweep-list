@@ -8,7 +8,7 @@ export interface SweepsState {
 }
 
 export const INITIAL_SWEEPS_STATE: SweepsState = {
-    sweeps: new HashedArray<user_sweep_display>([], 'user_sweep_id'),
+    sweeps: new HashedArray<user_sweep>([], 'user_sweep_id'),
     isSweepsLoading: true,
     isAllSweepsLoaded: false,
 };

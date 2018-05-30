@@ -1,22 +1,9 @@
+
 <mat-dialog-content>
     <form class="form" #addSweepForm="ngForm">
         <ng-container *ngIf="step === 1">
             <h2 mat-dialog-title>New Sweep</h2>
-            <mat-form-field>
-                <input matInput placeholder="Prize (sweep name)" name="name" id="name" [(ngModel)]="newSweep.sweep_name" required #name="ngModel">
-                <mat-error *ngIf="name.invalid && (name.dirty || name.touched) && name.errors.required">
-                    Name is required.
-                </mat-error>
-            </mat-form-field>
-            <mat-form-field>
-                <input matInput [matDatepicker]="picker" placeholder="End date" id="endDate" name="endDate" [(ngModel)]="newSweep.end_date"
-                       required #endDate="ngModel">
-                <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-                <mat-datepicker #picker></mat-datepicker>
-                <mat-error *ngIf="endDate.invalid && (endDate.dirty || endDate.touched) && endDate.errors.required">
-                    End date is required or invalid.
-                </mat-error>
-            </mat-form-field>
+            <app-basic-sweep-data [(sweepName)]="newSweep.sweep_name" [(sweepEndDate)]="newSweep.end_date"></app-basic-sweep-data>
         </ng-container>
         <ng-container *ngIf="step === 2">
             <mat-slide-toggle [checked]="newSweep.is_frequency" [labelPosition]="'before'" [color]="'primary'"
