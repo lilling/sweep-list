@@ -59,11 +59,6 @@ export class EditSweepComponent implements OnInit {
         }
     }
 
-    openCalendar(picker, calInput) {
-        picker.open();
-        calInput.blur();
-    }
-
     login(candidate: SocialMedia) {
         if (this.loggedSocialMedias.includes(candidate)) {
             return;
