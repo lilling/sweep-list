@@ -19,6 +19,7 @@ export class EditSweepComponent implements OnInit {
 
     sweep: user_sweep;
     SocialMedia = SocialMedia;
+    thankReferrer: boolean;
 
     constructor(private ngRedux: NgRedux<AppState>,
                 private usersService: UsersService,
@@ -31,7 +32,12 @@ export class EditSweepComponent implements OnInit {
 
     ngOnInit() {
         const sweepId = +this.route.snapshot.params['id'];
-        this.ngRedux.select(state => state.sweepsState.sweeps).subscribe(sweeps => this.sweep = sweeps.getItem(sweepId));
+        this.ngRedux.select(state => state.sweepsState.sweeps).subscribe(sweeps => {
+            this.sweep = sweeps.getItem(sweepId);
+            if (this.sweep) {
+                this.thankReferrer = !!this.sweep.thanks_to;
+            }
+        });
     }
 
     changeIsFrequency(event: MatSlideToggleChange, panel: MatExpansionPanel) {
@@ -50,6 +56,13 @@ export class EditSweepComponent implements OnInit {
         }
     }
 
+    changeIsThank(event: MatSlideToggleChange, panel: MatExpansionPanel) {
+        this.thankReferrer = event.checked;
+
+        if (!event.checked) {
+            panel.close();
+        }
+    }
     back() {
         this.router.navigate(['./list']);
     }

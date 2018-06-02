@@ -42,6 +42,16 @@
                                              [(referGoogle)]="sweep.refer_google"
                                              [(referralFrequency)]="sweep.referral_frequency"></app-referral-sweep-data>
                 </mat-expansion-panel>
+                <mat-expansion-panel #thankPanel [disabled]="!thankReferrer">
+                    <mat-expansion-panel-header>
+                        Thank referrer if I won
+                        <mat-slide-toggle [checked]="thankReferrer" [color]="'primary'" (click)="$event.stopPropagation()"
+                                          (change)="changeIsThank($event, thankPanel)">
+                        </mat-slide-toggle>
+                    </mat-expansion-panel-header>
+                    <app-thank-sweep-data [disabled]="!thankReferrer" [(thanksTo)]="sweep.thanks_to"
+                                          [(thanksSocialMediaId)]="sweep.thanks_social_media_id"></app-thank-sweep-data>
+                </mat-expansion-panel>
             </mat-accordion>
         </form>
     </div>
