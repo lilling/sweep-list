@@ -7,8 +7,8 @@ import { NgRedux } from '@angular-redux/store';
 //
 import { AppState } from '../state/store';
 import { user_sweep } from '../../../shared/classes';
-import { UsersService } from '../services/users.service';
 import { SocialMedia } from '../../../shared/models/social-media.enum';
+import { SweepsActions } from '../state/sweeps/sweeps.actions';
 
 @Component({
     selector: 'app-edit-sweep',
@@ -22,7 +22,7 @@ export class EditSweepComponent implements OnInit {
     thankReferrer: boolean;
 
     constructor(private ngRedux: NgRedux<AppState>,
-                private usersService: UsersService,
+                private sweepsActions: SweepsActions,
                 private router: Router,
                 private route: ActivatedRoute,
                 iconRegistry: MatIconRegistry,
@@ -63,6 +63,34 @@ export class EditSweepComponent implements OnInit {
             panel.close();
         }
     }
+
+    canSaveSweep() {
+        if (this.thankReferrer && (!this.sweep.thanks_to || !this.sweep.thanks_social_media_id)) {
+            return false;
+        }
+        if (this.sweep.is_referral && (!this.sweep.referral_url || !this.sweep.personal_refer_message || !this.sweep.referral_frequency || (!this.sweep.refer_facebook && !this.sweep.refer_google))) {
+            return false;
+        }
+        if (this.sweep.is_frequency && (!this.sweep.frequency_days || !this.sweep.frequency_url)) {
+            return false;
+        }
+        if (!this.sweep.sweep_name || !this.sweep.end_date) {
+            return false;
+        }
+
+        return true;
+    }
+
+    saveSweep() {
+        this.sweepsActions.updateSweep(this.sweep);
+        this.back();
+    }
+
+    deleteSweep() {
+        this.sweepsActions.deleteSweep(this.sweep.user_sweep_id);
+        this.back();
+    }
+
     back() {
         this.router.navigate(['./list']);
     }

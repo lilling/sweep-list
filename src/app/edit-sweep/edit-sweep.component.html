@@ -7,10 +7,13 @@
             <span class="title">Edit Sweep</span>
         </span>
         <span class="buttons">
+            <button mat-icon-button (click)="deleteSweep()">
+                <mat-icon fontSet="fa" fontIcon="fa-trash"></mat-icon>
+            </button>
             <button mat-icon-button>
                 <mat-icon svgIcon="contact-us"></mat-icon>
             </button>
-            <button mat-icon-button>
+            <button mat-icon-button [disabled]="!canSaveSweep()" (click)="saveSweep()">
                 <mat-icon fontSet="fa" fontIcon="fa-check"></mat-icon>
             </button>
         </span>

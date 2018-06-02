@@ -47,4 +47,15 @@ export class HashedArray<T> {
             return result;
         }, []);
     }
+
+    updateItem(updatedItem: T): HashedArray<T> {
+        const index = this.hash[updatedItem[this.idField]];
+        let newArray = [...this.array];
+        newArray = [
+            ...newArray.slice(0, index),
+            updatedItem,
+            ...newArray.slice(index + 1, newArray.length - 1)
+        ];
+        return new HashedArray(newArray, this.idField);
+    }
 }

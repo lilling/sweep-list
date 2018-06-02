@@ -48,4 +48,34 @@ export class SweepsEpics extends BaseEpic {
 
             });
     }
+
+    @Epic
+    deleteSweep(action$: ActionsObservable<TypedAction<number>>) {
+        return action$.ofType(SweepsActions.DELETE_SWEEP)
+            .switchMap(action => {
+                return this.sweepsService.deleteSweep(action.payload).pipe(
+                    map(res => {
+                        return { type: SweepsActions.DELETE_SWEEP_COMPLETED, payload: res };
+                    }),
+                    catchError(err => {
+                        return of(generateError(err, SweepsActions.DELETE_SWEEP));
+                    }));
+
+            });
+    }
+
+    @Epic
+    updateSweep(action$: ActionsObservable<TypedAction<user_sweep>>) {
+        return action$.ofType(SweepsActions.UPDATE_SWEEP)
+            .switchMap(action => {
+                return this.sweepsService.addOrUpdateSweep(action.payload).pipe(
+                    map(res => {
+                        return { type: SweepsActions.UPDATE_SWEEP_COMPLETED, payload: res };
+                    }),
+                    catchError(err => {
+                        return of(generateError(err, SweepsActions.UPDATE_SWEEP));
+                    }));
+
+            });
+    }
 }

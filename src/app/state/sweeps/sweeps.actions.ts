@@ -14,7 +14,10 @@ export class SweepsActions {
     static GET_USER_SWEEPS = '[SweepsActions] GET_USER_SWEEPS';
     static GET_USER_SWEEPS_COMPLETED = '[SweepsActions] GET_USER_SWEEPS_COMPLETED';
     static GET_USER_SWEEPS_FAILED = '[SweepsActions] GET_USER_SWEEPS_FAILED';
-
+    static DELETE_SWEEP = '[SweepsActions] DELETE_SWEEP';
+    static DELETE_SWEEP_COMPLETED = '[SweepsActions] DELETE_SWEEP_COMPLETED';
+    static UPDATE_SWEEP = '[SweepsActions] UPDATE_SWEEP';
+    static UPDATE_SWEEP_COMPLETED = '[SweepsActions] UPDATE_SWEEP_COMPLETED';
 
     constructor(private ngRedux: NgRedux<AppState>) {
     }
@@ -25,5 +28,13 @@ export class SweepsActions {
 
     addSweep(sweep: user_sweep) {
         this.ngRedux.dispatch({ type: SweepsActions.ADD_SWEEP, payload: sweep });
+    }
+
+    deleteSweep(id: number) {
+        this.ngRedux.dispatch({ type: SweepsActions.DELETE_SWEEP, payload: id });
+    }
+
+    updateSweep(sweep: user_sweep) {
+        this.ngRedux.dispatch({ type: SweepsActions.UPDATE_SWEEP, payload: sweep });
     }
 }
