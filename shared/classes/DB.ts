@@ -33,8 +33,11 @@ export interface user_sweep {
     is_frequency: boolean | null;
     frequency_url: string | null;
     frequency_days: number | null;
+    last_entry_date: Date | null;
+    total_entries: number | null;
     is_referral: boolean | null;
     referral_url: string | null;
+    total_shares: number | null;
     referral_frequency: number | null;
     personal_refer_message: string | null;
     refer_facebook: boolean | null;
