@@ -296,6 +296,7 @@ export class UserSweepService extends BaseService<user_sweep> {
             `    ,is_frequency\n` +
             `    ,frequency_url\n` +
             `    ,frequency_days\n` +
+            `    ,last_entry_date\n` +
             `    ,total_entries\n` +
             `    ,is_referral\n` +
             `    ,referral_url\n` +
@@ -322,6 +323,7 @@ export class UserSweepService extends BaseService<user_sweep> {
             `    ,$<is_frequency>\n` +
             `    ,$<frequency_url>\n` +
             `    ,$<frequency_days>\n` +
+            `    ,current_timestamp\n` +
             `    ,0\n` +
             `    ,$<is_referral>\n` +
             `    ,$<referral_url>\n` +

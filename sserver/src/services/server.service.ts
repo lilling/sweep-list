@@ -57,9 +57,6 @@ export class ServerService extends BaseService<PostToPublish> {
                 ` WHERE user_account_id = $<user_account_id^>;\n`;
         });
         let allProvidersCred = await db.multi(allProvidersQuery, RawPostToPublish);
-//        console.log(RawPostToPublish);
-        //console.log(allProvidersCred);
-        //console.log(RawPostToPublish);
         let sweepShareDMLs = ``;
         let shareCount = 0;
         let FinalPostToPublish;
