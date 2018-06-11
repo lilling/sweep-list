@@ -1,0 +1,44 @@
+<div class="basic-container">
+    <mat-form-field>
+        <input matInput placeholder="My Url" name="shareSiteUrl" id="shareSiteUrl" [(ngModel)]="referralUrl" required
+               #url="ngModel" [disabled]="disabled">
+        <mat-icon matSuffix>public</mat-icon>
+        <mat-error *ngIf="url.invalid && (url.dirty || url.touched) && url.errors.required">
+            url is required.
+        </mat-error>
+    </mat-form-field>
+    <mat-form-field>
+        <input matInput placeholder="Message with post" name="messageWithPost" id="messageWithPost"
+               [(ngModel)]="personalReferMessage" [disabled]="disabled">
+    </mat-form-field>
+    <span>
+        <span>Share every </span>
+        <input matInput type="number" name="shareDuration" placeholder="XX" required [(ngModel)]="referralFrequency"
+               appPositive [disabled]="disabled" #shareDuration="ngModel">
+        <span> days on:</span>
+    </span>
+    <div class="icons-holder">
+        <i class="fa fa-google social-icon" [ngClass]="{'logged': loggedSocialMedias?.includes(SocialMedia.google)}"
+           (click)="login(SocialMedia.google)"></i>
+        <mat-slide-toggle [checked]="referGoogle" [color]="'primary'"
+                          [disabled]="!loggedSocialMedias?.includes(SocialMedia.google)"
+                          (change)="referGoogle = $event.checked">
+        </mat-slide-toggle>
+    </div>
+    <div class="icons-holder">
+        <i class="fa fa-facebook-f social-icon" [ngClass]="{'logged': loggedSocialMedias?.includes(SocialMedia.facebook)}"
+           (click)="login(SocialMedia.facebook)"></i>
+        <mat-slide-toggle [checked]="referFacebook" [color]="'primary'"
+                          [disabled]="!loggedSocialMedias?.includes(SocialMedia.facebook)"
+                          (change)="referFacebook = $event.checked">
+        </mat-slide-toggle>
+    </div>
+    <ng-container *ngIf="shareDuration.invalid && (shareDuration.dirty || shareDuration.touched)">
+        <mat-error *ngIf="shareDuration.errors.required">
+            Duration is required.
+        </mat-error>
+        <mat-error *ngIf="shareDuration.errors.positive">
+            Duration must be positive.
+        </mat-error>
+    </ng-container>
+</div>

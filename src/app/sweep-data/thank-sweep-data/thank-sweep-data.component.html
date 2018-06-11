@@ -1,0 +1,18 @@
+<div class="basic-container">
+    <mat-form-field>
+        <input matInput placeholder="Referrer name" name="referrerName" id="referrerName" [(ngModel)]="thanksTo" required
+               #referrerName="ngModel" [disabled]="disabled">
+        <mat-error *ngIf="referrerName.invalid && (referrerName.dirty || referrerName.touched) && referrerName.errors.required">
+            referrer name is required.
+        </mat-error>
+    </mat-form-field>
+    <mat-radio-group class="social-media-radio-group" [(ngModel)]="thanksSocialMediaId" name="referrerSocialMedia" id="referrerSocialMedia"
+                     required #referrerSocialMedia="ngModel" [disabled]="disabled">
+        <mat-radio-button class="social-media-radio-button" *ngFor="let socialMedia of socialMedias" [value]="socialMedia">
+            {{SocialMedia[socialMedia]}}
+        </mat-radio-button>
+    </mat-radio-group>
+    <mat-error *ngIf="referrerSocialMedia.invalid && (referrerSocialMedia.dirty || referrerSocialMedia.touched) && referrerSocialMedia.errors.required">
+        social media is required.
+    </mat-error>
+</div>

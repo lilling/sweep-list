@@ -2,122 +2,33 @@
     <form class="form" #addSweepForm="ngForm">
         <ng-container *ngIf="step === 1">
             <h2 mat-dialog-title>New Sweep</h2>
-            <mat-form-field>
-                <input matInput placeholder="Prize (sweep name)" name="name" id="name" [(ngModel)]="newSweep.sweep_name" required #name="ngModel">
-                <mat-error *ngIf="name.invalid && (name.dirty || name.touched) && name.errors.required">
-                    Name is required.
-                </mat-error>
-            </mat-form-field>
-            <mat-form-field>
-                <input matInput [matDatepicker]="picker" placeholder="End date" id="endDate" name="endDate" [(ngModel)]="newSweep.end_date"
-                       required disabled #endDate="ngModel">
-                <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-                <mat-datepicker #picker disabled="false"></mat-datepicker>
-                <mat-error *ngIf="endDate.invalid && (endDate.dirty || endDate.touched) && endDate.errors.required">
-                    End date is required.
-                </mat-error>
-            </mat-form-field>
+            <app-basic-sweep-data [(sweepName)]="newSweep.sweep_name" [(sweepEndDate)]="newSweep.end_date"></app-basic-sweep-data>
         </ng-container>
         <ng-container *ngIf="step === 2">
             <mat-slide-toggle [checked]="newSweep.is_frequency" [labelPosition]="'before'" [color]="'primary'"
-                              (change)="newSweep.is_frequency= $event.checked">
+                              (change)="newSweep.is_frequency = $event.checked">
                 Recurring Entry
             </mat-slide-toggle>
-            <mat-form-field>
-                <input matInput placeholder="sweep url" name="siteUrl" id="siteUrl" [(ngModel)]="newSweep.frequency_url" required #url="ngModel"
-                       [disabled]="!newSweep.is_frequency">
-                <mat-icon matSuffix>public</mat-icon>
-                <mat-error *ngIf="url.invalid && (url.dirty || url.touched) && url.errors.required">
-                    url is required.
-                </mat-error>
-            </mat-form-field>
-            <span>
-                <span>Every </span>
-                <input matInput type="number" placeholder="XX" required [disabled]="!newSweep.is_frequency" name="recurringDuration"
-                       appPositive
-                       [(ngModel)]="newSweep.frequency_days" #recurringDuration="ngModel">
-                <span>days</span>
-            </span>
-            <ng-container *ngIf="recurringDuration.invalid && (recurringDuration.dirty || recurringDuration.touched)">
-                <mat-error *ngIf="recurringDuration.errors.required">
-                    Duration is required.
-                </mat-error>
-                <mat-error *ngIf="recurringDuration.errors.positive">
-                    Duration must be positive.
-                </mat-error>
-            </ng-container>
+            <app-frequency-sweep-data [disabled]="!newSweep.is_frequency" [(frequencyUrl)]="newSweep.frequency_url"
+                                      [(frequencyDays)]="newSweep.frequency_days"></app-frequency-sweep-data>
         </ng-container>
         <ng-container *ngIf="step === 3">
             <mat-slide-toggle [checked]="newSweep.is_referral" [labelPosition]="'before'" [color]="'primary'"
                               (change)="newSweep.is_referral = $event.checked">
                 Share On My Social Media
             </mat-slide-toggle>
-            <mat-form-field>
-                <input matInput placeholder="My Url" name="shareSiteUrl" id="shareSiteUrl" [(ngModel)]="newSweep.referral_url" required
-                       #url="ngModel" [disabled]="!newSweep.is_referral">
-                <mat-icon matSuffix>public</mat-icon>
-                <mat-error *ngIf="url.invalid && (url.dirty || url.touched) && url.errors.required">
-                    url is required.
-                </mat-error>
-            </mat-form-field>
-            <mat-form-field>
-                <input matInput placeholder="Message with post" name="messageWithPost" id="messageWithPost"
-                       [(ngModel)]="newSweep.personal_refer_message" [disabled]="!newSweep.is_referral">
-            </mat-form-field>
-            <span>
-                <span>Share every </span>
-                <input matInput type="number" name="shareDuration" placeholder="XX" required [(ngModel)]="newSweep.referral_frequency"
-                       appPositive [disabled]="!newSweep.is_referral" #shareDuration="ngModel">
-                <span> days on:</span>
-            </span>
-            <div class="icons-holder">
-                <i class="fa fa-google social-icon" [ngClass]="{'logged': loggedSocialMedias.includes(SocialMedia.google)}"
-                   (click)="login(SocialMedia.google)"></i>
-                <mat-slide-toggle [checked]="newSweep.refer_google" [color]="'primary'"
-                                  [disabled]="!loggedSocialMedias.includes(SocialMedia.google)"
-                                  (change)="newSweep.refer_google = $event.checked">
-                </mat-slide-toggle>
-            </div>
-            <div class="icons-holder">
-                <i class="fa fa-facebook-f social-icon" [ngClass]="{'logged': loggedSocialMedias.includes(SocialMedia.facebook)}"
-                   (click)="login(SocialMedia.facebook)"></i>
-                <mat-slide-toggle [checked]="newSweep.refer_facebook" [color]="'primary'"
-                                  [disabled]="!loggedSocialMedias.includes(SocialMedia.facebook)"
-                                  (change)="newSweep.refer_facebook = $event.checked">
-                </mat-slide-toggle>
-            </div>
-
-            <ng-container *ngIf="shareDuration.invalid && (shareDuration.dirty || shareDuration.touched)">
-                <mat-error *ngIf="shareDuration.errors.required">
-                    Duration is required.
-                </mat-error>
-                <mat-error *ngIf="shareDuration.errors.positive">
-                    Duration must be positive.
-                </mat-error>
-            </ng-container>
+            <app-referral-sweep-data [disabled]="!newSweep.is_referral" [(personalReferMessage)]="newSweep.personal_refer_message"
+                                     [(referralUrl)]="newSweep.referral_url" [(referFacebook)]="newSweep.refer_facebook"
+                                     [(referGoogle)]="newSweep.refer_google"
+                                     [(referralFrequency)]="newSweep.referral_frequency"></app-referral-sweep-data>
         </ng-container>
         <ng-container *ngIf="step === 4">
             <mat-slide-toggle [checked]="thankReferrer" [labelPosition]="'before'" [color]="'primary'"
                               (change)="thankReferrer = $event.checked">
                 Thank referrer if I won
             </mat-slide-toggle>
-            <mat-form-field>
-                <input matInput placeholder="Referrer name" name="referrerName" id="referrerName" [(ngModel)]="newSweep.thanks_to" required
-                       #referrerName="ngModel" [disabled]="!thankReferrer">
-                <mat-error *ngIf="referrerName.invalid && (referrerName.dirty || referrerName.touched) && referrerName.errors.required">
-                    referrer name is required.
-                </mat-error>
-            </mat-form-field>
-            <mat-radio-group class="social-media-radio-group" [(ngModel)]="newSweep.thanks_social_media_id" name="referrerSocialMedia" id="referrerSocialMedia"
-                             required #referrerSocialMedia="ngModel" [disabled]="!thankReferrer">
-                <mat-radio-button class="social-media-radio-button" *ngFor="let socialMedia of socialMedias" [value]="socialMedia">
-                    {{SocialMedia[socialMedia]}}
-                </mat-radio-button>
-            </mat-radio-group>
-            <mat-error *ngIf="referrerSocialMedia.invalid && (referrerSocialMedia.dirty || referrerSocialMedia.touched) && referrerSocialMedia.errors.required">
-                social media is required.
-            </mat-error>
-
+            <app-thank-sweep-data [disabled]="!thankReferrer" [(thanksTo)]="newSweep.thanks_to"
+                                  [(thanksSocialMediaId)]="newSweep.thanks_social_media_id"></app-thank-sweep-data>
         </ng-container>
         <ng-container *ngIf="step === 5">
             <h2 mat-dialog-title>New Sweep Added!</h2>

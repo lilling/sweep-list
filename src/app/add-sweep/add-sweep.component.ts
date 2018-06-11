@@ -2,10 +2,8 @@ import { Component, Inject } from '@angular/core';
 //
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 //
-import { UsersService } from '../services/users.service';
 import { LocalStorageKeys } from '../models/local-storage-keys.enum';
 import { SocialMedia } from '../../../shared/models/social-media.enum';
-import { FacebookLoginProvider, GoogleLoginProvider, AuthService } from 'angularx-social-login';
 import { user_sweep } from '../../../shared/classes';
 import { SweepsActions } from '../state/sweeps/sweeps.actions';
 
@@ -20,18 +18,12 @@ export class AddSweepComponent {
     thankReferrer: boolean;
     SocialMedia = SocialMedia;
     socialMedias = [SocialMedia.google, SocialMedia.facebook];
-    loggedSocialMedias: SocialMedia[];
     userAccountId: number;
 
     constructor(public dialogRef: MatDialogRef<AddSweepComponent>,
-                private usersService: UsersService,
                 private sweepsActions: SweepsActions,
-                private authService: AuthService,
                 @Inject(MAT_DIALOG_DATA) public data: any) {
         this.userAccountId = +localStorage.getItem(LocalStorageKeys.loggedUser);
-        this.usersService.getUserSocialAccounts(this.userAccountId).subscribe(socialMedias => {
-            this.loggedSocialMedias = socialMedias;
-        });
         this.clear();
     }
 
@@ -97,30 +89,6 @@ export class AddSweepComponent {
                         !this.newSweep.refer_pinterest && !this.newSweep.refer_twitter));
             case 4:
                 return this.thankReferrer && (!this.newSweep.thanks_to || this.newSweep.thanks_social_media_id === undefined);
-        }
-    }
-
-    login(candidate: SocialMedia) {
-        if (this.loggedSocialMedias.includes(candidate)) {
-            return;
-        }
-        switch (candidate) {
-            case SocialMedia.facebook:
-                this.authService.signIn(FacebookLoginProvider.PROVIDER_ID).then(data => {
-                    this.usersService.login({ ...data, user_account_id: undefined, expiration_date: undefined, auth_error: undefined })
-                        .subscribe(() => {
-                            this.loggedSocialMedias.push(SocialMedia.facebook);
-                        });
-                });
-                break;
-            case SocialMedia.google:
-                this.authService.signIn(GoogleLoginProvider.PROVIDER_ID).then(data => {
-                    this.usersService.login({ ...data, user_account_id: undefined, expiration_date: undefined, auth_error: undefined })
-                        .subscribe(inner => {
-                            this.loggedSocialMedias.push(SocialMedia.google);
-                        });
-                });
-                break;
         }
     }
 }

@@ -20,4 +20,8 @@ export class SweepsService extends BaseService {
     addOrUpdateSweep(user_sweep: user_sweep): Observable<user_sweep> {
         return this.post<user_sweep>('sweep', user_sweep);
     }
+
+    deleteSweep(id: number) {
+        return this.get(`del_sweep/${id}`);
+    }
 }

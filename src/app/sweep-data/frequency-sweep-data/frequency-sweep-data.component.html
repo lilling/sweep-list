@@ -1,0 +1,24 @@
+<div class="basic-container">
+    <mat-form-field>
+        <input matInput placeholder="sweep url" name="siteUrl" id="siteUrl" [(ngModel)]="frequencyUrl" required #url="ngModel"
+               [disabled]="disabled">
+        <mat-icon matSuffix>public</mat-icon>
+        <mat-error *ngIf="url.invalid && (url.dirty || url.touched) && url.errors.required">
+            url is required.
+        </mat-error>
+    </mat-form-field>
+    <span>
+        <span>Every </span>
+        <input matInput type="number" placeholder="XX" required [disabled]="disabled" name="recurringDuration"
+               appPositive [(ngModel)]="frequencyDays" #recurringDuration="ngModel">
+        <span>days</span>
+    </span>
+    <ng-container *ngIf="recurringDuration.invalid && (recurringDuration.dirty || recurringDuration.touched)">
+        <mat-error *ngIf="recurringDuration.errors.required">
+            Duration is required.
+        </mat-error>
+        <mat-error *ngIf="recurringDuration.errors.positive">
+            Duration must be positive.
+        </mat-error>
+    </ng-container>
+</div>
