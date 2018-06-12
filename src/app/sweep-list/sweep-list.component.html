@@ -42,7 +42,7 @@
                         </ng-container>
                     </ng-container>
                     <ng-container *ngIf="sweep.data.is_referral">
-                        {{sweep.data.total_shares}} shares
+                        {{sweep.data.total_shares ? sweep.data.total_shares : 0}} shares
                     </ng-container>
                 </div>
                 <mat-icon class="edit-sweep" (click)="editSweep(sweep.data, $event)">edit</mat-icon>
