@@ -28,6 +28,9 @@ export class LoginEpics extends BaseEpic {
                 if (action.payload.fromCache) {
                     return this.usersService.getUser(+action.payload.id).pipe(
                         map(res => {
+                            res.created = new Date(res.created);
+                            res.updated = new Date(res.updated);
+                            res.user_account_id = +res.user_account_id;
                             return { type: LoginActions.LOGIN_COMPLETED, payload: res };
                         }),
                         catchError(err => {
@@ -39,6 +42,9 @@ export class LoginEpics extends BaseEpic {
                         const userAccount = { ...user, user_account_id: undefined, expiration_date: undefined, auth_error: undefined };
                         return this.usersService.login(userAccount).pipe(
                             map(res => {
+                                res.created = new Date(res.created);
+                                res.updated = new Date(res.updated);
+                                res.user_account_id = +res.user_account_id;
                                 return { type: LoginActions.LOGIN_COMPLETED, payload: res };
                             }),
                             catchError(err => {
