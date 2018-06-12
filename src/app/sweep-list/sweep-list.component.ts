@@ -26,6 +26,7 @@ export class SweepListComponent implements OnInit {
     }[];
     loggedUser: user_account;
     subscriptions: { [index: string]: Subscription };
+    Date = Date;
 
     constructor(public dialog: MatDialog,
                 private router: Router,
@@ -64,7 +65,8 @@ export class SweepListComponent implements OnInit {
         this.router.navigate(['edit', sweep.user_sweep_id]);
     }
 
-    openUrl(urlToOpen: string) {
+    openUrl(urlToOpen: string, sweepId: number) {
+        this.sweepsActions.enterSweep(sweepId);
         let url: string = '';
         if (!/^http[s]?:\/\//.test(urlToOpen)) {
             url += 'http://';
@@ -72,6 +74,11 @@ export class SweepListComponent implements OnInit {
 
         url += urlToOpen;
         window.open(url, '_blank');
+    }
+
+    getTimePassedUntilLastVisit(lastVisit: Date) {
+        const days = (Date.now() - lastVisit.getTime()) / 864e5;
+        return `Last visit was ${days > 1 ? `${days} days ago` : `today`}`;
     }
 
     private getTimeToEnd(endDate: number): string {
