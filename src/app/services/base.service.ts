@@ -8,7 +8,11 @@ export class BaseService {
         return this.http.post<T>(`${this.baseUrl}${url}`, body);
     }
 
-    get<T>(url: string) {
-        return this.http.get<T>(`${this.baseUrl}${url}`);
+    get<T>(url: string, isTextResponse = false) {
+        if (isTextResponse) {
+            return this.http.get(`${this.baseUrl}${url}`, { responseType: 'text' });
+        } else {
+            return this.http.get<T>(`${this.baseUrl}${url}`);
+        }
     }
 }

@@ -22,7 +22,7 @@ export class SweepsService extends BaseService {
     }
 
     enterSweep(sweepId: number): Observable<string> {
-        return this.get(`user_sweep_url/${sweepId}`);
+        return this.get(`user_sweep_url/${sweepId}`, true);
     }
 
     deleteSweep(id: number) {
