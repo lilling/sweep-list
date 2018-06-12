@@ -30,18 +30,10 @@
             <app-thank-sweep-data [disabled]="!thankReferrer" [(thanksTo)]="newSweep.thanks_to"
                                   [(thanksSocialMediaId)]="newSweep.thanks_social_media_id"></app-thank-sweep-data>
         </ng-container>
-        <ng-container *ngIf="step === 5">
-            <h2 mat-dialog-title>New Sweep Added!</h2>
-            <h2 mat-dialog-title>What do you want to do?</h2>
-        </ng-container>
     </form>
 </mat-dialog-content>
 <mat-dialog-actions>
     <button mat-button *ngIf="1 < step && step < 5" (click)="back()">Back</button>
     <button mat-raised-button color="primary" *ngIf="step < 4" (click)="next()" [disabled]="isNextDisabled()">Next</button>
     <button mat-raised-button color="primary" *ngIf="step === 4" (click)="addSweep()" [disabled]="isNextDisabled()">Submit</button>
-    <ng-container *ngIf="step === 5">
-        <button mat-button (click)="dialogRef.close()">I'm done</button>
-        <button mat-raised-button color="primary" (click)="clear()">Add one more</button>
-    </ng-container>
 </mat-dialog-actions>

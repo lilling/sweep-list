@@ -75,7 +75,7 @@ export class AddSweepComponent {
 
     addSweep() {
         this.sweepsActions.addSweep(this.newSweep);
-        this.next();
+        this.dialogRef.close()
     }
 
     isNextDisabled() {
