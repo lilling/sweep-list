@@ -324,7 +324,7 @@ export class UserSweepService extends BaseService<user_sweep> {
             `    ,$<frequency_url>\n` +
             `    ,$<frequency_days>\n` +
             `    ,current_timestamp\n` +
-            `    ,0\n` +
+            `    ,1\n` +
             `    ,$<is_referral>\n` +
             `    ,$<referral_url>\n` +
             `    ,0\n` +
