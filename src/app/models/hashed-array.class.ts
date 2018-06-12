@@ -28,10 +28,13 @@ export class HashedArray<T> {
         let newArray = [...this.array];
         ids.forEach(id => {
             const index = this.hash[id];
-            newArray = [
-                ...newArray.slice(0, index),
-                ...newArray.slice(index + 1, newArray.length)
-            ];
+
+            if (index) {
+                newArray = [
+                    ...newArray.slice(0, index),
+                    ...newArray.slice(index + 1, newArray.length)
+                ];
+            }
         });
 
         return new HashedArray(newArray, this.idField);
