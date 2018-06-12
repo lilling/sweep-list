@@ -77,8 +77,11 @@ export class SweepListComponent implements OnInit {
     }
 
     getTimePassedUntilLastVisit(lastVisit: Date) {
+        if (!lastVisit) {
+            return '';
+        }
         const days = (Date.now() - lastVisit.getTime()) / 864e5;
-        return `Last visit was ${days > 1 ? `${days.toFixed(0)} days ago` : `today`}`;
+        return `Last visit was ${days > 1 ? `${days.toFixed(0)} days ago` : `today`}. `;
     }
 
     private getTimeToEnd(endDate: number): string {
