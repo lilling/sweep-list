@@ -24,7 +24,11 @@ export class SweepsEpics extends BaseEpic {
         return action$.ofType(SweepsActions.GET_USER_SWEEPS)
             .switchMap(action => {
                 return this.sweepsService.getLiveSweeps(action.payload).pipe(
-                    map(res => {
+                    map((res: user_sweep[]) => {
+                        res.forEach(sweep => {
+                            sweep.last_entry_date = new Date(sweep.last_entry_date);
+                            sweep.total_entries = +sweep.total_entries;
+                        });
                         return { type: SweepsActions.GET_USER_SWEEPS_COMPLETED, payload: res };
                     }),
                     catchError(err => {
@@ -45,8 +49,21 @@ export class SweepsEpics extends BaseEpic {
                     catchError(err => {
                         return of(generateError(err, SweepsActions.ADD_SWEEP));
                     }));
-
             });
+    }
+
+    @Epic
+    enterSweep(action$: ActionsObservable<TypedAction<number>>) {
+        return action$.ofType(SweepsActions.ENTER_SWEEP)
+            .switchMap(action => {
+                return this.sweepsService.enterSweep(action.payload).pipe(
+                    map(res => {
+                        return { type: SweepsActions.ENTER_SWEEP_COMPLETED, payload: action.payload };
+                    }),
+                    catchError(err => {
+                        return of(generateError(err, SweepsActions.ENTER_SWEEP));
+                    }));
+            })
     }
 
     @Epic

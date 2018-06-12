@@ -45,7 +45,7 @@ export class SweepListComponent implements OnInit {
                 this.sweeps = sweeps.array.reduce((result, current) => {
                     const element = {
                         data: current,
-                        text: `${this.getText(new Date(current.end_date).getTime())}`
+                        text: `${this.getTimeToEnd(new Date(current.end_date).getTime())}`
                     };
                     result.push(element);
                     return result;
@@ -74,7 +74,7 @@ export class SweepListComponent implements OnInit {
         window.open(url, '_blank');
     }
 
-    private getText(endDate: number): string {
+    private getTimeToEnd(endDate: number): string {
         const diff = endDate - Date.now();
         let returnValue = '';
         const days = diff / 864e5;

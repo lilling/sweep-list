@@ -10,10 +10,10 @@ export class SweepsActions {
 
     static ADD_SWEEP = '[SweepsActions] ADD_SWEEP';
     static ADD_SWEEP_COMPLETED = '[SweepsActions] ADD_SWEEP_COMPLETED';
-    static ADD_SWEEP_FAILED = '[SweepsActions] ADD_SWEEP_FAILED';
+    static ENTER_SWEEP = '[SweepsActions] ENTER_SWEEP';
+    static ENTER_SWEEP_COMPLETED = '[SweepsActions] ENTER_SWEEP_COMPLETED';
     static GET_USER_SWEEPS = '[SweepsActions] GET_USER_SWEEPS';
     static GET_USER_SWEEPS_COMPLETED = '[SweepsActions] GET_USER_SWEEPS_COMPLETED';
-    static GET_USER_SWEEPS_FAILED = '[SweepsActions] GET_USER_SWEEPS_FAILED';
     static DELETE_SWEEP = '[SweepsActions] DELETE_SWEEP';
     static DELETE_SWEEP_COMPLETED = '[SweepsActions] DELETE_SWEEP_COMPLETED';
     static UPDATE_SWEEP = '[SweepsActions] UPDATE_SWEEP';
@@ -24,6 +24,10 @@ export class SweepsActions {
 
     getUserSweeps(user_account_id: string, lastUserSweep?: user_sweep) {
         this.ngRedux.dispatch({ type: SweepsActions.GET_USER_SWEEPS, payload: { user_account_id, lastUserSweep } });
+    }
+
+    enterSweep(sweep_id: number) {
+        this.ngRedux.dispatch({ type: SweepsActions.ENTER_SWEEP, payload: sweep_id });
     }
 
     addSweep(sweep: user_sweep) {
