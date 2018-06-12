@@ -26,6 +26,7 @@ export class SweepListComponent implements OnInit {
     }[];
     loggedUser: user_account;
     subscriptions: { [index: string]: Subscription };
+    Date = Date;
 
     constructor(public dialog: MatDialog,
                 private router: Router,
@@ -45,7 +46,7 @@ export class SweepListComponent implements OnInit {
                 this.sweeps = sweeps.array.reduce((result, current) => {
                     const element = {
                         data: current,
-                        text: `${this.getText(new Date(current.end_date).getTime())}`
+                        text: `${this.getTimeToEnd(new Date(current.end_date).getTime())}`
                     };
                     result.push(element);
                     return result;
@@ -64,7 +65,8 @@ export class SweepListComponent implements OnInit {
         this.router.navigate(['edit', sweep.user_sweep_id]);
     }
 
-    openUrl(urlToOpen: string) {
+    openUrl(urlToOpen: string, sweepId: number) {
+        this.sweepsActions.enterSweep(sweepId);
         let url: string = '';
         if (!/^http[s]?:\/\//.test(urlToOpen)) {
             url += 'http://';
@@ -74,7 +76,12 @@ export class SweepListComponent implements OnInit {
         window.open(url, '_blank');
     }
 
-    private getText(endDate: number): string {
+    getTimePassedUntilLastVisit(lastVisit: Date) {
+        const days = (Date.now() - lastVisit.getTime()) / 864e5;
+        return `Last visit was ${days > 1 ? `${days} days ago` : `today`}`;
+    }
+
+    private getTimeToEnd(endDate: number): string {
         const diff = endDate - Date.now();
         let returnValue = '';
         const days = diff / 864e5;

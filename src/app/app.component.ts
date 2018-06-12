@@ -65,7 +65,6 @@ export class AppComponent implements OnInit {
         const id = localStorage.getItem(LocalStorageKeys.loggedUser);
         if (id) {
             this.loginActions.login({id, fromCache: true});
-            this.sweepsActions.getUserSweeps(id);
         }
     }
 }

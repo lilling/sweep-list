@@ -34,6 +34,18 @@ export function sweepsReducer(state: SweepsState = INITIAL_SWEEPS_STATE, action:
                 isSweepsLoading: false
             };
         }
+        case SweepsActions.ENTER_SWEEP_COMPLETED: {
+            const old = state.sweeps.getItem(action.payload);
+            const updated = {
+                ...old,
+                last_entry_date: new Date(),
+                total_entries: old.total_entries ? old.total_entries + 1 : 1
+            };
+            return {
+                ...state,
+                sweeps: state.sweeps.updateItem(updated)
+            };
+        }
         case SweepsActions.DELETE_SWEEP_COMPLETED: {
             return {
                 ...state,

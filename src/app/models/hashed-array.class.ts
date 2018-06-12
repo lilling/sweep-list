@@ -30,7 +30,7 @@ export class HashedArray<T> {
             const index = this.hash[id];
             newArray = [
                 ...newArray.slice(0, index),
-                ...newArray.slice(index + 1, newArray.length - 1)
+                ...newArray.slice(index + 1, newArray.length)
             ];
         });
 
@@ -54,7 +54,7 @@ export class HashedArray<T> {
         newArray = [
             ...newArray.slice(0, index),
             updatedItem,
-            ...newArray.slice(index + 1, newArray.length - 1)
+            ...newArray.slice(index + 1, newArray.length)
         ];
         return new HashedArray(newArray, this.idField);
     }

@@ -23,19 +23,28 @@
     max-height: calc(100vh - 40px);
     overflow-y: auto;
 
-    .list-item-first {
-      display: flex;
-      justify-content: space-between;
-      .sweep-name {
-        font-weight: bold;
+    mat-list-item {
+      &:hover {
+        background: #dddddd75;
       }
-      .sweep-data {
+      .edit-sweep {
+        padding-left: 20px;
+      }
+      .list-item-first {
+        display: flex;
+        justify-content: space-between;
+        .sweep-name {
+          font-weight: bold;
+        }
+        .sweep-data {
+          color: gray;
+        }
+      }
+      .list-item-second {
+        display: flex;
+        justify-content: flex-end;
         color: gray;
       }
-    }
-    .list-item-second {
-      display: flex;
-      justify-content: flex-end;
     }
 
     .blocker {
