@@ -51,6 +51,15 @@ export class SweepsEpics extends BaseEpic {
             .switchMap(action => {
                 return this.sweepsService.addOrUpdateSweep(action.payload).pipe(
                     map(res => {
+                        res.last_entry_date = res.last_entry_date ? new Date(res.last_entry_date) : null;
+                        res.created = res.created ? new Date(res.created) : null;
+                        res.updated = res.updated ? new Date(res.updated) : null;
+                        res.end_date = res.end_date ? new Date(res.end_date) : null;
+                        res.total_entries = res.total_entries ? +res.total_entries : null;
+                        res.total_shares = res.total_shares ? +res.total_shares : null;
+                        res.referral_frequency = res.referral_frequency ? +res.referral_frequency : null;
+                        res.frequency_days = res.frequency_days ? +res.frequency_days : null;
+                        res.user_account_id = res.user_account_id ? +res.user_account_id : null;
                         return { type: SweepsActions.ADD_SWEEP_COMPLETED, payload: res };
                     }),
                     catchError(err => {

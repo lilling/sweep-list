@@ -34,8 +34,7 @@
                 </div>
                 <div mat-line class="list-item-second">
                     <ng-container *ngIf="sweep.data.is_frequency">
-                        {{getTimePassedUntilLastVisit(sweep.data.last_entry_date)}}{{sweep.data.total_entries ? sweep.data.total_entries : 0
-                        }} visits total.
+                        {{getTimePassedUntilLastVisit(sweep.data.last_entry_date)}}
                     </ng-container>
                     <ng-container *ngIf="sweep.data.is_referral">
                         {{sweep.data.total_shares ? sweep.data.total_shares : 0}} shares
