@@ -6,7 +6,7 @@ import { FacebookService } from './facebook.service'
 import { SocialMedia }  from '../../../shared/models/social-media.enum'
 
 export class UserAccountService extends BaseService<user_account> {
-    validProviders = ['facebook', 'google'];
+    validProviders = ['facebook'];
     FacebookService: FacebookService;
 
     constructor() {
