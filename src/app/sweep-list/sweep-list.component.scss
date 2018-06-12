@@ -27,6 +27,9 @@
       &:hover {
         background: #dddddd75;
       }
+      &.deleted {
+        text-decoration: line-through;
+      }
       .edit-sweep {
         padding-left: 20px;
       }

@@ -26,7 +26,9 @@
         </ng-container>
 
         <mat-list>
-            <mat-list-item class="clickable" (click)="openUrl(sweep.data.frequency_url, sweep.data.user_sweep_id)" *ngFor="let sweep of sweeps">
+            <mat-list-item *ngFor="let sweep of sweeps"
+                           class="clickable" [ngClass]="{'deleted': sweep.data.deleted_yn}"
+                           (click)="openUrl(sweep.data.frequency_url, sweep.data.user_sweep_id)">
                 <mat-icon matListIcon fontSet="fa" fontIcon="fa-gift"></mat-icon>
                 <div mat-line class="list-item-first">
                     <span class="sweep-name"> {{sweep.data.sweep_name}}</span>
