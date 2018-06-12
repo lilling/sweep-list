@@ -1,5 +1,5 @@
 import { Get, Post, Body, Controller, Param } from '@nestjs/common';
-import { user_sweep, Win, Search } from '../../../shared/classes';
+import { user_sweep, Win, Search, URL } from '../../../shared/classes';
 import { UserSweepService } from '../services/user_sweep.service';
 
 @Controller('api/sweep')
@@ -40,7 +40,7 @@ export class SweepController {
     }
 
     @Get('user_sweep_url/:id')
-    GetSweepURL(@Param() params): Promise<string> {
+    GetSweepURL(@Param() params): Promise<URL> {
         return this.UserSweepService.GetSweepURL(params.id);
     }
 

@@ -21,8 +21,8 @@ export class SweepsService extends BaseService {
         return this.post<user_sweep>('sweep', user_sweep);
     }
 
-    enterSweep(sweepId: number): Observable<string> {
-        return this.get(`user_sweep_url/${sweepId}`, true);
+    enterSweep(sweepId: number): Observable<URL> {
+        return this.get(`user_sweep_url/${sweepId}`);
     }
 
     deleteSweep(id: number) {

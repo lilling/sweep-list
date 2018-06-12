@@ -130,7 +130,7 @@ export class UserSweepService extends BaseService<user_sweep> {
         return db.manyOrNone(q, { id });
     }
 
-    async GetSweepURL(id: number): Promise<string> {
+    async GetSweepURL(id: number): Promise<URL> {
         const db = DbGetter.getDB();
         const q =
             `SELECT user_sweep_id\n` +
@@ -139,7 +139,7 @@ export class UserSweepService extends BaseService<user_sweep> {
             ` WHERE user_sweep_id = $<id^>`;
         const result = await db.oneOrNone<Promise<URL>>(q, { id });
         this.ManageEntry([id]);
-        return result.sweep_url;
+        return result;
     }
 
     async GetSweepURLs(id: number): Promise<string[]> {
