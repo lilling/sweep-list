@@ -2,7 +2,6 @@
     <mat-form-field>
         <input matInput placeholder="My Url" name="shareSiteUrl" id="shareSiteUrl" [(ngModel)]="referralUrl" required
                #url="ngModel" [disabled]="disabled">
-        <mat-icon matSuffix>public</mat-icon>
         <mat-error *ngIf="url.invalid && (url.dirty || url.touched) && url.errors.required">
             url is required.
         </mat-error>
