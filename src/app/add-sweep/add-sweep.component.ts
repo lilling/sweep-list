@@ -19,6 +19,10 @@ export class AddSweepComponent {
     SocialMedia = SocialMedia;
     socialMedias = [SocialMedia.google, SocialMedia.facebook];
     userAccountId: number;
+    step1Valid: boolean;
+    step2Valid: boolean;
+    step3Valid: boolean;
+    step4Valid: boolean;
 
     constructor(public dialogRef: MatDialogRef<AddSweepComponent>,
                 private sweepsActions: SweepsActions,
@@ -75,23 +79,19 @@ export class AddSweepComponent {
 
     addSweep() {
         this.sweepsActions.addSweep(this.newSweep);
-        this.dialogRef.close()
+        this.dialogRef.close();
     }
 
     isNextDisabled() {
         switch (this.step) {
             case 1:
-                return !this.newSweep.end_date || !this.newSweep.sweep_name;
+                return !this.step1Valid;
             case 2:
-                return this.newSweep.is_frequency &&
-                    (!this.newSweep.frequency_days || !this.newSweep.frequency_url || this.newSweep.frequency_days < 0);
+                return this.newSweep.is_frequency && !this.step2Valid;
             case 3:
-                return this.newSweep.is_referral &&
-                    (!this.newSweep.referral_frequency || !this.newSweep.referral_url || this.newSweep.referral_frequency < 0 ||
-                    (!this.newSweep.refer_google && !this.newSweep.refer_facebook && !this.newSweep.refer_linkedin &&
-                        !this.newSweep.refer_pinterest && !this.newSweep.refer_twitter));
+                return this.newSweep.is_referral && !this.step3Valid;
             case 4:
-                return this.thankReferrer && (!this.newSweep.thanks_to || this.newSweep.thanks_social_media_id === undefined);
+                return this.thankReferrer && !this.step4Valid;
         }
     }
 }

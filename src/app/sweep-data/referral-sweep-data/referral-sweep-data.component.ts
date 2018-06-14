@@ -19,6 +19,7 @@ export class ReferralSweepDataComponent {
     @Output() referralFrequencyChange = new EventEmitter();
     @Output() referFacebookChange = new EventEmitter();
     @Output() referGoogleChange = new EventEmitter();
+    @Output() isValidChange = new EventEmitter<boolean>();
     SocialMedia = SocialMedia;
     private url: string;
     private message: string;
@@ -32,6 +33,7 @@ export class ReferralSweepDataComponent {
 
     set referGoogle(val: boolean) {
         this.google = val;
+        this.changeIsValid();
         this.referGoogleChange.emit(this.google);
     }
 
@@ -41,6 +43,7 @@ export class ReferralSweepDataComponent {
 
     set referFacebook(val: boolean) {
         this.facebook = val;
+        this.changeIsValid();
         this.referFacebookChange.emit(this.facebook);
     }
 
@@ -50,6 +53,7 @@ export class ReferralSweepDataComponent {
 
     set referralUrl(val: string) {
         this.url = val;
+        this.changeIsValid();
         this.referralUrlChange.emit(this.url);
     }
 
@@ -59,6 +63,7 @@ export class ReferralSweepDataComponent {
 
     set personalReferMessage(val: string) {
         this.message = val;
+        this.changeIsValid();
         this.personalReferMessageChange.emit(this.message);
     }
 
@@ -68,6 +73,7 @@ export class ReferralSweepDataComponent {
 
     set referralFrequency(val: number) {
         this.frequency = val;
+        this.changeIsValid();
         this.referralFrequencyChange.emit(this.frequency);
     }
 
@@ -100,5 +106,9 @@ export class ReferralSweepDataComponent {
                 });
                 break;
         }
+    }
+
+    private changeIsValid() {
+        this.isValidChange.emit((this.facebook || this.google) && this.frequency > 0 && !!this.url);
     }
 }

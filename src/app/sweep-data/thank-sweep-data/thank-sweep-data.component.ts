@@ -11,6 +11,7 @@ export class ThankSweepDataComponent {
     @Input() disabled: boolean;
     @Output() thanksSocialMediaIdChange = new EventEmitter();
     @Output() thankToChange = new EventEmitter();
+    @Output() isValidChange = new EventEmitter<boolean>();
     SocialMedia = SocialMedia;
     socialMedias = [SocialMedia.google, SocialMedia.facebook];
     private thanks_To: string;
@@ -22,6 +23,7 @@ export class ThankSweepDataComponent {
 
     set thanksTo(val: string) {
         this.thanks_To = val;
+        this.changeIsValid();
         this.thankToChange.emit(this.thanks_To);
     }
 
@@ -31,6 +33,11 @@ export class ThankSweepDataComponent {
 
     set thanksSocialMediaId(val: number) {
         this.selectedSocialMedia = val;
+        this.changeIsValid();
         this.thanksSocialMediaIdChange.emit(this.selectedSocialMedia);
+    }
+
+    private changeIsValid() {
+        this.isValidChange.emit(!!this.thanksTo && ![null, undefined].includes(this.thanksSocialMediaId) );
     }
 }

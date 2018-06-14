@@ -20,6 +20,10 @@ export class EditSweepComponent implements OnInit {
     sweep: user_sweep;
     SocialMedia = SocialMedia;
     thankReferrer: boolean;
+    step1Valid: boolean;
+    step2Valid: boolean;
+    step3Valid: boolean;
+    step4Valid: boolean;
 
     constructor(private ngRedux: NgRedux<AppState>,
                 private sweepsActions: SweepsActions,
@@ -65,19 +69,10 @@ export class EditSweepComponent implements OnInit {
     }
 
     canSaveSweep() {
-        if (this.thankReferrer && (!this.sweep.thanks_to || !this.sweep.thanks_social_media_id)) {
+        if (!this.step1Valid || (this.sweep.is_frequency && !this.step2Valid) ||
+            (this.sweep.is_referral && !this.step3Valid) || (this.thankReferrer && !this.step4Valid)) {
             return false;
         }
-        if (this.sweep.is_referral && (!this.sweep.referral_url || !this.sweep.referral_frequency || (!this.sweep.refer_facebook && !this.sweep.refer_google))) {
-            return false;
-        }
-        if (this.sweep.is_frequency && (!this.sweep.frequency_days || !this.sweep.frequency_url)) {
-            return false;
-        }
-        if (!this.sweep.sweep_name || !this.sweep.end_date) {
-            return false;
-        }
-
         return true;
     }
 

@@ -2,14 +2,16 @@
     <form class="form" #addSweepForm="ngForm">
         <ng-container *ngIf="step === 1">
             <h2 mat-dialog-title>New Sweep</h2>
-            <app-basic-sweep-data [(sweepName)]="newSweep.sweep_name" [(sweepEndDate)]="newSweep.end_date"></app-basic-sweep-data>
+            <app-basic-sweep-data (isValidChange)="step1Valid = $event" [(sweepName)]="newSweep.sweep_name"
+                                  [(sweepEndDate)]="newSweep.end_date"></app-basic-sweep-data>
         </ng-container>
         <ng-container *ngIf="step === 2">
             <mat-slide-toggle [checked]="newSweep.is_frequency" [labelPosition]="'before'" [color]="'primary'"
                               (change)="newSweep.is_frequency = $event.checked">
                 Recurring Entry
             </mat-slide-toggle>
-            <app-frequency-sweep-data [disabled]="!newSweep.is_frequency" [(frequencyUrl)]="newSweep.frequency_url"
+            <app-frequency-sweep-data (isValidChange)="step2Valid = $event" [disabled]="!newSweep.is_frequency"
+                                      [(frequencyUrl)]="newSweep.frequency_url"
                                       [(frequencyDays)]="newSweep.frequency_days"></app-frequency-sweep-data>
         </ng-container>
         <ng-container *ngIf="step === 3">
@@ -17,7 +19,8 @@
                               (change)="newSweep.is_referral = $event.checked">
                 Share On My Social Media
             </mat-slide-toggle>
-            <app-referral-sweep-data [disabled]="!newSweep.is_referral" [(personalReferMessage)]="newSweep.personal_refer_message"
+            <app-referral-sweep-data (isValidChange)="step3Valid = $event" [disabled]="!newSweep.is_referral"
+                                     [(personalReferMessage)]="newSweep.personal_refer_message"
                                      [(referralUrl)]="newSweep.referral_url" [(referFacebook)]="newSweep.refer_facebook"
                                      [(referGoogle)]="newSweep.refer_google"
                                      [(referralFrequency)]="newSweep.referral_frequency"></app-referral-sweep-data>
@@ -27,13 +30,13 @@
                               (change)="thankReferrer = $event.checked">
                 Thank referrer if I won
             </mat-slide-toggle>
-            <app-thank-sweep-data [disabled]="!thankReferrer" [(thanksTo)]="newSweep.thanks_to"
+            <app-thank-sweep-data (isValidChange)="step4Valid = $event" [disabled]="!thankReferrer" [(thanksTo)]="newSweep.thanks_to"
                                   [(thanksSocialMediaId)]="newSweep.thanks_social_media_id"></app-thank-sweep-data>
         </ng-container>
     </form>
 </mat-dialog-content>
 <mat-dialog-actions>
-    <button mat-button *ngIf="1 < step && step < 5" (click)="back()">Back</button>
-    <button mat-raised-button color="primary" *ngIf="step < 4" (click)="next()" [disabled]="isNextDisabled()">Next</button>
-    <button mat-raised-button color="primary" *ngIf="step === 4" (click)="addSweep()" [disabled]="isNextDisabled()">Submit</button>
+    <button mat-button *ngIf="1 < step" (click)="back()">Back</button>
+    <button mat-raised-button color="primary" (click)="step === 4 ? addSweep() : next()" [disabled]="isNextDisabled()">
+        {{step === 4 ? 'Submit' : 'Next'}}</button>
 </mat-dialog-actions>
