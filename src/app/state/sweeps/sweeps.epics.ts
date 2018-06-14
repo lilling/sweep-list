@@ -26,7 +26,7 @@ export class SweepsEpics extends BaseEpic {
                 return this.sweepsService.getLiveSweeps(action.payload).pipe(
                     map((res: user_sweep[]) => {
                         res.forEach(sweep => {
-                            this.fixSweepTyes(sweep);
+                            this.fixSweepTypes(sweep);
                         });
                         return { type: SweepsActions.GET_USER_SWEEPS_COMPLETED, payload: res };
                     }),
@@ -43,7 +43,7 @@ export class SweepsEpics extends BaseEpic {
             .switchMap(action => {
                 return this.sweepsService.addOrUpdateSweep(action.payload).pipe(
                     map(res => {
-                        this.fixSweepTyes(res);
+                        this.fixSweepTypes(res);
                         return { type: SweepsActions.ADD_SWEEP_COMPLETED, payload: res };
                     }),
                     catchError(err => {
@@ -87,7 +87,7 @@ export class SweepsEpics extends BaseEpic {
             .switchMap(action => {
                 return this.sweepsService.addOrUpdateSweep(action.payload).pipe(
                     map(res => {
-                        this.fixSweepTyes(res);
+                        this.fixSweepTypes(res);
                         return { type: SweepsActions.UPDATE_SWEEP_COMPLETED, payload: res };
                     }),
                     catchError(err => {
@@ -97,7 +97,7 @@ export class SweepsEpics extends BaseEpic {
             });
     }
 
-    private fixSweepTyes(sweep: user_sweep) {
+    private fixSweepTypes(sweep: user_sweep) {
         sweep.last_entry_date = sweep.last_entry_date ? new Date(sweep.last_entry_date) : null;
         sweep.created = sweep.created ? new Date(sweep.created) : null;
         sweep.updated = sweep.updated ? new Date(sweep.updated) : null;
