@@ -1,7 +1,6 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { SocialMedia } from '../../../../shared/models/social-media.enum';
 import { UsersService } from '../../services/users.service';
-import { AuthService } from 'angularx-social-login';
 import { LocalStorageKeys } from '../../models/local-storage-keys.enum';
 
 @Component({
