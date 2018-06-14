@@ -25,18 +25,8 @@ export class HashedArray<T> {
     }
 
     deleteItems(ids: any[]): HashedArray<T> {
-        let newArray = [...this.array];
-        ids.forEach(id => {
-            const index = this.hash[id];
-
-            if (index) {
-                newArray = [
-                    ...newArray.slice(0, index),
-                    ...newArray.slice(index + 1, newArray.length)
-                ];
-            }
-        });
-
+        const indexesToRemove = ids.map(id => this.hash[id]);
+        const newArray = this.array.filter((item, index) => !indexesToRemove.includes(index));
         return new HashedArray(newArray, this.idField);
     }
 
