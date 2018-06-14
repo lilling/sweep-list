@@ -1,5 +1,8 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { SocialMedia } from '../../../../shared/models/social-media.enum';
+import { UsersService } from '../../services/users.service';
+import { AuthService } from 'angularx-social-login';
+import { LocalStorageKeys } from '../../models/local-storage-keys.enum';
 
 @Component({
     selector: 'app-thank-sweep-data',
@@ -14,6 +17,7 @@ export class ThankSweepDataComponent {
     @Output() isValidChange = new EventEmitter<boolean>();
     SocialMedia = SocialMedia;
     socialMedias = [SocialMedia.google, SocialMedia.facebook];
+    loggedSocialMedias: SocialMedia[];
     private thanks_To: string;
     private selectedSocialMedia: number;
 
@@ -37,7 +41,15 @@ export class ThankSweepDataComponent {
         this.thanksSocialMediaIdChange.emit(this.selectedSocialMedia);
     }
 
+    constructor(private usersService: UsersService) {
+        const userAccountId = +localStorage.getItem(LocalStorageKeys.loggedUser);
+        this.usersService.getUserSocialAccounts(userAccountId).subscribe(socialMedias => {
+            this.loggedSocialMedias = socialMedias;
+        });
+    }
+
     private changeIsValid() {
         this.isValidChange.emit(!!this.thanksTo && ![null, undefined].includes(this.thanksSocialMediaId) );
     }
+
 }
