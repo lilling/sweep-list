@@ -23,7 +23,7 @@ export class SweepsEpics extends BaseEpic {
     getUserSweeps(action$: ActionsObservable<TypedAction<{user_account_id: string, lastUserSweep?: user_sweep}>>) {
         return action$.ofType(SweepsActions.GET_USER_SWEEPS)
             .switchMap(action => {
-                return this.sweepsService.getLiveSweeps(action.payload).pipe(
+                return this.sweepsService.getActiveSweeps(action.payload).pipe(
                     map((res: user_sweep[]) => {
                         res.forEach(sweep => {
                             this.fixSweepTypes(sweep);
