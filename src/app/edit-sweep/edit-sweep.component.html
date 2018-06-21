@@ -20,7 +20,7 @@
     </div>
     <div class="body">
         <form class="form" #editSweepForm="ngForm">
-            <app-basic-sweep-data (isValidChange)="step1Valid = $event" [(sweepName)]="sweep.sweep_name"
+            <app-basic-sweep-data (isValidChange)="step1Valid = $event" [(sweepName)]="sweep.sweep_name" [(url)]="sweep.sweep_url"
                                   [(sweepEndDate)]="sweep.end_date"></app-basic-sweep-data>
 
             <mat-accordion [multi]="true">
@@ -32,7 +32,6 @@
                         </mat-slide-toggle>
                     </mat-expansion-panel-header>
                     <app-frequency-sweep-data (isValidChange)="step2Valid = $event" [disabled]="!sweep.is_frequency"
-                                              [(frequencyUrl)]="sweep.frequency_url"
                                               [(frequencyDays)]="sweep.frequency_days"></app-frequency-sweep-data>
                 </mat-expansion-panel>
                 <mat-expansion-panel #referralPanel [disabled]="!sweep.is_referral">
@@ -44,8 +43,7 @@
                     </mat-expansion-panel-header>
                     <app-referral-sweep-data (isValidChange)="step3Valid = $event" [disabled]="!sweep.is_referral"
                                              [(personalReferMessage)]="sweep.personal_refer_message"
-                                             [(referralUrl)]="sweep.referral_url" [(referFacebook)]="sweep.refer_facebook"
-                                             [(referGoogle)]="sweep.refer_google"
+                                             [(referFacebook)]="sweep.refer_facebook" [(referGoogle)]="sweep.refer_google"
                                              [(referralFrequency)]="sweep.referral_frequency"></app-referral-sweep-data>
                 </mat-expansion-panel>
                 <mat-expansion-panel #thankPanel [disabled]="!thankReferrer">

@@ -9,6 +9,8 @@ export class BasicSweepDataComponent {
 
     private name: string;
     private endDate: Date;
+    private _url: string;
+
     @Output() isValidChange = new EventEmitter<boolean>();
     now = new Date();
 
@@ -25,11 +27,19 @@ export class BasicSweepDataComponent {
         this.sweepEndDateChange.emit(this.endDate);
     }
 
+    @Input() get url() { return this._url; }
+    set url(val: string) {
+        this._url = val;
+        this.changeIsValid();
+        this.sweepEndDateChange.emit(this._url);
+    }
+
     @Output() sweepNameChange = new EventEmitter();
     @Output() sweepEndDateChange = new EventEmitter();
+    @Output() urlChange = new EventEmitter();
 
     private changeIsValid() {
-        this.isValidChange.emit(!!this.name && this.endDate && this.endDate > this.now);
+        this.isValidChange.emit(!!this.name && !!this.url && this.endDate && this.endDate > this.now);
     }
 }
 
