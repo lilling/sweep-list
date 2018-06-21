@@ -11,27 +11,27 @@ export class SweepController {
 
     @Get('user_sweep/:id')
     GetSweep(@Param() params): Promise<user_sweep> {
-        return this.UserSweepService.getItem(params.id, 'user_sweep_id');
+        return this.UserSweepService.getItem(params.id, `user_sweep_id`);
     }
 
     @Post('todo_user_sweeps')
     GetTodoSweeps(@Body() user_sweep_search: Search): Promise<user_sweep[]> {
-        return this.UserSweepService.GetSweeps(user_sweep_search, 'todo');
+        return this.UserSweepService.GetSweeps(user_sweep_search, `todo`);
     }
 
-    @Post('live_user_sweeps')
-    GetLiveSweeps(@Body() user_sweep_search: Search): Promise<user_sweep[]> {
-        return this.UserSweepService.GetSweeps(user_sweep_search, 'live');
+    @Post('active_user_sweeps')
+    GetActiveSweeps(@Body() user_sweep_search: Search): Promise<user_sweep[]> {
+        return this.UserSweepService.GetSweeps(user_sweep_search, `active`);
     }
 
     @Post('ended_user_sweeps')
     GetEndedSweeps(@Body() user_sweep_search: Search): Promise<user_sweep[]> {
-        return this.UserSweepService.GetSweeps(user_sweep_search, 'ended');
+        return this.UserSweepService.GetSweeps(user_sweep_search, `ended`);
     }
 
     @Post('won_user_sweeps')
     GetWonSweepsY(@Body() user_sweep_search: Search): Promise<user_sweep[]> {
-        return this.UserSweepService.GetSweeps(user_sweep_search, 'won');
+        return this.UserSweepService.GetSweeps(user_sweep_search, `won`);
     }
 
     @Get('user_wins/:id')
@@ -51,22 +51,22 @@ export class SweepController {
 
     @Get('del_sweep/:id')
     DelSweep(@Param() params): Promise<user_sweep> {
-        return this.UserSweepService.ToggleSweepState('deleted_yn', params.id, true);
+        return this.UserSweepService.ToggleSweepState(`deleted_yn`, params.id, true);
     }
 
     @Get('undel_sweep/:id')
     UndelSweep(@Param() params): Promise<user_sweep> {
-        return this.UserSweepService.ToggleSweepState('deleted_yn', params.id, false);
+        return this.UserSweepService.ToggleSweepState(`deleted_yn`, params.id, false);
     }
 
     @Get('win_sweep/:id')
     WinSweep(@Param() params): Promise<user_sweep> {
-        return this.UserSweepService.ToggleSweepState('won_yn', params.id, true);
+        return this.UserSweepService.ToggleSweepState(`won_yn`, params.id, true);
     }
 
     @Get('unwin_sweep/:id')
     UnwinSweep(@Param() params): Promise<user_sweep> {
-        return this.UserSweepService.ToggleSweepState('won_yn', params.id, false);
+        return this.UserSweepService.ToggleSweepState(`won_yn`, params.id, false);
     }
 
     @Post('sweep')

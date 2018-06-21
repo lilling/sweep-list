@@ -53,7 +53,7 @@ export class UserSweepService extends BaseService<user_sweep> {
                 order_by = `ORDER BY frequency_days*24*60*60 - ((EXTRACT(EPOCH FROM current_timestamp) - EXTRACT(EPOCH FROM last_entry_date))) nulls first, end_date, user_sweep_id\n`;
                 break;
             }
-            case `live`: {
+            case `active`: {
                 if (user_sweep_search.lastUserSweep) {
                     lastSweep = (user_sweep_search.lastUserSweep.deleted_yn ? 2 : 1).toString()
                             + (user_sweep_search.lastUserSweep.end_date ? new Date(user_sweep_search.lastUserSweep.end_date).getTime().toString() : `0000000000000`)
@@ -257,8 +257,8 @@ export class UserSweepService extends BaseService<user_sweep> {
             ` WHERE user_account_id = $<user_account_id^>\n` +
             `   AND deleted_yn = false\n` +
             `   AND end_date >= now();`;
-        const liveSweeps = await db.oneOrNone(q, new_user_sweep);
-        // prevent sweep update to live if # of sweeps exceeded max
+        const activeSweeps = await db.oneOrNone(q, new_user_sweep);
+        // prevent sweep update to active if # of sweeps exceeded max
         if (new_user_sweep.user_sweep_id) { // existing sweep - update
             const existing_user_sweep = await this.getItem(new_user_sweep.user_sweep_id, `user_sweep_id`);
             if ((existing_user_sweep.deleted_yn && !new_user_sweep.deleted_yn) ||
@@ -267,13 +267,13 @@ export class UserSweepService extends BaseService<user_sweep> {
                 sweepRevive = 1;
             }
         }
-        if (liveSweeps){
-            // live sweeps are calculated before the insert, but update is taken into account => add 1 to max sweeps when updating
-            if ((Number(liveSweeps.daily_sweeps) + sweepRevive) >= (Number(paymentPackage.max_daily_sweeps) + Number(new_user_sweep.user_sweep_id ? 1 : 0))){
+        if (activeSweeps){
+            // active sweeps are calculated before the insert, but update is taken into account => add 1 to max sweeps when updating
+            if ((Number(activeSweeps.daily_sweeps) + sweepRevive) >= (Number(paymentPackage.max_daily_sweeps) + Number(new_user_sweep.user_sweep_id ? 1 : 0))){
                 throw new HttpException(`User daily sweeps reached plan maxinum (` + paymentPackage.max_daily_sweeps.toString() + `)`, HttpStatus.FORBIDDEN);
             }
-            if ((Number(liveSweeps.monthly_sweeps) + sweepRevive) >= paymentPackage.max_monthly_live_sweeps){
-                throw new HttpException(`User monthly live sweeps reached plan maxinum (` + paymentPackage.max_monthly_live_sweeps.toString() + `)`, HttpStatus.FORBIDDEN);
+            if ((Number(activeSweeps.monthly_sweeps) + sweepRevive) >= paymentPackage.max_monthly_active_sweeps){
+                throw new HttpException(`User monthly active sweeps reached plan maxinum (` + paymentPackage.max_monthly_active_sweeps.toString() + `)`, HttpStatus.FORBIDDEN);
             }
         }
         return true;
