@@ -20,7 +20,7 @@
     </div>
     <div class="body">
         <form class="form" #editSweepForm="ngForm">
-            <app-basic-sweep-data (isValidChange)="step1Valid = $event" [(sweepName)]="sweep.sweep_name" [(url)]="sweep.sweep_url"
+            <app-basic-sweep-data (isValidChange)="step1Valid = $event" [(sweepName)]="sweep.sweep_name" [(sweepUrl)]="sweep.sweep_url"
                                   [(sweepEndDate)]="sweep.end_date"></app-basic-sweep-data>
 
             <span>Recurring entry</span>

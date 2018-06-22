@@ -27,19 +27,19 @@ export class BasicSweepDataComponent {
         this.sweepEndDateChange.emit(this.endDate);
     }
 
-    @Input() get url() { return this._url; }
-    set url(val: string) {
+    @Input() get sweepUrl() { return this._url; }
+    set sweepUrl(val: string) {
         this._url = val;
         this.changeIsValid();
-        this.sweepEndDateChange.emit(this._url);
+        this.sweepUrlChange.emit(this._url);
     }
 
     @Output() sweepNameChange = new EventEmitter();
     @Output() sweepEndDateChange = new EventEmitter();
-    @Output() urlChange = new EventEmitter();
+    @Output() sweepUrlChange = new EventEmitter();
 
     private changeIsValid() {
-        this.isValidChange.emit(!!this.name && !!this.url && this.endDate && this.endDate > this.now);
+        this.isValidChange.emit(!!this.name && !!this.sweepUrl && this.endDate && this.endDate > this.now);
     }
 }
 

@@ -3,7 +3,7 @@
         <ng-container *ngIf="step === 1">
             <h2 mat-dialog-title>New Sweep</h2>
             <app-basic-sweep-data (isValidChange)="step1Valid = $event" [(sweepName)]="newSweep.sweep_name"
-                                  [(sweepEndDate)]="newSweep.end_date" [(url)]="newSweep.sweep_url"></app-basic-sweep-data>
+                                  [(sweepEndDate)]="newSweep.end_date" [(sweepUrl)]="newSweep.sweep_url"></app-basic-sweep-data>
         </ng-container>
         <ng-container *ngIf="step === 2">
             <mat-slide-toggle [checked]="newSweep.is_frequency" [labelPosition]="'before'" [color]="'primary'"

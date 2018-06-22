@@ -6,9 +6,9 @@
         </mat-error>
     </mat-form-field>
     <mat-form-field>
-        <input matInput placeholder="sweep url" name="url" id="url" [(ngModel)]="url" required #url="ngModel">
-        <mat-error *ngIf="url.invalid && (url.dirty || url.touched) && url.errors.required">
-            Name is required.
+        <input matInput placeholder="sweep url" name="surl" id="surl" [(ngModel)]="sweepUrl" required #surl="ngModel">
+        <mat-error *ngIf="surl.invalid && (surl.dirty || surl.touched) && surl.errors.required">
+            url is required.
         </mat-error>
     </mat-form-field>
     <mat-form-field>
