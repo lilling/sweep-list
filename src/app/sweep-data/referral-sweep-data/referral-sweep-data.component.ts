@@ -14,14 +14,12 @@ export class ReferralSweepDataComponent {
     userAccountId: number;
     loggedSocialMedias: SocialMedia[];
     @Input() disabled: boolean;
-    @Output() referralUrlChange = new EventEmitter();
     @Output() personalReferMessageChange = new EventEmitter();
     @Output() referralFrequencyChange = new EventEmitter();
     @Output() referFacebookChange = new EventEmitter();
     @Output() referGoogleChange = new EventEmitter();
     @Output() isValidChange = new EventEmitter<boolean>();
     SocialMedia = SocialMedia;
-    private url: string;
     private message: string;
     private frequency: number;
     private google: boolean;
@@ -45,16 +43,6 @@ export class ReferralSweepDataComponent {
         this.facebook = val;
         this.changeIsValid();
         this.referFacebookChange.emit(this.facebook);
-    }
-
-    @Input() get referralUrl() {
-        return this.url;
-    }
-
-    set referralUrl(val: string) {
-        this.url = val;
-        this.changeIsValid();
-        this.referralUrlChange.emit(this.url);
     }
 
     @Input() get personalReferMessage() {
@@ -109,6 +97,6 @@ export class ReferralSweepDataComponent {
     }
 
     private changeIsValid() {
-        this.isValidChange.emit((this.facebook || this.google) && this.frequency > 0 && !!this.url);
+        this.isValidChange.emit((this.facebook || this.google) && this.frequency > 0);
     }
 }

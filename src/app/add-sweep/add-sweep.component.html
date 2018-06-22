@@ -3,7 +3,7 @@
         <ng-container *ngIf="step === 1">
             <h2 mat-dialog-title>New Sweep</h2>
             <app-basic-sweep-data (isValidChange)="step1Valid = $event" [(sweepName)]="newSweep.sweep_name"
-                                  [(sweepEndDate)]="newSweep.end_date"></app-basic-sweep-data>
+                                  [(sweepEndDate)]="newSweep.end_date" [(sweepUrl)]="newSweep.sweep_url"></app-basic-sweep-data>
         </ng-container>
         <ng-container *ngIf="step === 2">
             <mat-slide-toggle [checked]="newSweep.is_frequency" [labelPosition]="'before'" [color]="'primary'"
@@ -11,7 +11,6 @@
                 Recurring Entry
             </mat-slide-toggle>
             <app-frequency-sweep-data (isValidChange)="step2Valid = $event" [disabled]="!newSweep.is_frequency"
-                                      [(frequencyUrl)]="newSweep.frequency_url"
                                       [(frequencyDays)]="newSweep.frequency_days"></app-frequency-sweep-data>
         </ng-container>
         <ng-container *ngIf="step === 3">
@@ -21,8 +20,7 @@
             </mat-slide-toggle>
             <app-referral-sweep-data (isValidChange)="step3Valid = $event" [disabled]="!newSweep.is_referral"
                                      [(personalReferMessage)]="newSweep.personal_refer_message"
-                                     [(referralUrl)]="newSweep.referral_url" [(referFacebook)]="newSweep.refer_facebook"
-                                     [(referGoogle)]="newSweep.refer_google"
+                                     [(referFacebook)]="newSweep.refer_facebook" [(referGoogle)]="newSweep.refer_google"
                                      [(referralFrequency)]="newSweep.referral_frequency"></app-referral-sweep-data>
         </ng-container>
         <ng-container *ngIf="step === 4">

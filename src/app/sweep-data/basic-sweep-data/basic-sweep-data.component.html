@@ -6,6 +6,12 @@
         </mat-error>
     </mat-form-field>
     <mat-form-field>
+        <input matInput placeholder="sweep url" name="surl" id="surl" [(ngModel)]="sweepUrl" required #surl="ngModel">
+        <mat-error *ngIf="surl.invalid && (surl.dirty || surl.touched) && surl.errors.required">
+            url is required.
+        </mat-error>
+    </mat-form-field>
+    <mat-form-field>
         <input matInput [min]="now" [matDatepicker]="picker" placeholder="End date" id="endDate" name="endDate" [(ngModel)]="sweepEndDate"
                required #endDate="ngModel">
         <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
