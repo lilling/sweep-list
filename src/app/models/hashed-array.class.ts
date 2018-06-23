@@ -9,15 +9,17 @@ export class HashedArray<T> {
         });
     }
 
-    addItem(item: T): HashedArray<T> {
-        return this.addItems([item]);
+    addItem(item: T, sortFunction?: (a, b) => number): HashedArray<T> {
+        return this.addItems([item], sortFunction);
     }
 
-    addItems(items: T[]): HashedArray<T> {
-        return new HashedArray([
-            ...this.array,
-            ...items
-        ], this.idField);
+    addItems(items: T[], sortFunction?: (a, b) => number): HashedArray<T> {
+        let newArray = [...this.array, ...items];
+        if (sortFunction) {
+            newArray.sort((a, b) => sortFunction(a, b));
+        }
+
+        return new HashedArray(newArray, this.idField);
     }
 
     deleteItem(id: any): HashedArray<T> {
