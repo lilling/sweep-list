@@ -12,15 +12,6 @@ export class UserSweepService extends BaseService<user_sweep> {
         this.PaymentService = new PaymentService();
     }
 
-    Pad(direction: string, str: string, len: number, ch = `.`): string {
-        len = len - str.length + 1;
-        return len > 0 ?
-            direction == 'left' ?
-                new Array(len).join(ch) + str
-                : str + new Array(len).join(ch)
-            : str;
-    }
-
     async GetSweeps(user_sweep_search: Search, status: string): Promise<user_sweep[]> {
         const db = DbGetter.getDB();
         var lastSweep = ``;
@@ -29,82 +20,30 @@ export class UserSweepService extends BaseService<user_sweep> {
             `  FROM sweepimp.user_sweep\n` +
             ` WHERE user_account_id = $<user_account_id^>\n`;
         let where = ``;
-        //let filter = ``;
         if (user_sweep_search.nameSearch) {
             where = where + `   AND upper(sweep_name) like '%' || upper($<nameSearch>) || '%'\n`;
         }
         let order_by = ``;
         switch (status) {
-            case `todo`: {
-                if (user_sweep_search.lastUserSweep) {
-                    lastSweep = (user_sweep_search.lastUserSweep.last_entry_date ? (user_sweep_search.lastUserSweep.frequency_days*24*60 - Math.floor((new Date().getTime() - new Date(user_sweep_search.lastUserSweep.last_entry_date).getTime())/60000)).toString() : `0`)
-                            + (user_sweep_search.lastUserSweep.end_date ? new Date(user_sweep_search.lastUserSweep.end_date).getTime().toString() : `0000000000000`)
-                            + this.Pad(`left`, (user_sweep_search.lastUserSweep.user_sweep_id ? user_sweep_search.lastUserSweep.user_sweep_id : 0).toString(), 20, `0`);
-                } else {
-                    lastSweep = `0`;
-                }
-                where = where + 
-                    `   AND end_date >= now()\n` +
-                    `   AND deleted_yn = false\n` +
-                    `   AND won_yn = false\n` +
-                    `   AND (coalesce((frequency_days*24*60 - floor((EXTRACT(EPOCH FROM current_timestamp) - EXTRACT(EPOCH FROM last_entry_date)) / 60)) :: text, '0')\n` +
-                    `     || coalesce((EXTRACT(EPOCH FROM end_date) * 1000) :: text, '0000000000000')\n` +
-                    `     || LPAD(user_sweep_id :: text, 20, '0')) :: numeric > ` + lastSweep + `\n`;
+            case `today`:
+            case `tomorrow`:
+            case `later`: {
+                where = this.BuildTodoSweepsWhere(user_sweep_search, status);
                 order_by = `ORDER BY frequency_days*24*60*60 - ((EXTRACT(EPOCH FROM current_timestamp) - EXTRACT(EPOCH FROM last_entry_date))) nulls first, end_date, user_sweep_id\n`;
                 break;
             }
             case `active`: {
-                if (user_sweep_search.lastUserSweep) {
-                    lastSweep = (user_sweep_search.lastUserSweep.deleted_yn ? 2 : 1).toString()
-                            + (user_sweep_search.lastUserSweep.end_date ? new Date(user_sweep_search.lastUserSweep.end_date).getTime().toString() : `0000000000000`)
-                            + (user_sweep_search.lastUserSweep.last_entry_date ? new Date(user_sweep_search.lastUserSweep.last_entry_date).getTime().toString() : `0000000000000`)
-                            + this.Pad(`left`, (user_sweep_search.lastUserSweep.user_sweep_id ? user_sweep_search.lastUserSweep.user_sweep_id : 0).toString(), 20, `0`)
-                            ;
-                } else {
-                    lastSweep = `0`;
-                }
-                where = where + 
-                    `   AND end_date >= now()\n` +
-                    `   AND (case deleted_yn when false then 1 else 2 end :: text\n` +
-                    `     || coalesce(floor(EXTRACT(EPOCH FROM end_date) * 1000) :: text, '0000000000000')\n` +
-                    `     || coalesce(floor(EXTRACT(EPOCH FROM last_entry_date) * 1000) :: text, '0000000000000')\n` +
-                    `     || LPAD(user_sweep_id :: text, 20, '0')) :: numeric > ` + lastSweep + `\n`;
-                order_by = `ORDER BY deleted_yn, end_date, last_entry_date nulls first,  user_sweep_id\n`;
+                where = this.BuildActiveSweepsWhere(user_sweep_search);
+                order_by = `ORDER BY deleted_yn, end_date, last_entry_date nulls first, user_sweep_id\n`;
                 break;
             }
             case `ended`: {
-                if (user_sweep_search.lastUserSweep) {
-                    lastSweep = (user_sweep_search.lastUserSweep.deleted_yn ? 2 : 1).toString()
-                            + (user_sweep_search.lastUserSweep.end_date ? (9999999999999 - new Date(user_sweep_search.lastUserSweep.end_date.toString()).getTime()).toString() : `9999999999999`)
-                            + this.Pad(`left`, (user_sweep_search.lastUserSweep.user_sweep_id ? user_sweep_search.lastUserSweep.user_sweep_id : 0).toString(), 20, `0`)
-                            ;
-                } else {
-                    lastSweep = `0`;
-                }
-                where = where +
-                    `   AND (  end_date BETWEEN now() - interval '1 month' AND now()\n` +
-                    `       OR won_yn = true)\n` +
-                    `   AND (case deleted_yn when false then 1 else 2 end :: text\n` +
-                    `     || (9999999999999 - (coalesce(floor(EXTRACT(EPOCH FROM end_date) * 1000) :: text, '0000000000000') :: numeric)) :: text\n` +
-                    `     || LPAD(user_sweep_id :: text, 20, '0')) :: numeric > ` + lastSweep + `\n`
+                where = this.BuildEndedSweepsWhere(user_sweep_search);
                 order_by = `ORDER BY deleted_yn, end_date desc, user_sweep_id\n`;
                 break;
             }
             case `won`: {
-                if (user_sweep_search.lastUserSweep) {
-                    lastSweep = (user_sweep_search.lastUserSweep.end_date ? new Date(user_sweep_search.lastUserSweep.end_date).getTime().toString() : `0000000000000`)
-                            + this.Pad(`left`, (user_sweep_search.lastUserSweep.user_sweep_id ? user_sweep_search.lastUserSweep.user_sweep_id : 0).toString(), 20, `0`)
-                            ;
-                } else {
-                    lastSweep = `0`;
-                }
-                where = where +
-                    `   AND won_yn = true\n` +
-                    `   AND deleted_yn = false\n` +
-                    `   AND EXTRACT(YEAR FROM end_date) = $<dateSearch.year^>\n` +
-                    (user_sweep_search.dateSearch.month ? `   AND EXTRACT(MONTH FROM end_date) = $<dateSearch.month^>\n` : ``) +
-                    `   AND (coalesce(floor(EXTRACT(EPOCH FROM end_date) * 1000) :: text, '0000000000000')\n` +
-                    `     || LPAD(user_sweep_id :: text, 20, '0')) :: numeric > ` + lastSweep + `\n`;
+                where = this.BuildWonSweepsWhere(user_sweep_search);
                 order_by = `ORDER BY end_date, user_sweep_id\n`;
                 break;
             }
@@ -151,32 +90,134 @@ export class UserSweepService extends BaseService<user_sweep> {
         return result;
     }
 
-    async GetSweepURLs(id: number): Promise<string[]> {
+    async ToggleSweepState(column: string, id: number, state: boolean): Promise<user_sweep> {
         const db = DbGetter.getDB();
-        const q =
-            `SELECT user_sweep_id\n` +
-            `      ,coalesce(frequency_url, sweep_url) sweep_url\n` +
-            `  FROM sweepimp.user_sweep\n` +
-            ` WHERE user_account_id = $<id^>\n` +
-            `   AND end_date >= now()\n` +
-            `   AND (  last_entry_date is null\n` +
-            `       OR last_entry_date < current_date - interval '1 DAY' * frequency_days)`;
-        const sweeps = [];
-        const urls = [];
-        const result = await db.manyOrNone<URL>(q, { id });
-        result.forEach(value => {
-            sweeps.push(value.user_sweep_id);
-            urls.push(value.sweep_url);
-        });
-        if (result.length > 0){
-            try {
-                await this.ManageEntry(sweeps);
-            } catch(err) {
-                urls.splice(0,urls.length);
-                console.log(`Error in ManageEntry`);
+        // build new sweep
+        const new_user_sweep = await this.getItem(id, `user_sweep_id`);
+        switch (column){
+            case `deleted_yn`: {
+                new_user_sweep.deleted_yn = state;
+                break;
+            }
+            case `won_yn`: {
+                new_user_sweep.won_yn = state;
+                break;
             }
         }
-        return urls;
+        return this.ManageSweep(new_user_sweep);
+    }
+
+    async ManageSweep(user_sweep: user_sweep): Promise<user_sweep> {
+        if (await this.CheckSweepLimit(user_sweep)){
+            if (user_sweep.user_sweep_id) { // existing sweep - update
+                return this.UpdateSweep(user_sweep);
+            } else { // new sweep - insert
+                return this.InsertSweep(user_sweep);
+            }
+        }
+    }
+
+    Pad(direction: string, str: string, len: number, ch = `.`): string {
+        len = len - str.length + 1;
+        return len > 0 ?
+            direction == 'left' ?
+                new Array(len).join(ch) + str
+                : str + new Array(len).join(ch)
+            : str;
+    }
+
+    BuildTodoSweepsWhere(user_sweep_search: Search, status: string): string {
+        let where = ``;
+        var lastSweep = ``;
+        const todoWhere =
+            `   AND end_date >= now()\n` +
+            `   AND deleted_yn = false\n` +
+            `   AND won_yn = false\n`;
+        switch (status) {
+            case `today`: {
+                where = where + todoWhere + 
+                    `   AND date_trunc('DAY', last_entry_date) + (interval '1 DAY' * frequency_days) <= date_trunc('DAY', current_timestamp)\n`;
+                break;
+            }
+            case `tomorrow`: {
+                where = where + todoWhere +
+                    `   AND date_trunc('DAY', last_entry_date) + (interval '1 DAY' * frequency_days) between date_trunc('DAY', current_timestamp)\n` +
+                    `       AND date_trunc('DAY', current_timestamp) + interval '1 DAY'\n`;
+                break;
+            }
+            case `later`: {
+                where = where + todoWhere +
+                `   AND date_trunc('DAY', last_entry_date) + (interval '1 DAY' * frequency_days) > date_trunc('DAY', current_timestamp) + interval '1 DAY'\n`;
+                break;
+            }
+        }
+        if (user_sweep_search.lastUserSweep) {
+            lastSweep = (user_sweep_search.lastUserSweep.last_entry_date ? (user_sweep_search.lastUserSweep.frequency_days*24*60*60 - Math.floor((new Date(Date.UTC(new Date().getFullYear(), 0, 1)).getTime() - new Date(user_sweep_search.lastUserSweep.last_entry_date).getTime())/1000)).toString() : `0`)
+                    + (user_sweep_search.lastUserSweep.end_date ? new Date(user_sweep_search.lastUserSweep.end_date).getTime().toString() : `0000000000000`)
+                    + this.Pad(`left`, (user_sweep_search.lastUserSweep.user_sweep_id ? user_sweep_search.lastUserSweep.user_sweep_id : 0).toString(), 20, `0`);
+            where = where +
+                `   AND (coalesce((frequency_days*24*60*60 - floor((EXTRACT(EPOCH FROM date_trunc('YEAR', current_timestamp)) - EXTRACT(EPOCH FROM last_entry_date)))) :: text, '0')\n` +
+                `     || coalesce((EXTRACT(EPOCH FROM end_date) * 1000) :: text, '0000000000000')\n` +
+                `     || LPAD(user_sweep_id :: text, 20, '0')) :: numeric > ` + lastSweep + `\n`;
+        }
+        return where;
+    }
+
+    BuildActiveSweepsWhere(user_sweep_search: Search): string {
+        let where = ``;
+        var lastSweep = ``;
+        where = where + 
+            `   AND end_date >= now()\n`;
+        if (user_sweep_search.lastUserSweep) {
+            lastSweep = (user_sweep_search.lastUserSweep.deleted_yn ? 2 : 1).toString()
+                    + (user_sweep_search.lastUserSweep.end_date ? new Date(user_sweep_search.lastUserSweep.end_date).getTime().toString() : `0000000000000`)
+                    + (user_sweep_search.lastUserSweep.last_entry_date ? new Date(user_sweep_search.lastUserSweep.last_entry_date).getTime().toString() : `0000000000000`)
+                    + this.Pad(`left`, (user_sweep_search.lastUserSweep.user_sweep_id ? user_sweep_search.lastUserSweep.user_sweep_id : 0).toString(), 20, `0`)
+                    ;
+            where = where + 
+                `   AND (case deleted_yn when false then 1 else 2 end :: text\n` +
+                `     || coalesce(floor(EXTRACT(EPOCH FROM end_date) * 1000) :: text, '0000000000000')\n` +
+                `     || coalesce(floor(EXTRACT(EPOCH FROM last_entry_date) * 1000) :: text, '0000000000000')\n` +
+                `     || LPAD(user_sweep_id :: text, 20, '0')) :: numeric > ` + lastSweep + `\n`;
+        }
+        return where;
+    }
+
+    BuildEndedSweepsWhere(user_sweep_search: Search): string {
+        let where = ``;
+        var lastSweep = ``;
+        where = where +
+            `   AND (  end_date BETWEEN now() - interval '1 month' AND now()\n` +
+            `       OR won_yn = true)\n`;
+        if (user_sweep_search.lastUserSweep) {
+            lastSweep = (user_sweep_search.lastUserSweep.deleted_yn ? 2 : 1).toString()
+                    + (user_sweep_search.lastUserSweep.end_date ? (9999999999999 - new Date(user_sweep_search.lastUserSweep.end_date.toString()).getTime()).toString() : `9999999999999`)
+                    + this.Pad(`left`, (user_sweep_search.lastUserSweep.user_sweep_id ? user_sweep_search.lastUserSweep.user_sweep_id : 0).toString(), 20, `0`);
+            where = where +
+                `   AND (case deleted_yn when false then 1 else 2 end :: text\n` +
+                `     || (9999999999999 - (coalesce(floor(EXTRACT(EPOCH FROM end_date) * 1000) :: text, '0000000000000') :: numeric)) :: text\n` +
+                `     || LPAD(user_sweep_id :: text, 20, '0')) :: numeric > ` + lastSweep + `\n`;
+        }
+        return where;
+    }
+
+    BuildWonSweepsWhere(user_sweep_search: Search): string {
+        let where = ``;
+        var lastSweep = ``;
+        where = where +
+            `   AND won_yn = true\n` +
+            `   AND deleted_yn = false\n` +
+            `   AND EXTRACT(YEAR FROM end_date) = $<dateSearch.year^>\n` +
+            (user_sweep_search.dateSearch.month ? `   AND EXTRACT(MONTH FROM end_date) = $<dateSearch.month^>\n` : ``);
+        if (user_sweep_search.lastUserSweep) {
+            lastSweep = (user_sweep_search.lastUserSweep.end_date ? new Date(user_sweep_search.lastUserSweep.end_date).getTime().toString() : `0000000000000`)
+                    + this.Pad(`left`, (user_sweep_search.lastUserSweep.user_sweep_id ? user_sweep_search.lastUserSweep.user_sweep_id : 0).toString(), 20, `0`)
+                    ;
+            where = where +
+                `   AND (coalesce(floor(EXTRACT(EPOCH FROM end_date) * 1000) :: text, '0000000000000')\n` +
+                `     || LPAD(user_sweep_id :: text, 20, '0')) :: numeric > ` + lastSweep + `\n`;
+        }
+        return where;
     }
 
     async ManageEntry(sweep_ids: number[]) {
@@ -204,33 +245,6 @@ export class UserSweepService extends BaseService<user_sweep> {
             await DB.oneOrNone(insert);
             await DB.oneOrNone(update, { user_sweep_ids: sweep_ids });
         });
-    }
-
-    async ToggleSweepState(column: string, id: number, state: boolean): Promise<user_sweep> {
-        const db = DbGetter.getDB();
-        // build new sweep
-        const new_user_sweep = await this.getItem(id, `user_sweep_id`);
-        switch (column){
-            case `deleted_yn`: {
-                new_user_sweep.deleted_yn = state;
-                break;
-            }
-            case `won_yn`: {
-                new_user_sweep.won_yn = state;
-                break;
-            }
-        }
-        return this.ManageSweep(new_user_sweep);
-    }
-
-    async ManageSweep(user_sweep: user_sweep): Promise<user_sweep> {
-        if (await this.CheckSweepLimit(user_sweep)){
-            if (user_sweep.user_sweep_id) { // existing sweep - update
-                return this.UpdateSweep(user_sweep);
-            } else { // new sweep - insert
-                return this.InsertSweep(user_sweep);
-            }
-        }
     }
 
     async InsertSweep(user_sweep: user_sweep): Promise<user_sweep> {
@@ -417,5 +431,33 @@ export class UserSweepService extends BaseService<user_sweep> {
             `   SET ` + UserSweepColumns +
             ` WHERE user_sweep_id = $<user_sweep_id^>\n` +
             `RETURNING *` : ``);
-    };
+    }
+
+    async GetSweepURLs(id: number): Promise<string[]> {
+        const db = DbGetter.getDB();
+        const q =
+            `SELECT user_sweep_id\n` +
+            `      ,coalesce(frequency_url, sweep_url) sweep_url\n` +
+            `  FROM sweepimp.user_sweep\n` +
+            ` WHERE user_account_id = $<id^>\n` +
+            `   AND end_date >= now()\n` +
+            `   AND (  last_entry_date is null\n` +
+            `       OR last_entry_date < current_date - interval '1 DAY' * frequency_days)`;
+        const sweeps = [];
+        const urls = [];
+        const result = await db.manyOrNone<URL>(q, { id });
+        result.forEach(value => {
+            sweeps.push(value.user_sweep_id);
+            urls.push(value.sweep_url);
+        });
+        if (result.length > 0){
+            try {
+                await this.ManageEntry(sweeps);
+            } catch(err) {
+                urls.splice(0,urls.length);
+                console.log(`Error in ManageEntry`);
+            }
+        }
+        return urls;
+    }
 }

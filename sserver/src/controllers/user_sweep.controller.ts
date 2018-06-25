@@ -14,9 +14,19 @@ export class SweepController {
         return this.UserSweepService.getItem(params.id, `user_sweep_id`);
     }
 
-    @Post('todo_user_sweeps')
-    GetTodoSweeps(@Body() user_sweep_search: Search): Promise<user_sweep[]> {
-        return this.UserSweepService.GetSweeps(user_sweep_search, `todo`);
+    @Post('today_user_sweeps')
+    GetTodaySweeps(@Body() user_sweep_search: Search): Promise<user_sweep[]> {
+        return this.UserSweepService.GetSweeps(user_sweep_search, `today`);
+    }
+
+    @Post('tomorrow_user_sweeps')
+    GetTomorrowSweeps(@Body() user_sweep_search: Search): Promise<user_sweep[]> {
+        return this.UserSweepService.GetSweeps(user_sweep_search, `tomorrow`);
+    }
+
+    @Post('later_user_sweeps')
+    GetLaterSweeps(@Body() user_sweep_search: Search): Promise<user_sweep[]> {
+        return this.UserSweepService.GetSweeps(user_sweep_search, `later`);
     }
 
     @Post('active_user_sweeps')
@@ -44,11 +54,6 @@ export class SweepController {
         return this.UserSweepService.GetSweepURL(params.id);
     }
 
-    @Get('user_sweep_urls/:id')
-    GetSweepsURL(@Param() params): Promise<string[]> {
-        return this.UserSweepService.GetSweepURLs(params.id);
-    }
-
     @Get('del_sweep/:id')
     DelSweep(@Param() params): Promise<user_sweep> {
         return this.UserSweepService.ToggleSweepState(`deleted_yn`, params.id, true);
@@ -73,4 +78,10 @@ export class SweepController {
     ManageSweep(@Body() user_sweep: user_sweep): Promise<user_sweep>{
         return this.UserSweepService.ManageSweep(user_sweep);
     }
+/*
+    @Get('user_sweep_urls/:id')
+    GetSweepsURL(@Param() params): Promise<string[]> {
+        return this.UserSweepService.GetSweepURLs(params.id);
+    }
+*/
 }
