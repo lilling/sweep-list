@@ -160,8 +160,7 @@ export interface log_action {
 export interface payment_package {
     payment_package_id: number;
     payment_package_name: string;
-    max_daily_sweeps: number | null;
-    max_monthly_active_sweeps: number | null;
+    max_active_sweeps: number | null;
     is_lifetime: boolean | null;
     price: number;
     expire_date: Date | null;

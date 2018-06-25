@@ -260,13 +260,11 @@ export class UserSweepService extends BaseService<user_sweep> {
         const now = new Date();
         var sweepRevive = 0;
         if (!paymentPackage) {
-            // user did not pay
-            throw new HttpException(`User does not an active payment plan`, HttpStatus.FORBIDDEN);
+            // user did not pick a plan
+            throw new HttpException(`User does not have an active payment plan`, HttpStatus.FORBIDDEN);
         }
         var q = 
-            `SELECT SUM(CASE WHEN DATE_PART('day', now() - created) <= 0 THEN 1 ELSE 0 END) daily_sweeps\n` +
-            `      ,SUM(CASE WHEN (DATE_PART('year', now()) - DATE_PART('year', created)) * 12\n` +
-            `                   + (DATE_PART('month', now()) - DATE_PART('month', created)) <= 0 THEN 1 ELSE 0 END) monthly_sweeps\n` +
+            `SELECT COUNT(*) active_sweeps\n` +
             `  FROM sweepimp.user_sweep\n` +
             ` WHERE user_account_id = $<user_account_id^>\n` +
             `   AND deleted_yn = false\n` +
@@ -282,12 +280,8 @@ export class UserSweepService extends BaseService<user_sweep> {
             }
         }
         if (activeSweeps){
-            // active sweeps are calculated before the insert, but update is taken into account => add 1 to max sweeps when updating
-            if ((Number(activeSweeps.daily_sweeps) + sweepRevive) >= (Number(paymentPackage.max_daily_sweeps) + Number(new_user_sweep.user_sweep_id ? 1 : 0))){
-                throw new HttpException(`User daily sweeps reached plan maxinum (` + paymentPackage.max_daily_sweeps.toString() + `)`, HttpStatus.FORBIDDEN);
-            }
-            if ((Number(activeSweeps.monthly_sweeps) + sweepRevive) >= paymentPackage.max_monthly_active_sweeps){
-                throw new HttpException(`User monthly active sweeps reached plan maxinum (` + paymentPackage.max_monthly_active_sweeps.toString() + `)`, HttpStatus.FORBIDDEN);
+            if ((Number(activeSweeps.active_sweeps) + (new_user_sweep.user_sweep_id ? sweepRevive : 1)) > paymentPackage.max_active_sweeps){
+                throw new HttpException(`User monthly active sweeps reached plan maxinum (` + paymentPackage.max_active_sweeps.toString() + `)`, HttpStatus.FORBIDDEN);
             }
         }
         return true;

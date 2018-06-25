@@ -48,8 +48,6 @@ export class PaymentService {
         nextYear.setFullYear(today.getFullYear() + 1);
         const daysNextMonth = Math.ceil((nextMonth.getTime() - today.getTime()) / (1000 * 3600 * 24));
         const daysNextYear = Math.ceil((nextYear.getTime() - today.getTime()) / (1000 * 3600 * 24));
-        /*console.log('daysNextMonth: ' + daysNextMonth);
-        console.log('daysNextYear: ' + daysNextYear);*/
         var q =
             `SELECT DATE_PART('day', paid_until - now()) / DATE_PART('day', paid_until - payment_date) * amount_paid remaining_balance\n` +
             `      ,*\n` +
@@ -57,12 +55,6 @@ export class PaymentService {
             ` WHERE user_account_id = $<user_account_id^>\n` +
             `   AND current_timestamp BETWEEN payment_date AND paid_until`;
         const currentPayment = await db.oneOrNone(q, {user_account_id: user_account_id});
-        /*console.log('currentPayment:');
-        console.log(currentPayment);
-        console.log('currentPayment.remaining_balance:');
-        console.log(currentPayment.remaining_balance);
-        console.log('amount_to_pay: ' + amount_to_pay);
-        console.log('isYearly: ' + isYearly);*/
         const daysToAdd = (currentPayment ? Math.round(currentPayment.remaining_balance / amount_to_pay * (isYearly? daysNextYear : daysNextMonth)) : 0);
         //insert new payment with added days
         return await db.tx('new payment', payment => {
