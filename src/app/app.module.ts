@@ -10,7 +10,7 @@ import { environment } from '../environments/environment'; // Angular CLI enviro
 //
 import { AppComponent } from './app.component';
 import { LoginComponent } from './login/login.component';
-import { MaterialModule } from './material.module';
+import { MaterialModule } from './modules/material.module';
 import { SocialLoginModule, AuthServiceConfig, GoogleLoginProvider, FacebookLoginProvider, LoginOpt } from 'angularx-social-login';
 import { SweepListComponent } from './sweep-list/sweep-list.component';
 import { appRoutes } from './app.routes';
@@ -20,13 +20,14 @@ import { HttpClientModule } from '@angular/common/http';
 import { UsersService } from './services/users.service';
 import { SweepsService } from './services/sweeps.service';
 import { PositiveValidatorDirective } from './add-sweep/positive.validator';
-import { StateModule } from './state.module';
+import { StateModule } from './modules/state.module';
 import { AuthGuard } from './services/auth-guard.service';
 import { BasicSweepDataComponent } from './sweep-data/basic-sweep-data/basic-sweep-data.component';
 import { FrequencySweepDataComponent } from './sweep-data/frequency-sweep-data/frequency-sweep-data.component';
 import { ReferralSweepDataComponent } from './sweep-data/referral-sweep-data/referral-sweep-data.component';
 import { ThankSweepDataComponent } from './sweep-data/thank-sweep-data/thank-sweep-data.component';
 import { ToDoComponent } from './to-do/to-do.component';
+import { HeaderComponent } from './header/header.component';
 
 const fbLoginOptions: LoginOpt = {
     scope: 'public_profile , email, publish_actions',
@@ -61,7 +62,8 @@ const SOCIAL_CONFIG = new AuthServiceConfig([
         LoginComponent,
         SweepListComponent,
         ToDoComponent,
-        PositiveValidatorDirective
+        PositiveValidatorDirective,
+        HeaderComponent
     ],
     imports: [
         StateModule,
