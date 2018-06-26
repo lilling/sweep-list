@@ -1,0 +1,12 @@
+<mat-sidenav-container>
+    <mat-sidenav #sidenav mode="side" [opened]="sideNavState | async">
+        <div>
+            <ul>
+                <li *ngFor="let i of [1,2]">bla</li>
+            </ul>
+        </div>
+    </mat-sidenav>
+    <mat-sidenav-content>
+        <router-outlet></router-outlet>
+    </mat-sidenav-content>
+</mat-sidenav-container>

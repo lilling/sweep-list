@@ -13,6 +13,7 @@ import { SweepsEpics } from './state/sweeps/sweeps.epics';
 import { LoginActions } from './state/login/login.actions';
 import { LocalStorageKeys } from './models/local-storage-keys.enum';
 import { SweepsActions } from './state/sweeps/sweeps.actions';
+import { CommonActions } from './state/common/common.actions';
 
 @Component({
     selector: 'app-root',
@@ -33,6 +34,7 @@ export class AppComponent implements OnInit {
                 private loginEpics: LoginEpics,
                 private loginActions: LoginActions,
                 private sweepsActions: SweepsActions,
+                private commonActions: CommonActions,
                 private sweepsEpics: SweepsEpics) {
     }
 

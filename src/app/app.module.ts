@@ -26,6 +26,8 @@ import { BasicSweepDataComponent } from './sweep-data/basic-sweep-data/basic-swe
 import { FrequencySweepDataComponent } from './sweep-data/frequency-sweep-data/frequency-sweep-data.component';
 import { ReferralSweepDataComponent } from './sweep-data/referral-sweep-data/referral-sweep-data.component';
 import { ThankSweepDataComponent } from './sweep-data/thank-sweep-data/thank-sweep-data.component';
+import { HeaderComponent } from './header/header.component';
+import { ContainerComponent } from './container/container.component';
 
 const fbLoginOptions: LoginOpt = {
     scope: 'public_profile , email, publish_actions',
@@ -50,6 +52,7 @@ const SOCIAL_CONFIG = new AuthServiceConfig([
 
 @NgModule({
     declarations: [
+        ContainerComponent,
         AddSweepComponent,
         EditSweepComponent,
         BasicSweepDataComponent,
@@ -59,6 +62,7 @@ const SOCIAL_CONFIG = new AuthServiceConfig([
         AppComponent,
         LoginComponent,
         SweepListComponent,
+        HeaderComponent,
         PositiveValidatorDirective
     ],
     imports: [

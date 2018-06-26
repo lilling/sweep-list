@@ -6,5 +6,12 @@ import { AppState } from '../store';
 
 @Injectable()
 export class CommonActions {
-    constructor(private ngRedux: NgRedux<AppState>) {}
+    static TOGGLE_SIDE_NAV = 'TOGGLE_SIDE_NAV';
+
+    constructor(private ngRedux: NgRedux<AppState>) {
+    }
+
+    toggleSideNav() {
+        this.ngRedux.dispatch({ type: CommonActions.TOGGLE_SIDE_NAV });
+    }
 }
