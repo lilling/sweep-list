@@ -1,24 +1,5 @@
 <div class="container">
-    <div class="header">
-        <span class="title">My Sweeps</span>
-
-        <span class="buttons">
-        <button mat-icon-button>
-            <mat-icon>search</mat-icon>
-        </button>
-        <button mat-icon-button [matMenuTriggerFor]="menu">
-            <mat-icon>filter_list</mat-icon>
-        </button>
-        <mat-menu #menu="matMenu" [overlapTrigger]="false">
-            <button mat-menu-item>
-                <span>Live</span>
-            </button>
-            <button mat-menu-item>
-                <span>Ended</span>
-            </button>
-        </mat-menu>
-    </span>
-    </div>
+    <app-header [title]="'My Sweeps'"></app-header>
     <div class="body">
         <ng-container *ngIf="isSweepsLoading$ | async">
             <div class="blocker"></div>
