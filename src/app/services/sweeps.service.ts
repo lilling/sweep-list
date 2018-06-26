@@ -13,8 +13,8 @@ export class SweepsService extends BaseService {
         super(http, 'api/sweep/');
     }
 
-    getLiveSweeps(data: {user_account_id: string, lastUserSweep?: user_sweep}): Observable<user_sweep[]> {
-        return this.post<user_sweep[]>(`live_user_sweeps`, data);
+    getActiveSweeps(data: {user_account_id: string, lastUserSweep?: user_sweep}): Observable<user_sweep[]> {
+        return this.post<user_sweep[]>(`active_user_sweeps`, data);
     }
 
     addOrUpdateSweep(user_sweep: user_sweep): Observable<user_sweep> {

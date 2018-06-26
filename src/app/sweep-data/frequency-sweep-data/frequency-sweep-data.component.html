@@ -1,11 +1,4 @@
 <div class="basic-container">
-    <mat-form-field>
-        <input matInput placeholder="sweep url" name="siteUrl" id="siteUrl" [(ngModel)]="frequencyUrl" required #url="ngModel"
-               [disabled]="disabled">
-        <mat-error *ngIf="url.invalid && (url.dirty || url.touched) && url.errors.required">
-            url is required.
-        </mat-error>
-    </mat-form-field>
     <span>
         <span>Every </span>
         <input matInput type="number" placeholder="XX" required [disabled]="disabled" name="recurringDuration"

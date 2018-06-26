@@ -23,18 +23,10 @@ export class SweepsEpics extends BaseEpic {
     getUserSweeps(action$: ActionsObservable<TypedAction<{user_account_id: string, lastUserSweep?: user_sweep}>>) {
         return action$.ofType(SweepsActions.GET_USER_SWEEPS)
             .switchMap(action => {
-                return this.sweepsService.getLiveSweeps(action.payload).pipe(
+                return this.sweepsService.getActiveSweeps(action.payload).pipe(
                     map((res: user_sweep[]) => {
                         res.forEach(sweep => {
-                            sweep.last_entry_date = sweep.last_entry_date ? new Date(sweep.last_entry_date) : null;
-                            sweep.created = sweep.created ? new Date(sweep.created) : null;
-                            sweep.updated = sweep.updated ? new Date(sweep.updated) : null;
-                            sweep.end_date = sweep.end_date ? new Date(sweep.end_date) : null;
-                            sweep.total_entries = sweep.total_entries ? +sweep.total_entries : null;
-                            sweep.total_shares = sweep.total_shares ? +sweep.total_shares : null;
-                            sweep.referral_frequency = sweep.referral_frequency ? +sweep.referral_frequency : null;
-                            sweep.frequency_days = sweep.frequency_days ? +sweep.frequency_days : null;
-                            sweep.user_account_id = sweep.user_account_id ? +sweep.user_account_id : null;
+                            this.fixSweepTypes(sweep);
                         });
                         return { type: SweepsActions.GET_USER_SWEEPS_COMPLETED, payload: res };
                     }),
@@ -51,15 +43,7 @@ export class SweepsEpics extends BaseEpic {
             .switchMap(action => {
                 return this.sweepsService.addOrUpdateSweep(action.payload).pipe(
                     map(res => {
-                        res.last_entry_date = res.last_entry_date ? new Date(res.last_entry_date) : null;
-                        res.created = res.created ? new Date(res.created) : null;
-                        res.updated = res.updated ? new Date(res.updated) : null;
-                        res.end_date = res.end_date ? new Date(res.end_date) : null;
-                        res.total_entries = res.total_entries ? +res.total_entries : null;
-                        res.total_shares = res.total_shares ? +res.total_shares : null;
-                        res.referral_frequency = res.referral_frequency ? +res.referral_frequency : null;
-                        res.frequency_days = res.frequency_days ? +res.frequency_days : null;
-                        res.user_account_id = res.user_account_id ? +res.user_account_id : null;
+                        this.fixSweepTypes(res);
                         return { type: SweepsActions.ADD_SWEEP_COMPLETED, payload: res };
                     }),
                     catchError(err => {
@@ -103,6 +87,7 @@ export class SweepsEpics extends BaseEpic {
             .switchMap(action => {
                 return this.sweepsService.addOrUpdateSweep(action.payload).pipe(
                     map(res => {
+                        this.fixSweepTypes(res);
                         return { type: SweepsActions.UPDATE_SWEEP_COMPLETED, payload: res };
                     }),
                     catchError(err => {
@@ -110,5 +95,17 @@ export class SweepsEpics extends BaseEpic {
                     }));
 
             });
+    }
+
+    private fixSweepTypes(sweep: user_sweep) {
+        sweep.last_entry_date = sweep.last_entry_date ? new Date(sweep.last_entry_date) : null;
+        sweep.created = sweep.created ? new Date(sweep.created) : null;
+        sweep.updated = sweep.updated ? new Date(sweep.updated) : null;
+        sweep.end_date = sweep.end_date ? new Date(sweep.end_date) : null;
+        sweep.total_entries = sweep.total_entries ? +sweep.total_entries : null;
+        sweep.total_shares = sweep.total_shares ? +sweep.total_shares : null;
+        sweep.referral_frequency = sweep.referral_frequency ? +sweep.referral_frequency : null;
+        sweep.frequency_days = sweep.frequency_days ? +sweep.frequency_days : null;
+        sweep.user_account_id = sweep.user_account_id ? +sweep.user_account_id : null;
     }
 }

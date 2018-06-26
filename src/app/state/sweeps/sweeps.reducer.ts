@@ -30,7 +30,7 @@ export function sweepsReducer(state: SweepsState = INITIAL_SWEEPS_STATE, action:
         case SweepsActions.ADD_SWEEP_COMPLETED: {
             return {
                 ...state,
-                sweeps: state.sweeps.addItem(action.payload),
+                sweeps: state.sweeps.addItem(action.payload, sort),
                 isSweepsLoading: false
             };
         }
@@ -61,4 +61,21 @@ export function sweepsReducer(state: SweepsState = INITIAL_SWEEPS_STATE, action:
         default:
             return state;
     }
+}
+
+function sort(a: user_sweep, b: user_sweep) {
+    if (!a.deleted_yn && b.deleted_yn) {
+        return -1;
+    } else if (a.deleted_yn && !b.deleted_yn) {
+        return 1;
+    } else if (a.end_date.getTime() > b.end_date.getTime()) {
+        return 1;
+    } else if (a.end_date.getTime() < b.end_date.getTime()) {
+        return -1;
+    } else if (a.last_entry_date.getTime() < b.last_entry_date.getTime()) {
+        return -1;
+    } else if (a.last_entry_date.getTime() > b.last_entry_date.getTime()) {
+        return 1;
+    }
+    return a.user_sweep_id > b.user_sweep_id ? -1 : 1;
 }
