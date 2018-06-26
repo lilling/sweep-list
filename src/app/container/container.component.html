@@ -1,0 +1,16 @@
+<mat-sidenav-container>
+    <mat-sidenav #sidenav mode="over" [opened]="sideNavState | async">
+        <mat-nav-list>
+            <a [routerLink]="['/todo']" mat-list-item>To Do</a>
+            <a [routerLink]="['/list']" mat-list-item>Live Sweeps</a>
+            <a [routerLink]="['/ended']" mat-list-item>Ended Sweeps</a>
+            <a [routerLink]="['/wins']" mat-list-item>Wins</a>
+            <a [routerLink]="['/login']" mat-list-item>Login</a> <!--just for testing -->
+            <a mat-list-item>Settings</a>
+            <a href="mailto:support@sweepimp.com" mat-list-item>contact us</a>
+        </mat-nav-list>
+    </mat-sidenav>
+    <mat-sidenav-content>
+        <router-outlet></router-outlet>
+    </mat-sidenav-content>
+</mat-sidenav-container>
