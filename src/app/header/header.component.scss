@@ -1,0 +1,12 @@
+@import '../../sass/styles';
+
+.header {
+  display: flex;
+  justify-content: space-between;
+
+  @include header(40px);
+
+  .title {
+    line-height: 2.5;
+  }
+}
