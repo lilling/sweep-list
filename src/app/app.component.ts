@@ -1,13 +1,14 @@
 import { Component, OnInit } from '@angular/core';
+import { Router, NavigationEnd } from '@angular/router';
 //
 import * as _ from 'lodash';
 import { NgRedux } from '@angular-redux/store';
 import { createLogger } from 'redux-logger';
+import { compose } from 'redux';
 import { combineEpics, createEpicMiddleware } from 'redux-observable';
 //
 import { AppState, rootReducer, INITIAL_STATE } from './state/store';
 import { BaseEpic } from './state/models/base-epic';
-import { compose } from 'redux';
 import { LoginEpics } from './state/login/login.epics';
 import { SweepsEpics } from './state/sweeps/sweeps.epics';
 import { LoginActions } from './state/login/login.actions';
@@ -31,6 +32,7 @@ export class AppComponent implements OnInit {
     }
 
     constructor(private ngRedux: NgRedux<AppState>,
+                private router: Router,
                 private loginEpics: LoginEpics,
                 private loginActions: LoginActions,
                 private sweepsActions: SweepsActions,
@@ -39,6 +41,11 @@ export class AppComponent implements OnInit {
     }
 
     ngOnInit() {
+        this.router.events.subscribe(x => {
+            if (x instanceof NavigationEnd) {
+                this.commonActions.routeChanged(x.url);
+            }
+        });
         const middlewares = [];
         const composeEnhancers =
             typeof window === 'object' &&
@@ -66,7 +73,7 @@ export class AppComponent implements OnInit {
 
         const id = localStorage.getItem(LocalStorageKeys.loggedUser);
         if (id) {
-            this.loginActions.login({id, fromCache: true});
+            this.loginActions.login({ id, fromCache: true });
         }
     }
 }
