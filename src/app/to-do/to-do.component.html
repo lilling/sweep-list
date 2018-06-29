@@ -1,7 +1,7 @@
 <div class="container">
     <app-header [title]="'Dont Forget!'"></app-header>
     <mat-tab-group (selectedIndexChange)="selectedIndexChanged($event)">
-        <mat-tab [label]="label" *ngFor="let label of ['Today', 'Tomorrow', 'Later']">
+        <mat-tab [label]="label" *ngFor="let label of ['Today', 'Tomorrow', 'Upcoming']">
             <div class="body">
                 <mat-list>
                     <mat-list-item *ngFor="let sweep of sweeps"
