@@ -2,44 +2,22 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 //
 import { Observable } from 'rxjs/Observable';
+import { EnumValues } from 'enum-values';
 //
 import { user_sweep, Search } from '../../../shared/classes';
 import { BaseService } from './base.service';
+import { SweepsMode } from '../state/sweeps/sweeps.state';
 
 @Injectable()
 export class SweepsService extends BaseService {
-
-    getTodaySweeps = (user_sweep_search: Search): Observable<user_sweep[]> => {
-        return this.post<user_sweep[]>('today_user_sweeps', user_sweep_search).map(res => {
-            res.forEach(sweep => {
-                this.fixSweepTypes(sweep);
-            });
-            return res;
-        });
-    }
-    getTomorrowSweeps = (user_sweep_search: Search): Observable<user_sweep[]> => {
-        return this.post<user_sweep[]>('tomorrow_user_sweeps', user_sweep_search).map(res => {
-            res.forEach(sweep => {
-                this.fixSweepTypes(sweep);
-            });
-            return res;
-        });
-    }
-    getLaterSweeps = (user_sweep_search: Search): Observable<user_sweep[]> => {
-        return this.post<user_sweep[]>('later_user_sweeps', user_sweep_search).map(res => {
-            res.forEach(sweep => {
-                this.fixSweepTypes(sweep);
-            });
-            return res;
-        });
-    }
 
     constructor(http: HttpClient) {
         super(http, 'api/sweep/');
     }
 
-    getActiveSweeps(data: { user_account_id: string, lastUserSweep?: user_sweep }): Observable<user_sweep[]> {
-        return this.post<user_sweep[]>(`active_user_sweeps`, data).map(res => {
+    getSweeps(data: Search, mode: SweepsMode): Observable<user_sweep[]> {
+        const url = `${EnumValues.getNameFromValue(SweepsMode, mode)}_user_sweeps`;
+        return this.post<user_sweep[]>(url, data).map(res => {
             res.forEach(sweep => {
                 this.fixSweepTypes(sweep);
             });

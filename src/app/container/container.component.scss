@@ -1,7 +1,11 @@
-.mat-icon {
-  margin-right: 10px;
+.mat-sidenav-container {
+  height: 100%;
 
-  svg {
-    margin: 4px 4px 4px 4px;
+  .mat-icon {
+    margin-right: 10px;
+
+    svg {
+      margin: 4px 4px 4px 4px;
+    }
   }
 }
