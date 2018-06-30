@@ -27,7 +27,7 @@ export class UserSweepService extends BaseService<user_sweep> {
         switch (status) {
             case `today`:
             case `tomorrow`:
-            case `later`: {
+            case `upcoming`: {
                 where = this.BuildTodoSweepsWhere(user_sweep_search, status);
                 order_by = `ORDER BY frequency_days*24*60*60 - ((EXTRACT(EPOCH FROM current_timestamp) - EXTRACT(EPOCH FROM last_entry_date))) nulls first, end_date, user_sweep_id\n`;
                 break;
@@ -145,7 +145,7 @@ export class UserSweepService extends BaseService<user_sweep> {
                     `       AND date_trunc('DAY', current_timestamp) + interval '1 DAY'\n`;
                 break;
             }
-            case `later`: {
+            case `upcoming`: {
                 where = where + todoWhere +
                 `   AND date_trunc('DAY', last_entry_date) + (interval '1 DAY' * frequency_days) > date_trunc('DAY', current_timestamp) + interval '1 DAY'\n`;
                 break;

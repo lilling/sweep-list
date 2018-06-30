@@ -26,7 +26,7 @@ export class SweepController {
 
     @Post('later_user_sweeps')
     GetLaterSweeps(@Body() user_sweep_search: Search): Promise<user_sweep[]> {
-        return this.UserSweepService.GetSweeps(user_sweep_search, `later`);
+        return this.UserSweepService.GetSweeps(user_sweep_search, `upcoming`);
     }
 
     @Post('active_user_sweeps')

@@ -98,11 +98,8 @@ export class SweepListComponent implements OnInit {
                 returnValue = `${hours.toFixed(0)} hours`;
             } else {
                 const minutes = diff / 6e4;
-                if (minutes > 1) {
-                    returnValue = `${minutes.toFixed(0)} minutes`;
-                } else {
-                    return '';
-                }
+
+                returnValue = `${minutes.toFixed(0)} minutes`;
             }
         }
 
