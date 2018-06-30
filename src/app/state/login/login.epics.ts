@@ -12,6 +12,7 @@ import { LoginActions } from './login.actions';
 import { UsersService } from '../../services/users.service';
 import { AuthService } from 'angularx-social-login';
 import { generateError } from '../models/error';
+import { Action } from '@ngrx/store';
 
 @Injectable()
 export class LoginEpics extends BaseEpic {
@@ -24,7 +25,6 @@ export class LoginEpics extends BaseEpic {
     login(action$: ActionsObservable<TypedAction<{ id: string, fromCache: boolean }>>) {
         return action$.ofType(LoginActions.LOGIN)
             .switchMap(action => {
-
                 if (action.payload.fromCache) {
                     return this.usersService.getUser(+action.payload.id).pipe(
                         map(res => {
@@ -48,9 +48,23 @@ export class LoginEpics extends BaseEpic {
                                 return { type: LoginActions.LOGIN_COMPLETED, payload: res };
                             }),
                             catchError(err => {
-                                return of(generateError(err, LoginActions.LOGIN_COMPLETED));
+                                return of(generateError(err, LoginActions.LOGIN));
                             }));
                     });
+            });
+    }
+
+    @Epic
+    logOff(action$: ActionsObservable<Action>) {
+        return action$.ofType(LoginActions.LOGOFF)
+            .switchMap(action => {
+                return fromPromise(this.authService.signOut()).pipe(
+                    map(val => {
+                        return { type: LoginActions.LOGOFF_COMPLETED };
+                    }),
+                    catchError(err => {
+                        return of(generateError(err, LoginActions.LOGOFF));
+                    }));
             });
     }
 }

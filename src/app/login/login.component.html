@@ -1,39 +1,22 @@
 <div class="logo"> logo</div>
 <div class="login-body">
-    <div class="buttons">
-        <button mat-raised-button (click)="login(SocialMedia.facebook)">
-            <i class="fa fa-facebook-f social-icon"></i>
-            Sign in with Facebook
-            <i *ngIf="facebook" class="fa fa-check"></i>
-        </button>
-
-        <!--<button mat-raised-button>-->
-        <!--<i class="fa fa-twitter social-icon"></i>-->
-        <!--Sign in with Twitter-->
-        <!--<i *ngIf="twitter" class="fa fa-check"></i>-->
-        <!--</button>-->
-        <!--button mat-raised-button (click)="login(SocialMedia.google)">
-            <i class="fa fa-google social-icon"></i>
-            Sign in with Google
-            <i *ngIf="google" class="fa fa-check"></i>
-        </button>-->
-        <button mat-raised-button>
-            More to come...
-        </button>
-        <!--<button mat-raised-button>-->
-        <!--<i class="fa fa-linkedin social-icon"></i>-->
-        <!--Sign in with Linkedin-->
-        <!--<i *ngIf="linkedin" class="fa fa-check"></i>-->
-        <!--</button>-->
-        <!--<button mat-raised-button>-->
-        <!--<i class="fa fa-pinterest-p social-icon"></i>-->
-        <!--Sign in with Pinterest-->
-        <!--<i *ngIf="pinterest" class="fa fa-check"></i>-->
-        <!--</button>-->
-
+    <div class="social-medias">
+        <table>
+            <tr>
+                <td class="social-media-row">
+                    <i class="fa fa-facebook-f social-icon"></i>
+                    <span>Facebook is {{facebook ? 'linked' : 'not linked'}}</span>
+                </td>
+                <td>
+                    <button *ngIf="!facebook" mat-button (click)="login(SocialMedia.facebook)">Link</button>
+                    <button *ngIf="facebook" mat-button (click)="logoff()">Unlink</button>
+                </td>
+            </tr>
+        </table>
+        More to come...
         <span class="continue-container">
-            <button class="button-link" (click)="goToList()" *ngIf="google || facebook">
-                skip and continue
+            <button mat-button (click)="goToList()" *ngIf="facebook">
+                Continue
                 <i class="fa fa-angle-right"></i>
             </button>
         </span>
