@@ -1,68 +1,54 @@
 @import '../../sass/styles';
 
 .logo {
-    @include header(25%);
+  @include header(25%);
 }
 
 .login-body {
-    height: 75%;
+  height: 75%;
+  margin: 20px;
 
-    .buttons {
-        padding: 10px;
-        display: grid;
+  .social-medias {
+    display: flex;
+    flex-direction: column;
 
-        button:not(.button-link) {
-            margin-bottom: 10px;
-            margin-top: 10px;
-            font-family: "Helvetica";
-            font-weight: bold;
+    .social-media-row {
+      display: flex;
+      flex-direction: row;
+      justify-content: center;
 
-            i  {
-                font-size: xx-large;
-
-                &.social-icon {
-                    float: left;
-                }
-
-                &.fa-check {
-                    color: $check-color;
-                    float: right;
-                }
-                &.fa-facebook-f {
-                    color: $facebook-color;
-                }
-
-                &.fa-google {
-                    color: $google-color;
-                }
-
-                &.fa-twitter {
-                    color: $twitter-color;
-                }
-
-                &.fa-linkedin {
-                    color: $linkedin-color;
-                }
-
-                &.fa-pinterest-p {
-                    color: $pintereset-color;
-                }
-            }
+      i {
+        &.fa-facebook-f {
+          color: $facebook-color;
+        }
+        &.fa-twitter {
+          color: $twitter-color;
         }
 
-        .button-link:disabled {
-            cursor: not-allowed;
-            color: $disabled-color;
+        &.fa-linkedin {
+          color: $linkedin-color;
         }
+
+        &.fa-pinterest-p {
+          color: $pintereset-color;
+        }
+        font-size: x-large;
+        margin-right: 6px;
+      }
     }
+  }
 
-    .continue-container {
-        text-align: right;
+  .continue-container {
+    text-align: right;
 
-        i {
-            text-decoration: underline;
-            font-weight: bold;
-        }
+    button {
+      background: $main-color;
+      color: white;
+
+      i {
+        font-weight: bold;
+      }
     }
+  }
 }
 

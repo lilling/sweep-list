@@ -28,8 +28,7 @@ export class LoginComponent implements OnInit {
     constructor(private authService: AuthService,
                 private ngRedux: NgRedux<AppState>,
                 private router: Router,
-                private loginActions: LoginActions,
-                private usersService: UsersService) {
+                private loginActions: LoginActions) {
         this.ngRedux.select(state => state.loginState.user).subscribe(user => {
             if (user) {
                 localStorage.setItem(LocalStorageKeys.loggedUser, user.user_account_id.toString());
@@ -46,6 +45,12 @@ export class LoginComponent implements OnInit {
         });
     }
 
+    logoff() {
+        this.loginActions.logOff();
+        localStorage.clear();
+        this.facebook = false;
+    }
+
     login(candidate: SocialMedia) {
         this.socialMediaSelected = candidate;
         let id = '';
@@ -57,7 +62,6 @@ export class LoginComponent implements OnInit {
                 id = GoogleLoginProvider.PROVIDER_ID;
                 break;
         }
-
         this.loginActions.login({ id, fromCache: false });
     }
 

@@ -9,11 +9,17 @@ export class LoginActions {
 
     static LOGIN = 'LOGIN';
     static LOGIN_COMPLETED = 'LOGIN_COMPLETED';
+    static LOGOFF = 'LOGOFF';
+    static LOGOFF_COMPLETED = 'LOGOFF_COMPLETED';
 
     constructor(private ngRedux: NgRedux<AppState>) {
     }
 
     login(options: {id: string, fromCache: boolean}) {
         this.ngRedux.dispatch({ type: LoginActions.LOGIN, payload: options });
+    }
+
+    logOff() {
+        this.ngRedux.dispatch({ type: LoginActions.LOGOFF });
     }
 }
