@@ -1,5 +1,5 @@
 <mat-sidenav-container>
-    <mat-sidenav #sidenav mode="over" [opened]="sideNavState | async">
+    <mat-sidenav #sidenav mode="over" [opened]="sideNav" (closedStart)="toggleSideNav()">
         <mat-nav-list>
             <a [routerLink]="['/todo']" mat-list-item>
                 <mat-icon matListIcon fontSet="fa" fontIcon="fa-list-ul"></mat-icon>

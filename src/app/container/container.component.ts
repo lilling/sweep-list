@@ -6,6 +6,7 @@ import { select } from '@angular-redux/store';
 import { Observable } from 'rxjs/Observable';
 //
 import { AppState } from '../state/store';
+import { CommonActions } from '../state/common/common.actions';
 
 @Component({
     selector: 'app-container',
@@ -16,10 +17,22 @@ export class ContainerComponent {
 
     @select((state: AppState) => state.commonState.sideNav)
     sideNavState: Observable<boolean>;
+    sideNav: boolean;
 
     constructor(iconRegistry: MatIconRegistry,
-                sanitizer: DomSanitizer) {
+                sanitizer: DomSanitizer,
+                private commonActions: CommonActions) {
         iconRegistry.addSvgIcon('calendar-with-clock', sanitizer.bypassSecurityTrustResourceUrl('assets/icons/calendar-with-clock.svg'));
         iconRegistry.addSvgIcon('win', sanitizer.bypassSecurityTrustResourceUrl('assets/icons/win.svg'));
+
+        this.sideNavState.subscribe(sideNav => {
+            this.sideNav = sideNav;
+        });
+    }
+
+    toggleSideNav() {
+        if (this.sideNav) {
+            this.commonActions.toggleSideNav();
+        }
     }
 }
