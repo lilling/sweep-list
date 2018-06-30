@@ -29,7 +29,7 @@ export class ToDoComponent implements OnInit, AfterViewInit, OnDestroy {
     userAccountId: number;
 
     constructor(private ngRedux: NgRedux<AppState>,
-                private sweepsService: SweepsService,
+                public sweepsService: SweepsService,
                 private sweepsActions: SweepsActions,
                 private router: Router) {
     }
@@ -78,12 +78,31 @@ export class ToDoComponent implements OnInit, AfterViewInit, OnDestroy {
         this.router.navigate(['edit', sweep.user_sweep_id]);
     }
 
-    getTimePassedUntilLastVisit(lastVisit: Date) {
-        if (!lastVisit) {
-            return '';
+    nextVisit(sweep: user_sweep) {
+        const nextVisit = sweep.frequency_days - (Date.now() - sweep.last_entry_date.getTime());
+
+        if (nextVisit < 0) {
+            return '0 Minutes Left';
         }
-        const days = (Date.now() - lastVisit.getTime()) / 864e5;
-        return `Last visit was ${days > 1 ? `${days.toFixed(0)} days ago` : `today`}. `;
+
+        let returnValue = '';
+
+        const days = nextVisit / 864e5;
+
+        if (days > 1) {
+            returnValue = `${days.toFixed(0)} days`;
+        } else {
+            const hours = nextVisit / 36e5;
+            if (hours > 1) {
+                returnValue = `${hours.toFixed(0)} hours`;
+            } else {
+                const minutes = nextVisit / 6e4;
+
+                returnValue = `${minutes.toFixed(0)} minutes`;
+            }
+        }
+
+        return `${returnValue} left to next visit.`;
     }
 
     ngOnDestroy() {

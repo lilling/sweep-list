@@ -51,4 +51,28 @@ export class SweepsService extends BaseService {
         sweep.frequency_days = sweep.frequency_days ? +sweep.frequency_days : null;
         sweep.user_account_id = sweep.user_account_id ? +sweep.user_account_id : null;
     }
+
+    getTimePassedUntilLastVisit(sweep: user_sweep) {
+        if (!sweep.last_entry_date) {
+            return '';
+        }
+        const diff = Date.now() - sweep.last_entry_date.getTime();
+
+        let returnValue = '';
+        const days = diff / 864e5;
+
+        if (days > 1) {
+            returnValue = `${days.toFixed(0)} days`;
+        } else {
+            const hours = diff / 36e5;
+            if (hours > 1) {
+                returnValue = `${hours.toFixed(0)} hours`;
+            } else {
+                const minutes = diff / 6e4;
+
+                returnValue = `${minutes.toFixed(0)} minutes`;
+            }
+        }
+        return `Last visit was ${returnValue} ago.`;
+    }
 }

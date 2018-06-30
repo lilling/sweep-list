@@ -11,6 +11,7 @@ import { user_sweep, user_account } from '../../../shared/classes';
 import { AppState } from '../state/store';
 import { SweepsActions } from '../state/sweeps/sweeps.actions';
 import { SweepsMode } from '../state/sweeps/sweeps.state';
+import { SweepsService } from '../services/sweeps.service';
 
 @Component({
     selector: 'app-sweep-list',
@@ -31,6 +32,7 @@ export class SweepListComponent implements OnInit {
 
     constructor(public dialog: MatDialog,
                 private router: Router,
+                public sweepsService: SweepsService,
                 private sweepsActions: SweepsActions,
                 private ngRedux: NgRedux<AppState>) {
     }
@@ -75,14 +77,6 @@ export class SweepListComponent implements OnInit {
 
         url += urlToOpen;
         window.open(url, '_blank');
-    }
-
-    getTimePassedUntilLastVisit(lastVisit: Date) {
-        if (!lastVisit) {
-            return '';
-        }
-        const days = (Date.now() - lastVisit.getTime()) / 864e5;
-        return `Last visit was ${days > 1 ? `${days.toFixed(0)} days ago` : `today`}. `;
     }
 
     private getTimeToEnd(endDate: number): string {

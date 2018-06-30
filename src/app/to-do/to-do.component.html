@@ -14,11 +14,12 @@
                         <mat-icon matListIcon fontSet="fa" fontIcon="fa-gift"></mat-icon>
                         <div mat-line class="list-item-first">
                             <span class="sweep-name"> {{sweep.sweep_name}}</span>
-                            <!--<span class="sweep-data"> {{sweep.text}} </span>-->
                         </div>
                         <div mat-line class="list-item-second">
                             <ng-container *ngIf="sweep.is_frequency">
-                                {{getTimePassedUntilLastVisit(sweep.last_entry_date)}}
+                                {{ nextVisit(sweep) }}
+                                {{ sweepsService.getTimePassedUntilLastVisit(sweep) }}
+                                {{ sweep.total_entries }} total visits.
                             </ng-container>
                         </div>
                         <mat-icon class="edit-sweep" (click)="editSweep(sweep, $event)">edit</mat-icon>
