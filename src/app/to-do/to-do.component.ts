@@ -1,49 +1,60 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, AfterViewInit } from '@angular/core';
 import { Router } from '@angular/router';
 //
 import * as _ from 'lodash';
 //
 import { SweepsService } from '../services/sweeps.service';
-import { user_sweep, Search } from '../../../shared/classes';
+import { user_sweep } from '../../../shared/classes';
 import { LocalStorageKeys } from '../models/local-storage-keys.enum';
 import { SweepsActions } from '../state/sweeps/sweeps.actions';
 import { SweepsMode } from '../state/sweeps/sweeps.state';
 import { AppState } from '../state/store';
-import { NgRedux } from '@angular-redux/store';
+import { NgRedux, select } from '@angular-redux/store';
 import { Subscription } from 'rxjs/Subscription';
+import { Observable } from 'rxjs/Observable';
 
 @Component({
     selector: 'app-to-do',
     templateUrl: 'to-do.component.html',
     styleUrls: ['to-do.component.scss']
 })
-export class ToDoComponent implements OnInit, OnDestroy {
-    currentSearch: Search;
+export class ToDoComponent implements OnInit, AfterViewInit, OnDestroy {
+
+    @select((state: AppState) => state.sweepsState.isSweepsLoading)
+    isSweepsLoading$: Observable<boolean>;
     sweeps: user_sweep[] = [];
     subscriptions: { [index: string]: Subscription };
+    mode: SweepsMode;
+    scroll = false;
+    userAccountId: number;
 
-    constructor(private ngRedux: NgRedux<AppState>, private sweepsService: SweepsService, private sweepsActions: SweepsActions, private router: Router) {
+    constructor(private ngRedux: NgRedux<AppState>,
+                private sweepsService: SweepsService,
+                private sweepsActions: SweepsActions,
+                private router: Router) {
     }
 
     ngOnInit() {
-        const id = localStorage.getItem(LocalStorageKeys.loggedUser);
-        this.currentSearch = {
-            user_account_id: +id
-        };
+        this.userAccountId = +localStorage.getItem(LocalStorageKeys.loggedUser);
         this.sweepsActions.goToSweeps(SweepsMode.today);
 
         this.subscriptions = {
             sweepsMode: this.ngRedux.select(state => state.sweepsState.mode).subscribe(mode => {
-                if (this.sweeps.length) {
-                    this.currentSearch.lastUserSweep = this.sweeps[this.sweeps.length - 1];
-                }
-                this.sweepsActions.getSweeps(this.currentSearch, mode);
+                this.mode = mode;
+                const search = {
+                    user_account_id: this.userAccountId,
+                    lastUserSweep: this.sweeps.length && this.scroll ? this.sweeps[this.sweeps.length - 1] : undefined
+                };
+                this.sweepsActions.getSweeps(search, mode);
             }),
             sweeps: this.ngRedux.select(state => state.sweepsState.sweeps).subscribe(sweeps => {
+                this.scroll = false;
                 this.sweeps = sweeps.array;
             })
         };
+    }
 
+    ngAfterViewInit() {
         this.addScrollEventHandler();
     }
 
@@ -88,25 +99,30 @@ export class ToDoComponent implements OnInit, OnDestroy {
     }
 
     private addScrollEventHandler(): void {
-        const tableBody = document.getElementsByClassName('body');
-        const el = <HTMLDivElement>tableBody[0];
+        const tablesBody = document.getElementsByClassName('body');
+
         // some times we get negative scroll position, so we don't want to trigger load more data when scrolling back up
         let lastScroll = Number.MAX_VALUE;
-        if (el) {
-            el.onscroll = () => {
-                const currentScroll = el.scrollHeight - el.scrollTop - this.outerHeight(el);
-                if (currentScroll < 1 && currentScroll < lastScroll) {
-                    if (this.ngRedux.getState().sweepsState.isAllSweepsLoaded) {
-                        lastScroll = currentScroll;
-                        return;
+        Array.from(tablesBody).forEach(el => {
+            if (el) {
+                const divEl = <HTMLDivElement>el;
+                divEl.onscroll = () => {
+                    const currentScroll = divEl.scrollHeight - divEl.scrollTop - this.outerHeight(divEl);
+                    if (currentScroll < 1 && currentScroll < lastScroll) {
+                        this.scroll = true;
+                        if (this.ngRedux.getState().sweepsState.isAllSweepsLoaded) {
+                            lastScroll = currentScroll;
+                            return;
+                        }
+                        this.sweepsActions.getSweeps({
+                            user_account_id: this.userAccountId,
+                            lastUserSweep: this.sweeps[this.sweeps.length - 1]
+                        }, this.mode);
                     }
-                    this.sweepsActions.getSweeps({
-                        user_account_id: this.loggedUser.user_account_id,
-                        lastUserSweep: this.sweeps[this.sweeps.length - 1].data
-                    }, SweepsMode.active);
-                }
-                lastScroll = currentScroll;
-            };
-        }
+                    lastScroll = currentScroll;
+                };
+            }
+        });
+
     }
 }
