@@ -20,9 +20,6 @@
                             <ng-container *ngIf="sweep.is_frequency">
                                 {{getTimePassedUntilLastVisit(sweep.last_entry_date)}}
                             </ng-container>
-                            <ng-container *ngIf="sweep.is_referral">
-                                {{sweep.total_shares ? sweep.total_shares : 0}} shares
-                            </ng-container>
                         </div>
                         <mat-icon class="edit-sweep" (click)="editSweep(sweep, $event)">edit</mat-icon>
                     </mat-list-item>
