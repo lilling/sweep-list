@@ -3,15 +3,14 @@ import { CommonActions } from '../state/common/common.actions';
 
 @Component({
     selector: 'app-header',
-    styleUrls: ['header.component.scss'],
-    templateUrl: 'header.component.html'
+    templateUrl: 'header.component.html',
+    styleUrls: ['header.component.scss']
 })
 export class HeaderComponent {
     @Input()
     title: string;
 
     constructor(private commonActions: CommonActions) {
-
     }
 
     toggleSideNav() {

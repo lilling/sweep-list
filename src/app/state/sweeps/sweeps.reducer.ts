@@ -1,24 +1,32 @@
 import { TypedAction } from '../models/typed-action';
-import { INITIAL_SWEEPS_STATE, SweepsState } from './sweeps.state';
+import { INITIAL_SWEEPS_STATE, SweepsState, SweepsMode } from './sweeps.state';
 import { SweepsActions } from './sweeps.actions';
 import { user_sweep } from '../../../../shared/classes';
+import { HashedArray } from '../../models/hashed-array.class';
 
 export function sweepsReducer(state: SweepsState = INITIAL_SWEEPS_STATE, action: TypedAction<any>) {
     switch (action.type) {
-        case SweepsActions.GET_USER_SWEEPS: {
+        case SweepsActions.GO_TO_SWEEPS: {
+            const sweeps = state.mode !== action.payload ? new HashedArray<user_sweep>([], 'user_sweep_id') : state.sweeps;
+            return {
+                ...state,
+                sweeps,
+                mode: action.payload
+            };
+        }
+        case SweepsActions.GET_SWEEPS: {
             return {
                 ...state,
                 isSweepsLoading: true
             };
         }
-        case SweepsActions.GET_USER_SWEEPS_COMPLETED: {
+        case SweepsActions.GET_SWEEPS_COMPLETED: {
             const newSweeps: user_sweep[] = action.payload;
-            const relevantSweeps = state.sweeps.deleteItems(newSweeps.map(sweep => sweep.user_sweep_id));
             return {
                 ...state,
-                sweeps: relevantSweeps.addItems(newSweeps),
+                sweeps: state.sweeps.addItems(newSweeps),
                 isSweepsLoading: false,
-                isAllSweepsLoaded: action.payload.length === 0
+                isAllSweepsLoaded: newSweeps.length === 0
             };
         }
         case SweepsActions.ADD_SWEEP: {

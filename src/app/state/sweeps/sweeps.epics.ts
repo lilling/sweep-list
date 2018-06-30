@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { ActionsObservable } from 'redux-observable';
 import { catchError, map } from 'rxjs/operators';
 import { of } from 'rxjs/observable/of';
+import * as _ from 'lodash';
 //
 import { TypedAction } from '../models/typed-action';
 import { BaseEpic } from '../models/base-epic';
@@ -10,7 +11,8 @@ import { Epic } from '../models/epic.decorator';
 import { SweepsActions } from './sweeps.actions';
 import { generateError } from '../models/error';
 import { SweepsService } from '../../services/sweeps.service';
-import { user_sweep } from '../../../../shared/classes';
+import { user_sweep, Search } from '../../../../shared/classes';
+import { SweepsMode } from './sweeps.state';
 
 @Injectable()
 export class SweepsEpics extends BaseEpic {
@@ -20,18 +22,15 @@ export class SweepsEpics extends BaseEpic {
     }
 
     @Epic
-    getUserSweeps(action$: ActionsObservable<TypedAction<{user_account_id: string, lastUserSweep?: user_sweep}>>) {
-        return action$.ofType(SweepsActions.GET_USER_SWEEPS)
+    getUserSweeps(action$: ActionsObservable<TypedAction<{search: Search, mode: SweepsMode}>>) {
+        return action$.ofType(SweepsActions.GET_SWEEPS)
             .switchMap(action => {
-                return this.sweepsService.getActiveSweeps(action.payload).pipe(
+                return this.sweepsService.getSweeps(action.payload.search, action.payload.mode).pipe(
                     map((res: user_sweep[]) => {
-                        res.forEach(sweep => {
-                            this.fixSweepTypes(sweep);
-                        });
-                        return { type: SweepsActions.GET_USER_SWEEPS_COMPLETED, payload: res };
+                        return { type: SweepsActions.GET_SWEEPS_COMPLETED, payload: res };
                     }),
                     catchError(err => {
-                        return of(generateError(err, SweepsActions.GET_USER_SWEEPS));
+                        return of(generateError(err, SweepsActions.GET_SWEEPS));
                     }));
 
             });
@@ -43,7 +42,6 @@ export class SweepsEpics extends BaseEpic {
             .switchMap(action => {
                 return this.sweepsService.addOrUpdateSweep(action.payload).pipe(
                     map(res => {
-                        this.fixSweepTypes(res);
                         return { type: SweepsActions.ADD_SWEEP_COMPLETED, payload: res };
                     }),
                     catchError(err => {
@@ -87,7 +85,6 @@ export class SweepsEpics extends BaseEpic {
             .switchMap(action => {
                 return this.sweepsService.addOrUpdateSweep(action.payload).pipe(
                     map(res => {
-                        this.fixSweepTypes(res);
                         return { type: SweepsActions.UPDATE_SWEEP_COMPLETED, payload: res };
                     }),
                     catchError(err => {
@@ -95,17 +92,5 @@ export class SweepsEpics extends BaseEpic {
                     }));
 
             });
-    }
-
-    private fixSweepTypes(sweep: user_sweep) {
-        sweep.last_entry_date = sweep.last_entry_date ? new Date(sweep.last_entry_date) : null;
-        sweep.created = sweep.created ? new Date(sweep.created) : null;
-        sweep.updated = sweep.updated ? new Date(sweep.updated) : null;
-        sweep.end_date = sweep.end_date ? new Date(sweep.end_date) : null;
-        sweep.total_entries = sweep.total_entries ? +sweep.total_entries : null;
-        sweep.total_shares = sweep.total_shares ? +sweep.total_shares : null;
-        sweep.referral_frequency = sweep.referral_frequency ? +sweep.referral_frequency : null;
-        sweep.frequency_days = sweep.frequency_days ? +sweep.frequency_days : null;
-        sweep.user_account_id = sweep.user_account_id ? +sweep.user_account_id : null;
     }
 }

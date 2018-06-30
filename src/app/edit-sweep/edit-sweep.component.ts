@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 import { Router, ActivatedRoute } from '@angular/router';
+import {Location} from '@angular/common';
 //
 import { MatIconRegistry, MatSlideToggleChange, MatExpansionPanel } from '@angular/material';
 import { NgRedux } from '@angular-redux/store';
@@ -28,6 +29,7 @@ export class EditSweepComponent implements OnInit {
     constructor(private ngRedux: NgRedux<AppState>,
                 private sweepsActions: SweepsActions,
                 private router: Router,
+                public location: Location,
                 private route: ActivatedRoute,
                 iconRegistry: MatIconRegistry,
                 sanitizer: DomSanitizer) {
@@ -78,15 +80,11 @@ export class EditSweepComponent implements OnInit {
 
     saveSweep() {
         this.sweepsActions.updateSweep(this.sweep);
-        this.back();
+        this.location.back();
     }
 
     deleteSweep() {
         this.sweepsActions.deleteSweep(this.sweep.user_sweep_id);
-        this.back();
-    }
-
-    back() {
-        this.router.navigate(['./list']);
+        this.location.back();
     }
 }

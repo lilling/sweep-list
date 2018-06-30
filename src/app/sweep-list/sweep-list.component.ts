@@ -10,6 +10,7 @@ import { AddSweepComponent } from '../add-sweep/add-sweep.component';
 import { user_sweep, user_account } from '../../../shared/classes';
 import { AppState } from '../state/store';
 import { SweepsActions } from '../state/sweeps/sweeps.actions';
+import { SweepsMode } from '../state/sweeps/sweeps.state';
 
 @Component({
     selector: 'app-sweep-list',
@@ -39,7 +40,7 @@ export class SweepListComponent implements OnInit {
             user: this.ngRedux.select(state => state.loginState.user).subscribe(user => {
                 this.loggedUser = user;
                 if (user) {
-                    this.sweepsActions.getUserSweeps(user.user_account_id.toString());
+                    this.sweepsActions.getSweeps({ user_account_id: user.user_account_id }, SweepsMode.active);
                 }
             }),
             sweeps: this.ngRedux.select(state => state.sweepsState.sweeps).subscribe(sweeps => {
@@ -67,7 +68,7 @@ export class SweepListComponent implements OnInit {
 
     openUrl(urlToOpen: string, sweepId: number) {
         this.sweepsActions.enterSweep(sweepId);
-        let url: string = '';
+        let url = '';
         if (!/^http[s]?:\/\//.test(urlToOpen)) {
             url += 'http://';
         }
@@ -97,6 +98,7 @@ export class SweepListComponent implements OnInit {
                 returnValue = `${hours.toFixed(0)} hours`;
             } else {
                 const minutes = diff / 6e4;
+
                 returnValue = `${minutes.toFixed(0)} minutes`;
             }
         }
@@ -125,7 +127,10 @@ export class SweepListComponent implements OnInit {
                         lastScroll = currentScroll;
                         return;
                     }
-                    this.sweepsActions.getUserSweeps(this.loggedUser.user_account_id.toString(), this.sweeps[this.sweeps.length - 1].data);
+                    this.sweepsActions.getSweeps({
+                        user_account_id: this.loggedUser.user_account_id,
+                        lastUserSweep: this.sweeps[this.sweeps.length - 1].data
+                    }, SweepsMode.active);
                 }
                 lastScroll = currentScroll;
             };

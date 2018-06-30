@@ -1,0 +1,33 @@
+<div class="container">
+    <app-header [title]="'Dont Forget!'"></app-header>
+    <ng-container *ngIf="isSweepsLoading$ | async">
+        <div class="blocker"></div>
+        <i class="fa fa-spinner fa-spin centered"></i>
+    </ng-container>
+    <mat-tab-group (selectedIndexChange)="selectedIndexChanged($event)">
+        <mat-tab [label]="label" *ngFor="let label of ['Today', 'Tomorrow', 'Upcoming']">
+            <div class="body">
+                <mat-list>
+                    <mat-list-item *ngFor="let sweep of sweeps"
+                                   class="clickable" [ngClass]="{'deleted': sweep.deleted_yn}"
+                                   (click)="openUrl(sweep.sweep_url, sweep.user_sweep_id)">
+                        <mat-icon matListIcon fontSet="fa" fontIcon="fa-gift"></mat-icon>
+                        <div mat-line class="list-item-first">
+                            <span class="sweep-name"> {{sweep.sweep_name}}</span>
+                            <!--<span class="sweep-data"> {{sweep.text}} </span>-->
+                        </div>
+                        <div mat-line class="list-item-second">
+                            <ng-container *ngIf="sweep.is_frequency">
+                                {{getTimePassedUntilLastVisit(sweep.last_entry_date)}}
+                            </ng-container>
+                            <ng-container *ngIf="sweep.is_referral">
+                                {{sweep.total_shares ? sweep.total_shares : 0}} shares
+                            </ng-container>
+                        </div>
+                        <mat-icon class="edit-sweep" (click)="editSweep(sweep, $event)">edit</mat-icon>
+                    </mat-list-item>
+                </mat-list>
+            </div>
+        </mat-tab>
+</mat-tab-group>
+</div>

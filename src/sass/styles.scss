@@ -25,3 +25,19 @@
     background-color: $main-color-opacity;
   }
 }
+
+.mat-tab-group {
+    .mat-tab-header {
+      .mat-ink-bar {
+        background-color: $main-color;
+      }
+
+      .mat-tab-label {
+        flex-basis: 0;
+        flex-grow: 1;
+        &:not(.mat-tab-disabled):focus {
+          background-color: $main-color-opacity;
+        }
+      }
+    }
+}
