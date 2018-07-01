@@ -23,14 +23,18 @@
             <app-basic-sweep-data (isValidChange)="step1Valid = $event" [(sweepName)]="sweep.sweep_name" [(sweepUrl)]="sweep.sweep_url"
                                   [(sweepEndDate)]="sweep.end_date"></app-basic-sweep-data>
 
-            <span>Recurring entry</span>
-            <mat-slide-toggle [checked]="sweep.is_frequency" [color]="'primary'" (click)="$event.stopPropagation()"
-                              (change)="changeIsFrequency($event, frequencyPanel)">
-            </mat-slide-toggle>
-            <app-frequency-sweep-data (isValidChange)="step2Valid = $event" [disabled]="!sweep.is_frequency"
-                                      [(frequencyDays)]="sweep.frequency_days"></app-frequency-sweep-data>
             <mat-accordion [multi]="true">
-                <mat-expansion-panel #referralPanel [disabled]="!sweep.is_referral">
+                <mat-expansion-panel #frequencyPanel [expanded]="sweep.is_frequency" [disabled]="!sweep.is_frequency">
+                    <mat-expansion-panel-header>
+                        Recurring entry
+                        <mat-slide-toggle [checked]="sweep.is_frequency" [color]="'primary'" (click)="$event.stopPropagation()"
+                                          (change)="changeIsFrequency($event, frequencyPanel)">
+                        </mat-slide-toggle>
+                    </mat-expansion-panel-header>
+                    <app-frequency-sweep-data (isValidChange)="step2Valid = $event" [disabled]="!sweep.is_frequency"
+                                              [(frequencyDays)]="sweep.frequency_days"></app-frequency-sweep-data>
+                </mat-expansion-panel>
+                <mat-expansion-panel #referralPanel [expanded]="sweep.is_referral" [disabled]="!sweep.is_referral">
                     <mat-expansion-panel-header>
                         Share on social media
                         <mat-slide-toggle [checked]="sweep.is_referral" [color]="'primary'" (click)="$event.stopPropagation()"
@@ -42,7 +46,7 @@
                                              [(referFacebook)]="sweep.refer_facebook" [(referGoogle)]="sweep.refer_google"
                                              [(referralFrequency)]="sweep.referral_frequency"></app-referral-sweep-data>
                 </mat-expansion-panel>
-                <mat-expansion-panel #thankPanel [disabled]="!thankReferrer">
+                <mat-expansion-panel #thankPanel [expanded]="thankReferrer"  [disabled]="!thankReferrer">
                     <mat-expansion-panel-header>
                         Thank referrer if I won
                         <mat-slide-toggle [checked]="thankReferrer" [color]="'primary'" (click)="$event.stopPropagation()"
