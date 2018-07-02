@@ -38,16 +38,16 @@ export class UserAccountService extends BaseService<user_account> {
         return ret;
     }
 
-    async GetSocialMedia(id: number, getExpired?: boolean): Promise<string[]> {
+    async GetSocialMedia(user_account_id: number, getExpired?: boolean): Promise<string[]> {
         const db = DbGetter.getDB();
         const SocialMedias = [];
         for (const i_Provider of this.validProviders) {
             let q =
                 `SELECT COUNT(*)\n` +
                 `  FROM sweepimp.${i_Provider}_account\n` +
-                ` WHERE user_account_id = $<id^>`;
+                ` WHERE user_account_id = $<user_account_id^>`;
             if (getExpired) {q = q + `\n   AND extract(epoch from (expiration_date - (current_date + current_time))) < 0`}
-            await db.oneOrNone(q, { id })
+            await db.oneOrNone(q, { user_account_id })
                 .then(values => {
                     if (values.count > 0) {
                         SocialMedias.push(SocialMedia[i_Provider]);
@@ -204,11 +204,9 @@ export class UserAccountService extends BaseService<user_account> {
         social_media_account.user_account_id = UserAccount.user_account_id;
         switch (Provider){
             case 'facebook': {
-                const expires = new Date();
                 const extendData = await this.FacebookService.extendAccessToken(social_media_account.authToken);
-                expires.setTime(expires.getTime() + extendData.expiration_seconds * 1000);
                 social_media_account.authToken = extendData.access_token;
-                social_media_account.expiration_date = expires;
+                social_media_account.expiration_date = extendData.expiration_date;
                 social_media_account.auth_error = extendData.auth_error;
                 break;
             }
@@ -232,7 +230,7 @@ export class UserAccountService extends BaseService<user_account> {
         return UserAccount;
     }
 
-    async extendUserAccounts(){
+    async extendFacebookUserAccounts(){
         //Get Facebook users to extend
         const db = DbGetter.getDB();
         let q =
@@ -244,21 +242,18 @@ export class UserAccountService extends BaseService<user_account> {
         let objectKeysArray = Object.keys(FacebookUsersToExtend);
         let extentions = [];
         for(const element in objectKeysArray){
-            const expires = new Date();
             let extention = await this.FacebookService.extendAccessToken(FacebookUsersToExtend[element].auth_token);
-            expires.setTime(expires.getTime() + extention.expiration_seconds * 1000);
             extentions.push({
                 facebook_account_id: FacebookUsersToExtend[element].facebook_account_id,
                 auth_token: (extention.access_token ? extention.access_token : FacebookUsersToExtend[element].auth_token),
-                expires: expires,
+                expiration_date: extention.expiration_date,
                 error: extention.auth_error
             });
         };
-        console.log(extentions);
         if (extentions.length > 0) {
             q = `UPDATE sweepimp.facebook_account\n` +
                 `   SET auth_token      = $<auth_token>\n` +
-                `      ,expiration_date = $<expires>\n` +
+                `      ,expiration_date = $<expiration_date>\n` +
                 `      ,auth_error      = $<error>\n` +
                 `      ,updated         = current_timestamp\n` +
                 ` WHERE facebook_account_id = $<facebook_account_id>;\n`;

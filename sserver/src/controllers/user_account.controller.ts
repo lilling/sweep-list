@@ -36,6 +36,6 @@ export class UserController {
 
     @Post('extendUserAccounts')
     extendUserAccounts(){
-        this.UserAccountService.extendUserAccounts();
+        this.UserAccountService.extendFacebookUserAccounts();
     }
 }
