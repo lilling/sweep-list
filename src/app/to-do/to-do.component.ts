@@ -108,14 +108,6 @@ export class ToDoComponent implements OnInit, AfterViewInit, OnDestroy {
         _.forOwn(this.subscriptions, subscription => subscription.unsubscribe());
     }
 
-    private outerHeight(element: HTMLElement): number {
-        let height = element.offsetHeight;
-        const computedStyle = getComputedStyle(element);
-
-        height += parseInt(computedStyle.marginTop, 10) + parseInt(computedStyle.marginBottom, 10);
-        return height;
-    }
-
     private addScrollEventHandler(): void {
         const tablesBody = document.getElementsByClassName('body');
 
@@ -125,7 +117,9 @@ export class ToDoComponent implements OnInit, AfterViewInit, OnDestroy {
             if (el) {
                 const divEl = <HTMLDivElement>el;
                 divEl.onscroll = () => {
-                    const currentScroll = divEl.scrollHeight - divEl.scrollTop - this.outerHeight(divEl);
+                    const computed = getComputedStyle(divEl);
+                    const outer = divEl.offsetHeight + parseInt(computed.marginBottom, 10) + parseInt(computed.marginTop, 10);
+                    const currentScroll = divEl.scrollHeight - divEl.scrollTop - outer;
                     if (currentScroll < 1 && currentScroll < lastScroll) {
                         if (this.ngRedux.getState().sweepsState.isAllSweepsLoaded) {
                             lastScroll = currentScroll;

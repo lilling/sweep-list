@@ -103,14 +103,6 @@ export class SweepListComponent implements OnInit {
         return `${returnValue} left`;
     }
 
-    private outerHeight(element: HTMLElement): number {
-        let height = element.offsetHeight;
-        const computedStyle = getComputedStyle(element);
-
-        height += parseInt(computedStyle.marginTop, 10) + parseInt(computedStyle.marginBottom, 10);
-        return height;
-    }
-
     private addScrollEventHandler(): void {
         const tableBody = document.getElementsByClassName('body');
         const el = <HTMLDivElement>tableBody[0];
@@ -118,7 +110,9 @@ export class SweepListComponent implements OnInit {
         let lastScroll = Number.MAX_VALUE;
         if (el) {
             el.onscroll = () => {
-                const currentScroll = el.scrollHeight - el.scrollTop - this.outerHeight(el);
+                const computed = getComputedStyle(el);
+                const outer = el.offsetHeight + parseInt(computed.marginBottom, 10) + parseInt(computed.marginTop, 10);
+                const currentScroll = el.scrollHeight - el.scrollTop - outer;
                 if (currentScroll < 1 && currentScroll < lastScroll) {
                     if (this.ngRedux.getState().sweepsState.isAllSweepsLoaded) {
                         lastScroll = currentScroll;
