@@ -48,7 +48,6 @@ export class SweepListComponent implements OnInit {
                 }
             }),
             sweeps: this.ngRedux.select(state => state.sweepsState.sweeps).subscribe(sweeps => {
-                this.scroll = false;
                 this.sweeps = sweeps.array.reduce((result, current) => {
                     const element = {
                         data: current,
