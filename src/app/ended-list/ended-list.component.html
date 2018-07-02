@@ -1,0 +1,37 @@
+<div class="container">
+    <app-header [title]="'My Active Sweeps'"></app-header>
+    <div class="body">
+        <ng-container *ngIf="isSweepsLoading$ | async">
+            <div class="blocker"></div>
+            <i class="fa fa-spinner fa-spin centered"></i>
+        </ng-container>
+
+        <mat-list>
+            <mat-list-item *ngFor="let sweep of sweeps"
+                           class="clickable" [ngClass]="{'deleted': sweep.data.deleted_yn}"
+                           (click)="openUrl(sweep.data.sweep_url, sweep.data.user_sweep_id)">
+                <mat-icon matListIcon fontSet="fa" fontIcon="fa-gift"></mat-icon>
+                <div mat-line class="list-item-first">
+                    <span class="sweep-name"> {{sweep.data.sweep_name}}</span>
+                    <span class="sweep-data"> {{sweep.text}} </span>
+                </div>
+                <div mat-line class="list-item-second">
+                    <ng-container *ngIf="sweep.data.is_frequency">
+                        {{ sweepsService.getTimePassedUntilLastVisit(sweep.data) }}
+                    </ng-container>
+                    <ng-container *ngIf="sweep.data.is_referral">
+                        {{sweep.data.total_shares ? sweep.data.total_shares : 0}} shares
+                    </ng-container>
+                </div>
+                <mat-icon class="edit-sweep" (click)="editSweep(sweep.data, $event)">edit</mat-icon>
+            </mat-list-item>
+        </mat-list>
+        <div class="no-sweeps" *ngIf="!(isSweepsLoading$ | async) && sweeps.length == 0">
+            <span>you have no sweeps! wanna start?</span>
+            <button mat-raised-button (click)="addSweep()"> Add Sweep </button>
+        </div>
+        <button mat-fab (click)="addSweep()">
+            <mat-icon aria-label="Example icon-button with a heart icon">add</mat-icon>
+        </button>
+    </div>
+</div>
