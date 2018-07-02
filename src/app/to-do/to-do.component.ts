@@ -78,10 +78,10 @@ export class ToDoComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     nextVisit(sweep: user_sweep) {
-        const nextVisit = sweep.frequency_days - (Date.now() - sweep.last_entry_date.getTime());
+        const nextVisit = sweep.frequency_days * 864e5 - (Date.now() - sweep.last_entry_date.getTime());
 
         if (nextVisit < 0) {
-            return '0 Minutes Left';
+            return 'Enter right now';
         }
 
         let returnValue = '';

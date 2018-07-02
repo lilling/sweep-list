@@ -17,8 +17,8 @@
                         </div>
                         <div mat-line class="list-item-second">
                             <ng-container *ngIf="sweep.is_frequency">
-                                {{ nextVisit(sweep) }}
-                                {{ sweepsService.getTimePassedUntilLastVisit(sweep) }}
+                                {{ nextVisit(sweep) }},
+                                last visit was {{ sweepsService.getTimePassedUntilLastVisit(sweep) }} ago.
                                 {{ sweep.total_entries }} total visits.
                             </ng-container>
                         </div>
