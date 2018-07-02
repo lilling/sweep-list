@@ -7,9 +7,9 @@
                     <i class="fa fa-facebook-f social-icon"></i>
                     <span>Facebook is {{facebook ? 'linked' : 'not linked'}}</span>
                 </td>
-                <td>
-                    <button *ngIf="!facebook" mat-button (click)="login(SocialMedia.facebook)">Link</button>
-                    <button *ngIf="facebook" mat-button (click)="logoff()">Unlink</button>
+                <td class="buttons">
+                    <button class="login-button" *ngIf="!facebook" mat-button (click)="login(SocialMedia.facebook)">Link</button>
+                    <button class="logoff-button" *ngIf="facebook" mat-button (click)="logoff()">Unlink</button>
                 </td>
             </tr>
         </table>

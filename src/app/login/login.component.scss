@@ -38,6 +38,17 @@
     }
   }
 
+  .buttons {
+    .login-button {
+      background: $main-color;
+      color: white;
+    }
+    .logoff-button {
+      color: $main-color;
+      font-weight: bold;
+    }
+  }
+
   .continue-container {
     text-align: right;
 
