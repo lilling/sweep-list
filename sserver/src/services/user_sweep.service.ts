@@ -130,6 +130,7 @@ export class UserSweepService extends BaseService<user_sweep> {
         let where = ``;
         var lastSweep = ``;
         const todoWhere =
+            `   AND is_frequency = true\n` +
             `   AND end_date >= now()\n` +
             `   AND deleted_yn = false\n` +
             `   AND won_yn = false\n`;

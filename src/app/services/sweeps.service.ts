@@ -73,6 +73,6 @@ export class SweepsService extends BaseService {
                 returnValue = `${minutes.toFixed(0)} minutes`;
             }
         }
-        return `Last visit was ${returnValue} ago.`;
+        return returnValue;
     }
 }
