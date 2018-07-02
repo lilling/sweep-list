@@ -66,7 +66,7 @@ export class LoginComponent implements OnInit {
     }
 
     goToList() {
-        this.router.navigate(['/todo']);
+        this.router.navigate(['/todo', 1]);
     }
 
     ngOnInit() {

@@ -4,7 +4,7 @@
         <div class="blocker"></div>
         <i class="fa fa-spinner fa-spin centered"></i>
     </ng-container>
-    <mat-tab-group (selectedIndexChange)="selectedIndexChanged($event)">
+    <mat-tab-group (selectedIndexChange)="selectedIndexChanged($event)" [selectedIndex]="mode - 1">
         <mat-tab [label]="label" *ngFor="let label of ['Today', 'Tomorrow', 'Upcoming']">
             <div class="body">
                 <mat-list>

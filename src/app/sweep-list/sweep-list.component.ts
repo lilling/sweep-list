@@ -7,11 +7,12 @@ import { NgRedux, select } from '@angular-redux/store';
 import { Subscription } from 'rxjs/Subscription';
 //
 import { AddSweepComponent } from '../add-sweep/add-sweep.component';
-import { user_sweep, user_account } from '../../../shared/classes';
+import { user_sweep } from '../../../shared/classes';
 import { AppState } from '../state/store';
 import { SweepsActions } from '../state/sweeps/sweeps.actions';
 import { SweepsMode } from '../state/sweeps/sweeps.state';
 import { SweepsService } from '../services/sweeps.service';
+import { LocalStorageKeys } from '../models/local-storage-keys.enum';
 
 @Component({
     selector: 'app-sweep-list',
@@ -21,14 +22,13 @@ import { SweepsService } from '../services/sweeps.service';
 export class SweepListComponent implements OnInit {
     @select((state: AppState) => state.sweepsState.isSweepsLoading)
     isSweepsLoading$: Observable<boolean>;
-
     sweeps: {
         data: user_sweep,
         text: string
     }[];
-    loggedUser: user_account;
     subscriptions: { [index: string]: Subscription };
     Date = Date;
+    userAccountId: number;
 
     constructor(public dialog: MatDialog,
                 private router: Router,
@@ -38,14 +38,17 @@ export class SweepListComponent implements OnInit {
     }
 
     ngOnInit() {
+        this.userAccountId = +localStorage.getItem(LocalStorageKeys.loggedUser);
+        this.sweepsActions.goToSweeps(SweepsMode.active);
+
         this.subscriptions = {
-            user: this.ngRedux.select(state => state.loginState.user).subscribe(user => {
-                this.loggedUser = user;
-                if (user) {
-                    this.sweepsActions.getSweeps({ user_account_id: user.user_account_id }, SweepsMode.active);
+            sweepsMode: this.ngRedux.select(state => state.sweepsState.mode).subscribe(mode => {
+                if (mode === SweepsMode.active && !this.ngRedux.getState().sweepsState.sweeps.length()) {
+                    this.sweepsActions.getSweeps({ user_account_id: this.userAccountId }, mode);
                 }
             }),
             sweeps: this.ngRedux.select(state => state.sweepsState.sweeps).subscribe(sweeps => {
+                this.scroll = false;
                 this.sweeps = sweeps.array.reduce((result, current) => {
                     const element = {
                         data: current,
@@ -122,7 +125,7 @@ export class SweepListComponent implements OnInit {
                         return;
                     }
                     this.sweepsActions.getSweeps({
-                        user_account_id: this.loggedUser.user_account_id,
+                        user_account_id: this.userAccountId,
                         lastUserSweep: this.sweeps[this.sweeps.length - 1].data
                     }, SweepsMode.active);
                 }

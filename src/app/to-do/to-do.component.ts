@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy, AfterViewInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 //
 import * as _ from 'lodash';
 //
@@ -25,30 +25,28 @@ export class ToDoComponent implements OnInit, AfterViewInit, OnDestroy {
     sweeps: user_sweep[] = [];
     subscriptions: { [index: string]: Subscription };
     mode: SweepsMode;
-    scroll = false;
     userAccountId: number;
 
     constructor(private ngRedux: NgRedux<AppState>,
                 public sweepsService: SweepsService,
+                private activatedRoute: ActivatedRoute,
                 private sweepsActions: SweepsActions,
                 private router: Router) {
     }
 
     ngOnInit() {
         this.userAccountId = +localStorage.getItem(LocalStorageKeys.loggedUser);
-        this.sweepsActions.goToSweeps(SweepsMode.today);
+        this.sweepsActions.goToSweeps(+this.activatedRoute.snapshot.params['mode']);
 
         this.subscriptions = {
             sweepsMode: this.ngRedux.select(state => state.sweepsState.mode).subscribe(mode => {
                 this.mode = mode;
-                const search = {
-                    user_account_id: this.userAccountId,
-                    lastUserSweep: this.sweeps.length && this.scroll ? this.sweeps[this.sweeps.length - 1] : undefined
-                };
-                this.sweepsActions.getSweeps(search, mode);
+
+                if (!this.ngRedux.getState().sweepsState.sweeps.length()) {
+                    this.sweepsActions.getSweeps({ user_account_id: this.userAccountId }, mode);
+                }
             }),
             sweeps: this.ngRedux.select(state => state.sweepsState.sweeps).subscribe(sweeps => {
-                this.scroll = false;
                 this.sweeps = sweeps.array;
             })
         };
@@ -60,6 +58,7 @@ export class ToDoComponent implements OnInit, AfterViewInit, OnDestroy {
 
     selectedIndexChanged(index: number) {
         this.sweepsActions.goToSweeps(index + 1);
+        this.router.navigate([`../${index + 1}`], {relativeTo : this.activatedRoute});
     }
 
     openUrl(urlToOpen: string, sweepId: number) {
@@ -128,7 +127,6 @@ export class ToDoComponent implements OnInit, AfterViewInit, OnDestroy {
                 divEl.onscroll = () => {
                     const currentScroll = divEl.scrollHeight - divEl.scrollTop - this.outerHeight(divEl);
                     if (currentScroll < 1 && currentScroll < lastScroll) {
-                        this.scroll = true;
                         if (this.ngRedux.getState().sweepsState.isAllSweepsLoaded) {
                             lastScroll = currentScroll;
                             return;

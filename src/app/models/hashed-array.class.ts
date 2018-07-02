@@ -9,6 +9,10 @@ export class HashedArray<T> {
         });
     }
 
+    length() {
+        return this.array.length;
+    }
+
     addItem(item: T, sortFunction?: (a, b) => number): HashedArray<T> {
         return this.addItems([item], sortFunction);
     }

@@ -14,7 +14,7 @@ export const appRoutes: Routes = [
         component: ContainerComponent,
         children: [
             { path: 'list', component: SweepListComponent, canActivate: [AuthGuard] },
-            { path: 'todo',  component: ToDoComponent, canActivate: [AuthGuard]},
+            { path: 'todo/:mode',  component: ToDoComponent, canActivate: [AuthGuard]},
             { path: 'edit/:id', component: EditSweepComponent, canActivate: [AuthGuard] },
         ]
     }
