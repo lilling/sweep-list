@@ -38,4 +38,14 @@ export class UserController {
     extendUserAccounts(){
         this.UserAccountService.extendFacebookUserAccounts();
     }
+
+    @Get('deleteUserAccountConfirm/:id')
+    deleteUserAccountConfirm(@Param() params): Promise<any>{
+        return this.UserAccountService.deleteUserAccountConfirm(params.id);
+    }
+
+    @Post('deleteUserAccount')
+    deleteUserAccount(@Body() user_account_id: any){
+        this.UserAccountService.deleteUserAccount(user_account_id.user_account_id);
+    }
 }

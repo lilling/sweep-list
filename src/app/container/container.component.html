@@ -1,11 +1,11 @@
 <mat-sidenav-container>
     <mat-sidenav #sidenav mode="over" [opened]="sideNav" (closedStart)="toggleSideNav()">
         <mat-nav-list>
-            <a [routerLink]="['/todo']" mat-list-item>
+            <a [routerLink]="['/todo', 1]" mat-list-item>
                 <mat-icon matListIcon fontSet="fa" fontIcon="fa-list-ul"></mat-icon>
                 Don't Forget!
             </a>
-            <a [routerLink]="['/list', 1]" mat-list-item>
+            <a [routerLink]="['/list']" mat-list-item>
                 <mat-icon matListIcon fontSet="fa" fontIcon="fa-gift"></mat-icon>
                 Active Sweeps
             </a>

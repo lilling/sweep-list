@@ -135,6 +135,7 @@ export interface user_account {
     user_account_id: number;
     first_name: string | null;
     last_name: string | null;
+    is_deleted: boolean;
     created: Date;
     updated: Date;
     expiredSocialMedias?: string[];
@@ -173,6 +174,7 @@ export interface retired_user_account {
     user_account_id: number;
     first_name: string | null;
     last_name: string | null;
+    is_deleted: boolean;
     replacement_user_account_id: number | null;
     created: Date;
     updated: Date;

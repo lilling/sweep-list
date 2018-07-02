@@ -25,12 +25,14 @@ export class UserAccountService extends BaseService<user_account> {
         const q =
             `SELECT user_account.*\n` +
             `  FROM sweepimp.user_account\n` +
-            ` WHERE user_account_id = $<user_account_id^>;\n` +
+            ` WHERE user_account_id = $<user_account_id^>\n` +
+            `   AND is_deleted = false;\n` +
             `SELECT retired_user_account.*\n` +
             `  FROM sweepimp.retired_user_account\n` +
-            ` WHERE user_account_id = $<user_account_id^>`;
+            ` WHERE user_account_id = $<user_account_id^>\n` +
+            `   AND is_deleted = false`;
         let UserAccounts = await DB.multi(q, { user_account_id: id });
-        while (!UserAccounts[0][0]) {
+        while (!UserAccounts[0][0] && UserAccounts[1][0].replacement_user_account_id) {
             UserAccounts = await DB.multi(q, { user_account_id: UserAccounts[1][0].replacement_user_account_id });
         }
         const ret = UserAccounts[0][0];
@@ -65,7 +67,8 @@ export class UserAccountService extends BaseService<user_account> {
             `SELECT user_account.*\n` +
             `  FROM sweepimp.${provider}_account\n` +
             `  JOIN sweepimp.user_account using (user_account_id)\n` +
-            ` WHERE ${provider}_account_id = $<id>`;
+            ` WHERE ${provider}_account_id = $<id>\n` +
+            `   AND is_deleted = false`;
         try {
             const loginUser = await db.oneOrNone<user_account>(q, social_media_account);
             const now = new Date();
@@ -183,17 +186,19 @@ export class UserAccountService extends BaseService<user_account> {
     async CreateSocialUser(DB, social_media_account: SocialUserAndAccount, Provider: string, CreateUserAccount: boolean): Promise<user_account> {
         const InsertUserAccount =
             `INSERT INTO sweepimp.user_account\n` +
-            `    (first_name, last_name, created, updated)\n` +
+            `    (first_name, last_name, is_deleted, created, updated)\n` +
             `VALUES\n` +
             `    ($<firstName>\n` +
             `    ,$<lastName>\n` +
+            `    ,false\n` +
             `    ,current_timestamp\n` +
             `    ,current_timestamp)\n` +
             `RETURNING *`;
         const SelectUserAccount =
             `SELECT user_account.*\n` +
             `  FROM sweepimp.user_account\n` +
-            ` WHERE user_account_id = $<user_account_id^>`;
+            ` WHERE user_account_id = $<user_account_id^>\n` +
+            `   AND is_deleted = false`;
         let q = (CreateUserAccount ? InsertUserAccount : SelectUserAccount);
         // Split name into firstName and lastName
         if (social_media_account.name) {
@@ -263,5 +268,28 @@ export class UserAccountService extends BaseService<user_account> {
                 });
             });
         }
+    }
+
+    async deleteUserAccountConfirm(user_account_id: number){
+        const db = DbGetter.getDB();
+        const q =
+            `SELECT COALESCE(SUM(CASE WHEN is_frequency = true THEN 1 ELSE 0 END), 0) tasks\n` +
+            `      ,COALESCE(SUM(CASE WHEN end_date >= now() THEN 1 ELSE 0 END), 0) active\n` +
+            `      ,COALESCE(SUM(CASE WHEN end_date < now() THEN 1 ELSE 0 END), 0) ended\n` +
+            `      ,COALESCE(SUM(CASE WHEN won_yn = true THEN 1 ELSE 0 END), 0) won\n` +
+            `  FROM sweepimp.user_sweep\n` +
+            ` WHERE user_account_id = $<user_account_id^>\n`;
+        let PreDeleteData = await db.one(q, {user_account_id: user_account_id});
+        return PreDeleteData;
+    }
+
+    async deleteUserAccount(user_account_id: number){
+        const db = DbGetter.getDB();
+        const q =
+            `UPDATE sweepimp.user_account\n` +
+            `   SET is_deleted = true\n` +
+            `      ,updated    = current_timestamp\n` +
+            ` WHERE user_account_id = $<user_account_id^>\n`;
+        db.none(q, {user_account_id: user_account_id});
     }
 }
