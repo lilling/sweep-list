@@ -12,6 +12,8 @@ import { AppState } from '../state/store';
 import { NgRedux, select } from '@angular-redux/store';
 import { Subscription } from 'rxjs/Subscription';
 import { Observable } from 'rxjs/Observable';
+import { AddSweepComponent } from '../add-sweep/add-sweep.component';
+import { MatDialog } from '@angular/material';
 
 @Component({
     selector: 'app-to-do',
@@ -28,6 +30,7 @@ export class ToDoComponent implements OnInit, AfterViewInit, OnDestroy {
     userAccountId: number;
 
     constructor(private ngRedux: NgRedux<AppState>,
+                public dialog: MatDialog,
                 public sweepsService: SweepsService,
                 private activatedRoute: ActivatedRoute,
                 private sweepsActions: SweepsActions,
@@ -102,6 +105,10 @@ export class ToDoComponent implements OnInit, AfterViewInit, OnDestroy {
         }
 
         return `${returnValue} left to next visit.`;
+    }
+
+    addSweep() {
+        this.dialog.open(AddSweepComponent);
     }
 
     ngOnDestroy() {

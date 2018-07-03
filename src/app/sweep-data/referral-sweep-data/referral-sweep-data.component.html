@@ -10,18 +10,18 @@
         <span> days on:</span>
     </span>
     <div class="icons-holder">
-        <i class="fa fa-google social-icon" [ngClass]="{'logged': loggedSocialMedias?.includes(SocialMedia.google)}"
-           (click)="login(SocialMedia.google)"></i>
-        <mat-slide-toggle [checked]="referGoogle" [color]="'primary'"
-                          [disabled]="!loggedSocialMedias?.includes(SocialMedia.google)"
-                          (change)="referGoogle = $event.checked">
-        </mat-slide-toggle>
+            <i class="fa fa-google social-icon" [ngClass]="{'logged': loggedSocialMedias?.includes(SocialMedia.google)}"
+               (click)="login(SocialMedia.google)"></i>
+            <mat-slide-toggle [checked]="referGoogle" [color]="'primary'"
+                              [disabled]="!loggedSocialMedias?.includes(SocialMedia.google) || disabled"
+                              (change)="referGoogle = $event.checked">
+            </mat-slide-toggle>
     </div>
     <div class="icons-holder">
         <i class="fa fa-facebook-f social-icon" [ngClass]="{'logged': loggedSocialMedias?.includes(SocialMedia.facebook)}"
            (click)="login(SocialMedia.facebook)"></i>
         <mat-slide-toggle [checked]="referFacebook" [color]="'primary'"
-                          [disabled]="!loggedSocialMedias?.includes(SocialMedia.facebook)"
+                          [disabled]="!loggedSocialMedias?.includes(SocialMedia.facebook) || disabled"
                           (change)="referFacebook = $event.checked">
         </mat-slide-toggle>
     </div>

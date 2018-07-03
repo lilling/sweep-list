@@ -16,6 +16,10 @@
   font-weight: bold;
 }
 
+.mat-dialog-content {
+  overflow: hidden;
+}
+
 .form{
   display: flex;
   flex-direction: column;
