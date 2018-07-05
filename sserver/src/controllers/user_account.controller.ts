@@ -40,7 +40,7 @@ export class UserController {
     }
 
     @Get('deleteUserAccountConfirm/:id')
-    deleteUserAccountConfirm(@Param() params): Promise<any>{
+    deleteUserAccountConfirm(@Param() params): Promise<{tasks: string, active: string, ended: string, won: string}>{
         return this.UserAccountService.deleteUserAccountConfirm(params.id);
     }
 

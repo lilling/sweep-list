@@ -61,5 +61,12 @@
       }
     }
   }
+
+  .delete-account {
+    bottom: 0;
+    position: absolute;
+    text-decoration: underline;
+    color: $linkedin-color
+  }
 }
 

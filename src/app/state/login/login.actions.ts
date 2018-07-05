@@ -11,6 +11,9 @@ export class LoginActions {
     static LOGIN_COMPLETED = 'LOGIN_COMPLETED';
     static LOGOFF = 'LOGOFF';
     static LOGOFF_COMPLETED = 'LOGOFF_COMPLETED';
+    static DELETE_ACCOUNT = 'DELETE_ACCOUNT';
+    static DELETE_ACCOUNT_COMPLETED = 'DELETE_ACCOUNT_COMPLETED';
+
 
     constructor(private ngRedux: NgRedux<AppState>) {
     }
@@ -21,5 +24,9 @@ export class LoginActions {
 
     logOff() {
         this.ngRedux.dispatch({ type: LoginActions.LOGOFF });
+    }
+
+    deleteAccount(userId: number) {
+        this.ngRedux.dispatch({ type: LoginActions.DELETE_ACCOUNT, payload: userId });
     }
 }

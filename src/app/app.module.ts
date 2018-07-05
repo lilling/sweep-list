@@ -29,6 +29,7 @@ import { ThankSweepDataComponent } from './sweep-data/thank-sweep-data/thank-swe
 import { ToDoComponent } from './to-do/to-do.component';
 import { HeaderComponent } from './header/header.component';
 import { ContainerComponent } from './container/container.component';
+import { DeleteAccountComponent } from './delete-account/delete-account.component';
 
 const fbLoginOptions: LoginOpt = {
     scope: 'public_profile , email, publish_actions',
@@ -66,6 +67,7 @@ const SOCIAL_CONFIG = new AuthServiceConfig([
         HeaderComponent,
         ToDoComponent,
         PositiveValidatorDirective,
+        DeleteAccountComponent,
     ],
     imports: [
         StateModule,

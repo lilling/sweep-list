@@ -13,6 +13,7 @@ import { UsersService } from '../../services/users.service';
 import { AuthService } from 'angularx-social-login';
 import { generateError } from '../models/error';
 import { Action } from '@ngrx/store';
+import { Observable } from 'rxjs/Observable';
 
 @Injectable()
 export class LoginEpics extends BaseEpic {
@@ -55,8 +56,24 @@ export class LoginEpics extends BaseEpic {
     }
 
     @Epic
-    logOff(action$: ActionsObservable<Action>) {
+    logOff(action$: ActionsObservable<TypedAction<number>>) {
         return action$.ofType(LoginActions.LOGOFF)
+            .switchMap(action => {
+                return fromPromise(this.authService.signOut()).switchMap(user => {
+                    return this.usersService.deleteAccount(action.payload).pipe(
+                        map(val => {
+                            return { type: LoginActions.DELETE_ACCOUNT_COMPLETED };
+                        }),
+                        catchError(err => {
+                            return of(generateError(err, LoginActions.LOGOFF));
+                        }));
+                });
+            });
+    }
+
+    @Epic
+    deleteAccount(action$: ActionsObservable<Action>) {
+        return action$.ofType(LoginActions.DELETE_ACCOUNT)
             .switchMap(action => {
                 return fromPromise(this.authService.signOut()).pipe(
                     map(val => {
@@ -67,4 +84,6 @@ export class LoginEpics extends BaseEpic {
                     }));
             });
     }
+
+
 }

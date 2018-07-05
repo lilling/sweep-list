@@ -25,4 +25,12 @@ export class UsersService extends BaseService {
     getUser(id: number): Observable<user_account> {
         return this.get<user_account>(`user_accounts/${id}`);
     }
+
+    deleteAccount(id: number) {
+        return this.post('deleteUserAccount', id);
+    }
+
+    getDeleteAccountData(id: number): Observable<{tasks: string, active: string, ended: string, won: string}> {
+        return this.get(`deleteUserAccountConfirm/${id}`);
+    }
 }
