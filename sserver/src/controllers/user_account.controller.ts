@@ -29,6 +29,11 @@ export class UserController {
         return this.UserAccountService.GetSocialMedia(params.id);
     }
 
+    @Get('user_expired_social_medias/:id')
+    GetExpiredSocialMedia(@Param() params): Promise<string[]>{
+        return this.UserAccountService.GetSocialMedia(params.id, true);
+    }
+
     @Post('SocialMediaLogin')
     SocialMediaLogin(@Body() social_media_account: SocialUserAndAccount): Promise<user_account>{
         return this.UserAccountService.SocialMediaLogin(social_media_account);

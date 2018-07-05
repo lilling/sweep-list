@@ -1,22 +1,22 @@
 import { DbGetter } from '../dal/DbGetter';
 import { BaseService } from './base.service';
-import { user_account, SocialUserAndAccount } from '../../../shared/classes';
+import { user_account, SocialUserAndAccount, facebook_account } from '../../../shared/classes';
 import { FacebookExtention } from '../../classes';
 import { FacebookService } from './facebook.service'
 import { SocialMedia }  from '../../../shared/models/social-media.enum'
 
 export class UserAccountService extends BaseService<user_account> {
-    validProviders = ['facebook'];
+    validProviders = [`facebook`];
     FacebookService: FacebookService;
 
     constructor() {
-        super('user_account');
+        super(`user_account`);
         this.FacebookService = new FacebookService();
     }
 
     async CookieLogin(id: number): Promise<user_account> {
         const db = DbGetter.getDB();
-        return db.task('cookie-login', innerDb => {
+        return db.task(`cookie-login`, innerDb => {
             return this.CookieLoginInner(innerDb, id);
         });
     }
@@ -41,14 +41,61 @@ export class UserAccountService extends BaseService<user_account> {
     }
 
     async GetSocialMedia(user_account_id: number, getExpired?: boolean): Promise<string[]> {
+        if (getExpired){
+            return await this.getExpiredSocialMedia(user_account_id);
+        } else {
+            return await this.getAllSocialMedia(user_account_id);
+        }
+    }
+
+    async getExpiredSocialMedia(user_account_id: number): Promise<string[]>{
+        const SocialMedias = [];
+        for (const i_Provider of this.validProviders) {
+            if (await this.extendSocialMedia(i_Provider, user_account_id) !== null){
+                SocialMedias.push(SocialMedia[i_Provider]);
+            }
+        }
+        return SocialMedias;
+    }
+
+    async extendSocialMedia(i_Provider: string, user_account_id: number): Promise<string>{
+        const db = DbGetter.getDB();
+        let ret = ``;
+        let q = ``;
+        switch (i_Provider){
+            case `facebook`: {
+                q = `SELECT *\n` +
+                //facebook_account_id, auth_token, expiration_date\n` +
+                    `  FROM sweepimp.facebook_account\n` +
+                    ` WHERE user_account_id = $<user_account_id^>`;
+                const facebookAccount = await db.oneOrNone<facebook_account>(q, {user_account_id});
+                if (facebookAccount){
+                    let extention = await this.FacebookService.extendAccessToken(facebookAccount.auth_token);
+                    facebookAccount.auth_token = extention.access_token;
+                    facebookAccount.auth_error = extention.auth_error;
+                    facebookAccount.expiration_date = extention.expiration_date;
+                    q = `UPDATE sweepimp.facebook_account\n` +
+                        `   SET auth_token      = $<auth_token>\n` +
+                        `      ,expiration_date = $<expiration_date>\n` +
+                        `      ,auth_error      = $<auth_error>\n` +
+                        `      ,updated         = current_timestamp\n` +
+                        ` WHERE facebook_account_id = $<facebook_account_id>;\n`;
+                    db.none(q, facebookAccount);
+                    ret = facebookAccount.auth_error;
+                }
+                break;
+            }
+        }
+        return ret;
+    }
+
+    async getAllSocialMedia(user_account_id: number): Promise<string[]>{
         const db = DbGetter.getDB();
         const SocialMedias = [];
         for (const i_Provider of this.validProviders) {
-            let q =
-                `SELECT COUNT(*)\n` +
-                `  FROM sweepimp.${i_Provider}_account\n` +
-                ` WHERE user_account_id = $<user_account_id^>`;
-            if (getExpired) {q = q + `\n   AND extract(epoch from (expiration_date - (current_date + current_time))) < 0`}
+            let q = `SELECT COUNT(*)\n` +
+                    `  FROM sweepimp.${i_Provider}_account\n` +
+                    ` WHERE user_account_id = $<user_account_id^>`;
             await db.oneOrNone(q, { user_account_id })
                 .then(values => {
                     if (values.count > 0) {
@@ -84,7 +131,7 @@ export class UserAccountService extends BaseService<user_account> {
                     return loginUser;
                 } else {
                     // Cookie exists, but social media user does not match cookie. SHIT! Merge user accounts?
-                    // first, let's get the cookie user. notice the filter is on user_account_id, not on id (social media's user id) as before
+                    // first, let`s get the cookie user. notice the filter is on user_account_id, not on id (social media`s user id) as before
                     const cookieUser = await this.CookieLogin(social_media_account.user_account_id);
                     const two_minutes = 2 * 60 * 1000;
                     if (now.getTime() - cookieUser.created.getTime() <= two_minutes) {
@@ -107,7 +154,7 @@ export class UserAccountService extends BaseService<user_account> {
                     }
                 }
             } else { // new social user
-                const txName = social_media_account.user_account_id ? 'new-social-user' : 'new-user';
+                const txName = social_media_account.user_account_id ? `new-social-user` : `new-user`;
                 const newUser = await db.tx(txName, innerDb => {
                     return this.CreateSocialUser(innerDb, social_media_account, provider, !social_media_account.user_account_id);
                 });
@@ -115,7 +162,7 @@ export class UserAccountService extends BaseService<user_account> {
                 return newUser;
             }
         } catch (error) {
-            console.log('failed to query db', error);
+            console.log(`failed to query db`, error);
         }
     }
 
@@ -143,12 +190,12 @@ export class UserAccountService extends BaseService<user_account> {
 
     async Merge(source: user_account, target: user_account, Provider: string, isSimple: boolean): Promise<user_account> {
         const db = DbGetter.getDB();
-        const mergeType = (isSimple ? 'simple' : 'complicated');
-        const TablesToUpdate = (isSimple ? [] : ['user_sweep', 'user_social_extra', 'payment']);
+        const mergeType = (isSimple ? `simple` : `complicated`);
+        const TablesToUpdate = (isSimple ? [] : [`user_sweep`, `user_social_extra`, `payment`]);
         for (const i_Provider of this.validProviders) {
-            TablesToUpdate.push(i_Provider + '_account');
+            TablesToUpdate.push(i_Provider + `_account`);
         }
-        await db.tx(mergeType + '-merge', merge => {
+        await db.tx(mergeType + `-merge`, merge => {
             return this.MergeInner(merge, source, target, TablesToUpdate);
         });
         return target;
@@ -202,13 +249,13 @@ export class UserAccountService extends BaseService<user_account> {
         let q = (CreateUserAccount ? InsertUserAccount : SelectUserAccount);
         // Split name into firstName and lastName
         if (social_media_account.name) {
-            social_media_account.firstName = social_media_account.name.substr(0, social_media_account.name.indexOf(' '));
-            social_media_account.lastName = social_media_account.name.substr(social_media_account.name.indexOf(' '));
+            social_media_account.firstName = social_media_account.name.substr(0, social_media_account.name.indexOf(` `));
+            social_media_account.lastName = social_media_account.name.substr(social_media_account.name.indexOf(` `));
         }
         const UserAccount = await DB.one(q, social_media_account);
         social_media_account.user_account_id = UserAccount.user_account_id;
         switch (Provider){
-            case 'facebook': {
+            case `facebook`: {
                 const extendData = await this.FacebookService.extendAccessToken(social_media_account.authToken);
                 social_media_account.authToken = extendData.access_token;
                 social_media_account.expiration_date = extendData.expiration_date;
@@ -252,17 +299,17 @@ export class UserAccountService extends BaseService<user_account> {
                 facebook_account_id: FacebookUsersToExtend[element].facebook_account_id,
                 auth_token: (extention.access_token ? extention.access_token : FacebookUsersToExtend[element].auth_token),
                 expiration_date: extention.expiration_date,
-                error: extention.auth_error
+                auth_error: extention.auth_error
             });
         };
         if (extentions.length > 0) {
             q = `UPDATE sweepimp.facebook_account\n` +
                 `   SET auth_token      = $<auth_token>\n` +
                 `      ,expiration_date = $<expiration_date>\n` +
-                `      ,auth_error      = $<error>\n` +
+                `      ,auth_error      = $<auth_error>\n` +
                 `      ,updated         = current_timestamp\n` +
                 ` WHERE facebook_account_id = $<facebook_account_id>;\n`;
-            db.task('Extend-Facebook', innerDB => {
+            db.task(`Extend-Facebook`, innerDB => {
                 extentions.forEach(element => {
                     db.none(q, element);
                 });
