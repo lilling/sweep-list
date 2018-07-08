@@ -12,6 +12,11 @@
   cursor: pointer;
 }
 
+.main-button {
+  background: $main-color;
+  color: $main-color-foreground !important;
+}
+
 .clickable {
   cursor: pointer;
 }

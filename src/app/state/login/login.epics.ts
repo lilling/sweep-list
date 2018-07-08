@@ -12,8 +12,7 @@ import { LoginActions } from './login.actions';
 import { UsersService } from '../../services/users.service';
 import { AuthService } from 'angularx-social-login';
 import { generateError } from '../models/error';
-import { Action } from '@ngrx/store';
-import { Observable } from 'rxjs/Observable';
+import { LocalStorageKeys } from '../../models/local-storage-keys.enum';
 
 @Injectable()
 export class LoginEpics extends BaseEpic {
@@ -59,31 +58,32 @@ export class LoginEpics extends BaseEpic {
     logOff(action$: ActionsObservable<TypedAction<number>>) {
         return action$.ofType(LoginActions.LOGOFF)
             .switchMap(action => {
-                return fromPromise(this.authService.signOut()).switchMap(user => {
-                    return this.usersService.deleteAccount(action.payload).pipe(
-                        map(val => {
-                            return { type: LoginActions.DELETE_ACCOUNT_COMPLETED };
-                        }),
-                        catchError(err => {
-                            return of(generateError(err, LoginActions.LOGOFF));
-                        }));
-                });
-            });
-    }
-
-    @Epic
-    deleteAccount(action$: ActionsObservable<Action>) {
-        return action$.ofType(LoginActions.DELETE_ACCOUNT)
-            .switchMap(action => {
                 return fromPromise(this.authService.signOut()).pipe(
                     map(val => {
                         return { type: LoginActions.LOGOFF_COMPLETED };
                     }),
                     catchError(err => {
                         return of(generateError(err, LoginActions.LOGOFF));
-                    }));
+                    })
+                );
             });
     }
 
+    @Epic
+    deleteAccount(action$: ActionsObservable<TypedAction<number>>) {
+        return action$.ofType(LoginActions.DELETE_ACCOUNT)
+            .switchMap(action => {
+                return fromPromise(this.authService.signOut()).switchMap(() => {
+                    return this.usersService.deleteAccount(action.payload).pipe(
+                        map(val => {
+                            localStorage.removeItem(LocalStorageKeys.loggedUser);
+                            return { type: LoginActions.DELETE_ACCOUNT_COMPLETED };
+                        }),
+                        catchError(err => {
+                            return of(generateError(err, LoginActions.DELETE_ACCOUNT));
+                        }));
+                });
+            }
 
-}
+
+    }

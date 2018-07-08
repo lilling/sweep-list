@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 //
 import { Observable } from 'rxjs/Observable';
 //
-import { user_account, SocialUserAndAccount} from '../../../shared/classes';
+import { user_account, SocialUserAndAccount } from '../../../shared/classes';
 import { BaseService } from './base.service';
 import { SocialMedia } from '../../../shared/models/social-media.enum';
 
@@ -27,10 +27,10 @@ export class UsersService extends BaseService {
     }
 
     deleteAccount(id: number) {
-        return this.post('deleteUserAccount', id);
+        return this.post('deleteUserAccount', { user_account_id: id });
     }
 
-    getDeleteAccountData(id: number): Observable<{tasks: string, active: string, ended: string, won: string}> {
+    getDeleteAccountData(id: number): Observable<{ tasks: string, active: string, ended: string, won: string }> {
         return this.get(`deleteUserAccountConfirm/${id}`);
     }
 }

@@ -1,3 +1,18 @@
-<p>
-  delete-account works!
-</p>
+<mat-dialog-content>
+    <h2 mat-dialog-title>Delete Account - Are You Sure?</h2>
+    <ng-container *ngIf="data">
+        <span>This will <b>permanently</b> delete:</span>
+
+        <ul>
+            <li>Your {{data.tasks}} tasks</li>
+            <li>Your {{data.active}} active sweeps</li>
+            <li>Your {{data.ended}} ended sweeps</li>
+            <li>Your {{data.won}} wins</li>
+            <li>Your social media links</li>
+        </ul>
+    </ng-container>
+</mat-dialog-content>
+<mat-dialog-actions>
+    <button mat-button (click)="loginActions.deleteAccount(userId)">Delete</button>
+    <button class="main-button" mat-button (click)="dialogRef.close()">No, Take me back</button>
+</mat-dialog-actions>

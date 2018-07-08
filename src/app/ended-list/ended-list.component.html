@@ -28,7 +28,7 @@
         </mat-list>
         <div class="no-sweeps" *ngIf="!(isSweepsLoading$ | async) && sweeps.length == 0">
             <span>you have no sweeps! wanna start?</span>
-            <button mat-raised-button (click)="addSweep()"> Add Sweep </button>
+            <button mat-raised-button class="main-button" (click)="addSweep()"> Add Sweep </button>
         </div>
         <button mat-fab (click)="addSweep()">
             <mat-icon aria-label="Example icon-button with a heart icon">add</mat-icon>

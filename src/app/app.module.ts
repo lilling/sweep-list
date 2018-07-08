@@ -84,7 +84,7 @@ const SOCIAL_CONFIG = new AuthServiceConfig([
     providers: [UsersService, SweepsService, AuthGuard],
     bootstrap: [AppComponent],
     exports: [RouterModule],
-    entryComponents: [AddSweepComponent, EditSweepComponent]
+    entryComponents: [AddSweepComponent, EditSweepComponent, DeleteAccountComponent]
 })
 export class AppModule {
 }

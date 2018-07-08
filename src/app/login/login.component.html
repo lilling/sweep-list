@@ -8,14 +8,14 @@
                     <span>Facebook is {{facebook ? 'linked' : 'not linked'}}</span>
                 </td>
                 <td class="buttons">
-                    <button class="login-button" *ngIf="!facebook" mat-button (click)="login(SocialMedia.facebook)">Link</button>
+                    <button class="main-button" *ngIf="!facebook" mat-button (click)="login(SocialMedia.facebook)">Link</button>
                     <button class="logoff-button" *ngIf="facebook" mat-button (click)="logoff()">Unlink</button>
                 </td>
             </tr>
         </table>
         More to come...
         <span class="continue-container">
-            <button mat-button (click)="goToList()" *ngIf="facebook">
+            <button class="main-button" mat-button (click)="goToList()" *ngIf="facebook">
                 Continue
                 <i class="fa fa-angle-right"></i>
             </button>
