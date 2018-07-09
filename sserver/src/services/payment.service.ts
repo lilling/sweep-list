@@ -55,21 +55,29 @@ export class PaymentService {
             ` WHERE user_account_id = $<user_account_id^>\n` +
             `   AND current_timestamp BETWEEN payment_date AND paid_until`;
         const currentPayment = await db.oneOrNone(q, {user_account_id: user_account_id});
-        const daysToAdd = (currentPayment ? Math.round(currentPayment.remaining_balance / amount_to_pay * (isYearly? daysNextYear : daysNextMonth)) : 0);
-        //insert new payment with added days
-        return await db.tx('new payment', payment => {
-            //TODO: return also daysToAdd, to prompt user
-            return this.InsertPayment(payment, currentPayment.payment_id, user_account_id, payment_package_id, amount_to_pay, (isYearly ? daysNextYear : daysNextMonth) + daysToAdd);
-        });
+        if (!currentPayment){//new user, never paid
+            return await db.tx('new payment', payment => {
+                return this.InsertPayment(payment, user_account_id, payment_package_id, amount_to_pay, (isYearly ? daysNextYear : daysNextMonth));
+            });
+        } else {
+            const daysToAdd = (currentPayment ? Math.round(currentPayment.remaining_balance / amount_to_pay * (isYearly? daysNextYear : daysNextMonth)) : 0);
+            //insert new payment with added days
+            return await db.tx('new payment', payment => {
+                //TODO: return also daysToAdd, to prompt user
+                return this.InsertPayment(payment, user_account_id, payment_package_id, amount_to_pay, (isYearly ? daysNextYear : daysNextMonth) + daysToAdd, currentPayment.payment_id);
+            });
+        }
     };
 
-    async InsertPayment(payment, payment_id: number, user_account_id: number, payment_package_id: number, amount_to_pay: number, daysToAdd: number): Promise<number> {
-        var q =
-            `UPDATE sweepimp.payment\n` +
-            `   SET paid_until = current_timestamp\n` +
-            `      ,updated    = current_timestamp\n` +
-            ` WHERE payment_id = $<payment_id^>`;
-        payment.none(q, {payment_id: payment_id});
+    async InsertPayment(payment, user_account_id: number, payment_package_id: number, amount_to_pay: number, daysToAdd: number, payment_id?: number): Promise<number> {
+        if (payment_id){
+            var q =
+                `UPDATE sweepimp.payment\n` +
+                `   SET paid_until = current_timestamp\n` +
+                `      ,updated    = current_timestamp\n` +
+                ` WHERE payment_id = $<payment_id^>`;
+            payment.none(q, {payment_id: payment_id});
+        }
         q = `INSERT INTO sweepimp.payment\n` +
             `    (user_account_id\n` +
             `    ,payment_package_id\n` +

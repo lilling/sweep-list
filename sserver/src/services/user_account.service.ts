@@ -3,15 +3,18 @@ import { BaseService } from './base.service';
 import { user_account, SocialUserAndAccount, facebook_account } from '../../../shared/classes';
 import { FacebookExtention } from '../../classes';
 import { FacebookService } from './facebook.service'
-import { SocialMedia }  from '../../../shared/models/social-media.enum'
+import { SocialMedia } from '../../../shared/models/social-media.enum'
+import { PaymentService } from './payment.service'
 
 export class UserAccountService extends BaseService<user_account> {
     validProviders = [`facebook`];
     FacebookService: FacebookService;
+    PaymentService: PaymentService;
 
     constructor() {
         super(`user_account`);
         this.FacebookService = new FacebookService();
+        this.PaymentService = new PaymentService();
     }
 
     async CookieLogin(id: number): Promise<user_account> {
@@ -279,6 +282,10 @@ export class UserAccountService extends BaseService<user_account> {
             `    ,current_timestamp\n` +
             `    ,current_timestamp)`;
         DB.none(q, social_media_account);
+        // create free payment plan for new user
+        if (CreateUserAccount){
+            this.PaymentService.makePayment(social_media_account.user_account_id, 1, 0, false);
+        }
         return UserAccount;
     }
 
@@ -330,13 +337,25 @@ export class UserAccountService extends BaseService<user_account> {
         return PreDeleteData;
     }
 
-    async deleteUserAccount(user_account_id: number){
+    async deleteUserAccount(user_account_id: number): Promise<boolean>{
         const db = DbGetter.getDB();
-        const q =
-            `UPDATE sweepimp.user_account\n` +
-            `   SET is_deleted = true\n` +
-            `      ,updated    = current_timestamp\n` +
-            ` WHERE user_account_id = $<user_account_id^>\n`;
-        db.none(q, {user_account_id: user_account_id});
+        var flag = false;
+        let q = ``;
+        await db.tx(`delete-user-account`, del => {
+            q = `UPDATE sweepimp.user_account\n` +
+                `   SET is_deleted = true\n` +
+                `      ,first_name = null\n` +
+                `      ,last_name  = null\n` +
+                `      ,updated    = current_timestamp\n` +
+                ` WHERE user_account_id = $<user_account_id^>\n`;
+            db.none(q, {user_account_id: user_account_id});
+            this.validProviders.forEach(i_Provider => {
+                q = `DELETE FROM sweepimp.${i_Provider}_account\n` +
+                    ` WHERE user_account_id = $<user_account_id^>`;
+                    db.none(q, {user_account_id: user_account_id});
+            })
+            flag = true;
+        });
+        return flag;
     }
 }

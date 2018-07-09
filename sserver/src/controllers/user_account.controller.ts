@@ -50,7 +50,7 @@ export class UserController {
     }
 
     @Post('deleteUserAccount')
-    deleteUserAccount(@Body() user_account_id: any){
-        this.UserAccountService.deleteUserAccount(user_account_id.user_account_id);
+    deleteUserAccount(@Body() user_account_id: any): Promise<boolean>{
+        return this.UserAccountService.deleteUserAccount(user_account_id.user_account_id);
     }
 }
