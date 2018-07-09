@@ -83,7 +83,6 @@ export class LoginEpics extends BaseEpic {
                             return of(generateError(err, LoginActions.DELETE_ACCOUNT));
                         }));
                 });
-            }
-
-
+            });
     }
+}
