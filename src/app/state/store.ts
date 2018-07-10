@@ -7,6 +7,7 @@ import { LoginState, INITIAL_LOGIN_STATE } from './login/login.state';
 import { loginReducer } from './login/login.reducer';
 import { SweepsState, INITIAL_SWEEPS_STATE } from './sweeps/sweeps.state';
 import { sweepsReducer } from './sweeps/sweeps.reducer';
+import { LoginActions } from './login/login.actions';
 
 export interface AppState {
     commonState: CommonState;
@@ -27,5 +28,13 @@ export const appReducer = combineReducers<AppState>({
 });
 
 export const rootReducer = (state: AppState, action: TypedAction<any>) => {
-    return appReducer(state, action);
+    switch (action.type) {
+        case LoginActions.DELETE_ACCOUNT_COMPLETED:
+            return {
+                ...INITIAL_STATE
+            };
+        default:
+            return appReducer(state, action);
+    }
+
 };
