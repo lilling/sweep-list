@@ -8,7 +8,7 @@
                     <span>Facebook is {{facebook ? 'linked' : 'not linked'}}</span>
                 </td>
                 <td class="buttons">
-                    <button class="main-button" *ngIf="!facebook" mat-button (click)="login(SocialMedia.facebook)">Link</button>
+                    <button class="main-button" *ngIf="!facebook" mat-button (click)="login()">Link</button>
                     <button class="logoff-button" *ngIf="facebook" mat-button (click)="logoff()">Unlink</button>
                 </td>
             </tr>
@@ -21,7 +21,7 @@
             </button>
         </span>
     </div>
-    <span *ngIf="userId" class="delete-account clickable" (click)="deleteAccount()">Delete my account</span>
+    <span *ngIf="user" class="delete-account clickable" (click)="deleteAccount()">Delete my account</span>
 </div>
 
 
