@@ -3,6 +3,8 @@
 example: schemats generate -c postgres://hsrbfqoh:OASQR0O7qDLnHlIBgWcHiD_dKwz4dBoM@hard-plum.db.elephantsql.com:5432/hsrbfqoh -s sweepimp -o DB1.ts -t user_sweep
 */
 
+import { SocialMedia } from '../models/social-media.enum';
+
 export interface sweep_share {
     sweep_share_id: number;
     user_sweep_id: number;
@@ -138,9 +140,8 @@ export interface user_account {
     is_deleted: boolean;
     created: Date;
     updated: Date;
-    expiredSocialMedias?: string[];
-    allSocialMedias?: string[];
-
+    expiredSocialMedias?: SocialMedia[];
+    allSocialMedias?: SocialMedia[];
 }
 
 export interface social_media {

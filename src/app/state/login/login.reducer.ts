@@ -9,6 +9,8 @@ export function loginReducer(state: LoginState = INITIAL_LOGIN_STATE, action: Ty
                 ...state,
                 user: action.payload
             };
+        case LoginActions.LOGOFF_COMPLETED:
+            return INITIAL_LOGIN_STATE;
         default:
             return state;
     }
