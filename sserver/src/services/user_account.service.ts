@@ -40,6 +40,7 @@ export class UserAccountService extends BaseService<user_account> {
         }
         const ret = UserAccounts[0][0];
         ret.expiredSocialMedias = await this.GetSocialMedia(ret.user_account_id, true);
+        ret.allSocialMedias = await this.GetSocialMedia(ret.user_account_id);
         return ret;
     }
 
@@ -67,8 +68,7 @@ export class UserAccountService extends BaseService<user_account> {
         let q = ``;
         switch (i_Provider){
             case `facebook`: {
-                q = `SELECT *\n` +
-                //facebook_account_id, auth_token, expiration_date\n` +
+                q = `SELECT facebook_account_id, auth_token, auth_error, expiration_date\n` +
                     `  FROM sweepimp.facebook_account\n` +
                     ` WHERE user_account_id = $<user_account_id^>`;
                 const facebookAccount = await db.oneOrNone<facebook_account>(q, {user_account_id});
@@ -131,6 +131,7 @@ export class UserAccountService extends BaseService<user_account> {
                         ` WHERE ${provider}_account_id = $<id>`;
                     db.none(q, social_media_account);
                     loginUser.expiredSocialMedias = await this.GetSocialMedia(loginUser.user_account_id, true);
+                    loginUser.allSocialMedias = await this.GetSocialMedia(loginUser.user_account_id);
                     return loginUser;
                 } else {
                     // Cookie exists, but social media user does not match cookie. SHIT! Merge user accounts?
@@ -141,6 +142,7 @@ export class UserAccountService extends BaseService<user_account> {
                         // Cookie user was created recently, probably due to login screen press order. Do a simple merge
                         const mergeUser = await this.Merge(cookieUser, loginUser, provider, true);
                         mergeUser.expiredSocialMedias = await this.GetSocialMedia(mergeUser.user_account_id, true);
+                        mergeUser.allSocialMedias = await this.GetSocialMedia(mergeUser.user_account_id);
                         return mergeUser;
                     } else {
                         // Two users were active for some time. Complicated merge?
@@ -152,6 +154,7 @@ export class UserAccountService extends BaseService<user_account> {
                             const [userSource, userTarget] = isCookieNewer ? [cookieUser, loginUser] : [loginUser, cookieUser];
                             const mergeUser = await this.Merge(userSource, userTarget, provider, false);
                             mergeUser.expiredSocialMedias = await this.GetSocialMedia(mergeUser.user_account_id, true);
+                            mergeUser.allSocialMedias = await this.GetSocialMedia(mergeUser.user_account_id);
                             return mergeUser;
                         }
                     }
@@ -162,6 +165,7 @@ export class UserAccountService extends BaseService<user_account> {
                     return this.CreateSocialUser(innerDb, social_media_account, provider, !social_media_account.user_account_id);
                 });
                 newUser.expiredSocialMedias = await this.GetSocialMedia(newUser.user_account_id, true);
+                newUser.allSocialMedias = await this.GetSocialMedia(newUser.user_account_id);
                 return newUser;
             }
         } catch (error) {
@@ -333,7 +337,7 @@ export class UserAccountService extends BaseService<user_account> {
             `      ,COALESCE(SUM(CASE WHEN won_yn = true THEN 1 ELSE 0 END), 0) won\n` +
             `  FROM sweepimp.user_sweep\n` +
             ` WHERE user_account_id = $<user_account_id^>\n`;
-        let PreDeleteData = await db.one(q, {user_account_id: user_account_id});
+        let PreDeleteData = await db.one(q, {user_account_id});
         return PreDeleteData;
     }
 
@@ -348,11 +352,11 @@ export class UserAccountService extends BaseService<user_account> {
                 `      ,last_name  = null\n` +
                 `      ,updated    = current_timestamp\n` +
                 ` WHERE user_account_id = $<user_account_id^>\n`;
-            db.none(q, {user_account_id: user_account_id});
+            db.none(q, {user_account_id});
             this.validProviders.forEach(i_Provider => {
                 q = `DELETE FROM sweepimp.${i_Provider}_account\n` +
                     ` WHERE user_account_id = $<user_account_id^>`;
-                    db.none(q, {user_account_id: user_account_id});
+                    db.none(q, {user_account_id});
             })
             flag = true;
         });

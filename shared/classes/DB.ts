@@ -139,6 +139,7 @@ export interface user_account {
     created: Date;
     updated: Date;
     expiredSocialMedias?: string[];
+    allSocialMedias?: string[];
 
 }
 
