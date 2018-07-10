@@ -39,7 +39,7 @@ export class UserAccountService extends BaseService<user_account> {
             UserAccounts = await DB.multi(q, { user_account_id: UserAccounts[1][0].replacement_user_account_id });
         }
         const ret = UserAccounts[0][0];
-        ret.expiredSocialMedias = await this.GetSocialMedia(ret.user_account_id, true);
+        ret.unlinkedSocialMedias = await this.GetSocialMedia(ret.user_account_id, true);
         ret.allSocialMedias = await this.GetSocialMedia(ret.user_account_id);
         return ret;
     }
@@ -131,7 +131,7 @@ export class UserAccountService extends BaseService<user_account> {
                         `      ,updated = current_timestamp\n` +
                         ` WHERE ${provider}_account_id = $<id>`;
                     db.none(q, social_media_account);
-                    loginUser.expiredSocialMedias = await this.GetSocialMedia(loginUser.user_account_id, true);
+                    loginUser.unlinkedSocialMedias = await this.GetSocialMedia(loginUser.user_account_id, true);
                     loginUser.allSocialMedias = await this.GetSocialMedia(loginUser.user_account_id);
                     return loginUser;
                 } else {
@@ -142,7 +142,7 @@ export class UserAccountService extends BaseService<user_account> {
                     if (now.getTime() - cookieUser.created.getTime() <= two_minutes) {
                         // Cookie user was created recently, probably due to login screen press order. Do a simple merge
                         const mergeUser = await this.Merge(cookieUser, loginUser, provider, true);
-                        mergeUser.expiredSocialMedias = await this.GetSocialMedia(mergeUser.user_account_id, true);
+                        mergeUser.unlinkedSocialMedias = await this.GetSocialMedia(mergeUser.user_account_id, true);
                         mergeUser.allSocialMedias = await this.GetSocialMedia(mergeUser.user_account_id);
                         return mergeUser;
                     } else {
@@ -154,7 +154,7 @@ export class UserAccountService extends BaseService<user_account> {
                             const isCookieNewer = cookieUser.created > loginUser.created;
                             const [userSource, userTarget] = isCookieNewer ? [cookieUser, loginUser] : [loginUser, cookieUser];
                             const mergeUser = await this.Merge(userSource, userTarget, provider, false);
-                            mergeUser.expiredSocialMedias = await this.GetSocialMedia(mergeUser.user_account_id, true);
+                            mergeUser.unlinkedSocialMedias = await this.GetSocialMedia(mergeUser.user_account_id, true);
                             mergeUser.allSocialMedias = await this.GetSocialMedia(mergeUser.user_account_id);
                             return mergeUser;
                         }
@@ -165,7 +165,7 @@ export class UserAccountService extends BaseService<user_account> {
                 const newUser = await db.tx(txName, innerDb => {
                     return this.CreateSocialUser(innerDb, social_media_account, provider, !social_media_account.user_account_id);
                 });
-                newUser.expiredSocialMedias = await this.GetSocialMedia(newUser.user_account_id, true);
+                newUser.unlinkedSocialMedias = await this.GetSocialMedia(newUser.user_account_id, true);
                 newUser.allSocialMedias = await this.GetSocialMedia(newUser.user_account_id);
                 return newUser;
             }

@@ -140,7 +140,7 @@ export interface user_account {
     is_deleted: boolean;
     created: Date;
     updated: Date;
-    expiredSocialMedias?: SocialMedia[];
+    unlinkedSocialMedias?: SocialMedia[];
     allSocialMedias?: SocialMedia[];
 }
 
