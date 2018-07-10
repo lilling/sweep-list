@@ -44,7 +44,7 @@ export class UserAccountService extends BaseService<user_account> {
         return ret;
     }
 
-    async GetSocialMedia(user_account_id: number, getExpired?: boolean): Promise<string[]> {
+    async GetSocialMedia(user_account_id: number, getExpired?: boolean): Promise<any> {
         if (getExpired){
             return await this.getExpiredSocialMedia(user_account_id);
         } else {
@@ -52,17 +52,18 @@ export class UserAccountService extends BaseService<user_account> {
         }
     }
 
-    async getExpiredSocialMedia(user_account_id: number): Promise<string[]>{
+    async getExpiredSocialMedia(user_account_id: number): Promise<any>{
         const SocialMedias = [];
         for (const i_Provider of this.validProviders) {
-            if (await this.extendSocialMedia(i_Provider, user_account_id) !== null){
-                SocialMedias.push(SocialMedia[i_Provider]);
+            const status = await this.checkSocialMedia(i_Provider, user_account_id);
+            if (status !== null){
+                SocialMedias.push({SocialMedia: SocialMedia[i_Provider], status: status});
             }
         }
         return SocialMedias;
     }
 
-    async extendSocialMedia(i_Provider: string, user_account_id: number): Promise<string>{
+    async checkSocialMedia(i_Provider: string, user_account_id: number): Promise<string>{
         const db = DbGetter.getDB();
         let ret = ``;
         let q = ``;
@@ -84,7 +85,7 @@ export class UserAccountService extends BaseService<user_account> {
                         `      ,updated         = current_timestamp\n` +
                         ` WHERE facebook_account_id = $<facebook_account_id>;\n`;
                     db.none(q, facebookAccount);
-                    ret = facebookAccount.auth_error;
+                    ret = (facebookAccount.auth_error ? 'authentication error' : await !this.FacebookService.checkGrantedPublish(facebookAccount.facebook_account_id, facebookAccount.auth_token) ? 'Publish not granted' : null);
                 }
                 break;
             }

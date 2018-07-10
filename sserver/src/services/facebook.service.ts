@@ -15,6 +15,19 @@ export class FacebookService {
         this.appSecret = '021ed0b1952127c7ad9df8d0f6db7d97';
     }
 
+    async checkGrantedPublish(account_id: string, client_access_token: string): Promise<boolean>{
+        FB.setAccessToken(client_access_token);
+        return FB.api(account_id + '/permissions', function (res) {
+            var granted = true;
+            for (const iPermission of res.data) { 
+                if (iPermission.status == `declined` && iPermission.permission == `publish_actions`) {
+                    granted = false;
+                }
+            }
+            return granted;
+          });
+    }
+
     extendAccessToken(client_access_token: string): Promise<FacebookExtention>{
         return new Promise<FacebookExtention>((resolve, reject) => {
             FB.api('oauth/access_token', {
