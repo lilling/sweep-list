@@ -1,7 +1,6 @@
 import { DbGetter } from '../dal/DbGetter';
 import { BaseService } from './base.service';
 import { user_account, SocialUserAndAccount, facebook_account } from '../../../shared/classes';
-import { FacebookExtention } from '../../classes';
 import { FacebookService } from './facebook.service'
 import { SocialMedia } from '../../../shared/models/social-media.enum'
 import { PaymentService } from './payment.service'
@@ -45,41 +44,37 @@ export class UserAccountService extends BaseService<user_account> {
     }
 
     async GetSocialMedia(user_account_id: number, getExpired?: boolean): Promise<any> {
-        if (getExpired){
+        if (getExpired) {
             return await this.getExpiredSocialMedia(user_account_id);
         } else {
             return await this.getAllSocialMedia(user_account_id);
         }
     }
 
-    async getExpiredSocialMedia(user_account_id: number): Promise<any>{
+    async getExpiredSocialMedia(user_account_id: number): Promise<any> {
         const SocialMedias = [];
         for (const i_Provider of this.validProviders) {
             const status = await this.checkSocialMedia(i_Provider, user_account_id);
-            if (status !== null){
-                SocialMedias.push({SocialMedia: SocialMedia[i_Provider], status: status});
+            if (status !== null) {
+                SocialMedias.push({ SocialMedia: SocialMedia[i_Provider], status: status });
             }
         }
         return SocialMedias;
     }
 
-    async checkSocialMedia(i_Provider: string, user_account_id: number): Promise<string>{
+    async checkSocialMedia(i_Provider: string, user_account_id: number): Promise<string> {
         const db = DbGetter.getDB();
         let ret = ``;
         let q = ``;
-        switch (i_Provider){
+        switch (i_Provider) {
             case `facebook`: {
                 q = `SELECT facebook_account_id, auth_token, auth_error, expiration_date\n` +
                     `  FROM sweepimp.facebook_account\n` +
                     ` WHERE user_account_id = $<user_account_id^>`;
-                const facebookAccount = await db.oneOrNone<facebook_account>(q, {user_account_id});
-                if (facebookAccount){
+                const facebookAccount = await db.oneOrNone<facebook_account>(q, { user_account_id });
+                if (facebookAccount) {
                     const extention = await this.FacebookService.extendAccessToken(facebookAccount.auth_token);
-console.log(`extention`);
-console.log(extention);
                     const publishGranted = await this.FacebookService.checkGrantedPublish(facebookAccount.facebook_account_id, facebookAccount.auth_token);
-console.log(`publishGranted`);
-console.log(publishGranted);
                     facebookAccount.auth_token = extention.access_token;
                     facebookAccount.auth_error = extention.auth_error;
                     facebookAccount.expiration_date = extention.expiration_date;
@@ -95,12 +90,10 @@ console.log(publishGranted);
                 break;
             }
         }
-console.log(`ret`);
-console.log(ret);
         return ret;
     }
 
-    async getAllSocialMedia(user_account_id: number): Promise<string[]>{
+    async getAllSocialMedia(user_account_id: number): Promise<string[]> {
         const db = DbGetter.getDB();
         const SocialMedias = [];
         for (const i_Provider of this.validProviders) {
@@ -269,7 +262,7 @@ console.log(ret);
         }
         const UserAccount = await DB.one(q, social_media_account);
         social_media_account.user_account_id = UserAccount.user_account_id;
-        switch (Provider){
+        switch (Provider) {
             case `facebook`: {
                 const extendData = await this.FacebookService.extendAccessToken(social_media_account.authToken);
                 social_media_account.authToken = extendData.access_token;
@@ -295,13 +288,13 @@ console.log(ret);
             `    ,current_timestamp)`;
         DB.none(q, social_media_account);
         // create free payment plan for new user
-        if (CreateUserAccount){
+        if (CreateUserAccount) {
             this.PaymentService.makePayment(social_media_account.user_account_id, 1, 0, false);
         }
         return UserAccount;
     }
 
-    async extendFacebookUserAccounts(){
+    async extendFacebookUserAccounts() {
         //Get Facebook users to extend
         const db = DbGetter.getDB();
         let q =
@@ -312,7 +305,7 @@ console.log(ret);
         let FacebookUsersToExtend = await db.manyOrNone(q);
         let objectKeysArray = Object.keys(FacebookUsersToExtend);
         let extentions = [];
-        for(const element in objectKeysArray){
+        for (const element in objectKeysArray) {
             let extention = await this.FacebookService.extendAccessToken(FacebookUsersToExtend[element].auth_token);
             extentions.push({
                 facebook_account_id: FacebookUsersToExtend[element].facebook_account_id,
@@ -336,7 +329,7 @@ console.log(ret);
         }
     }
 
-    async deleteUserAccountConfirm(user_account_id: number){
+    async deleteUserAccountConfirm(user_account_id: number) {
         const db = DbGetter.getDB();
         const q =
             `SELECT COALESCE(SUM(CASE WHEN is_frequency = true THEN 1 ELSE 0 END), 0) tasks\n` +
@@ -345,11 +338,11 @@ console.log(ret);
             `      ,COALESCE(SUM(CASE WHEN won_yn = true THEN 1 ELSE 0 END), 0) won\n` +
             `  FROM sweepimp.user_sweep\n` +
             ` WHERE user_account_id = $<user_account_id^>\n`;
-        let PreDeleteData = await db.one(q, {user_account_id});
+        let PreDeleteData = await db.one(q, { user_account_id });
         return PreDeleteData;
     }
 
-    async deleteUserAccount(user_account_id: number): Promise<boolean>{
+    async deleteUserAccount(user_account_id: number): Promise<boolean> {
         const db = DbGetter.getDB();
         var flag = false;
         let q = ``;
@@ -360,7 +353,7 @@ console.log(ret);
                 `      ,last_name  = null\n` +
                 `      ,updated    = current_timestamp\n` +
                 ` WHERE user_account_id = $<user_account_id^>\n`;
-            db.none(q, {user_account_id});
+            db.none(q, { user_account_id });
             this.validProviders.forEach(i_Provider => {
                 q = `DELETE FROM sweepimp.${i_Provider}_account\n` +
                     ` WHERE user_account_id = $<user_account_id^>`;
