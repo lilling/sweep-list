@@ -74,7 +74,10 @@ export class UserAccountService extends BaseService<user_account> {
                 const facebookAccount = await db.oneOrNone<facebook_account>(q, { user_account_id });
                 if (facebookAccount) {
                     const extention = await this.FacebookService.extendAccessToken(facebookAccount.auth_token);
-                    const publishGranted = await this.FacebookService.checkGrantedPublish(facebookAccount.facebook_account_id, facebookAccount.auth_token);
+                    let publishGranted = true;
+                    if (!extention.auth_error){
+                        publishGranted = await this.FacebookService.checkGrantedPublish(facebookAccount.facebook_account_id, facebookAccount.auth_token);
+                    }
                     facebookAccount.auth_token = extention.access_token;
                     facebookAccount.auth_error = extention.auth_error;
                     facebookAccount.expiration_date = extention.expiration_date;
