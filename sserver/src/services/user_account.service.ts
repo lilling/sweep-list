@@ -74,7 +74,12 @@ export class UserAccountService extends BaseService<user_account> {
                     ` WHERE user_account_id = $<user_account_id^>`;
                 const facebookAccount = await db.oneOrNone<facebook_account>(q, {user_account_id});
                 if (facebookAccount){
-                    let extention = await this.FacebookService.extendAccessToken(facebookAccount.auth_token);
+                    const extention = await this.FacebookService.extendAccessToken(facebookAccount.auth_token);
+console.log(`extention`);
+console.log(extention);
+                    const publishGranted = await this.FacebookService.checkGrantedPublish(facebookAccount.facebook_account_id, facebookAccount.auth_token);
+console.log(`publishGranted`);
+console.log(publishGranted);
                     facebookAccount.auth_token = extention.access_token;
                     facebookAccount.auth_error = extention.auth_error;
                     facebookAccount.expiration_date = extention.expiration_date;
@@ -85,11 +90,13 @@ export class UserAccountService extends BaseService<user_account> {
                         `      ,updated         = current_timestamp\n` +
                         ` WHERE facebook_account_id = $<facebook_account_id>;\n`;
                     db.none(q, facebookAccount);
-                    ret = (facebookAccount.auth_error ? 'authentication error' : await !this.FacebookService.checkGrantedPublish(facebookAccount.facebook_account_id, facebookAccount.auth_token) ? 'Publish not granted' : null);
+                    ret = (facebookAccount.auth_error ? 'authentication error' : !publishGranted ? 'Publish not granted' : null);
                 }
                 break;
             }
         }
+console.log(`ret`);
+console.log(ret);
         return ret;
     }
 

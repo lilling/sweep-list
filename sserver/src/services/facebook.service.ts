@@ -15,7 +15,7 @@ export class FacebookService {
         this.appSecret = '021ed0b1952127c7ad9df8d0f6db7d97';
     }
 
-    async checkGrantedPublish(account_id: string, client_access_token: string): Promise<boolean>{
+    checkGrantedPublish(account_id: string, client_access_token: string): boolean{
         FB.setAccessToken(client_access_token);
         return FB.api(account_id + '/permissions', function (res) {
             var granted = true;
