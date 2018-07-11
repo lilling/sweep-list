@@ -34,7 +34,8 @@ export class LoginComponent implements OnInit {
             this.user = user;
             if (user) {
                 localStorage.setItem(LocalStorageKeys.loggedUser, user.user_account_id.toString());
-                this.facebook = user.allSocialMedias.indexOf(SocialMedia.facebook) !== -1;
+                this.facebook = user.allSocialMedias.indexOf(SocialMedia.facebook) !== -1 &&
+                    user.unlinkedSocialMedias.findIndex(unlinked => unlinked.socialMedia === SocialMedia.facebook) === -1;
             } else {
                 this.facebook = false;
             }
