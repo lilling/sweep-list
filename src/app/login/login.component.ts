@@ -56,7 +56,7 @@ export class LoginComponent implements OnInit {
 
     ngOnInit() {
         if (!+this.activatedRoute.snapshot.queryParams['dt']) {
-            if (+localStorage.getItem(LocalStorageKeys.loggedUser)) {
+            if (localStorage.getItem(LocalStorageKeys.loggedUser)) {
                 this.goToList();
             }
         }

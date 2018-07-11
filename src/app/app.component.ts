@@ -15,6 +15,8 @@ import { LoginActions } from './state/login/login.actions';
 import { LocalStorageKeys } from './models/local-storage-keys.enum';
 import { SweepsActions } from './state/sweeps/sweeps.actions';
 import { CommonActions } from './state/common/common.actions';
+import { MatDialog } from '@angular/material';
+import { SocialMediaLoginErrorComponent } from './social-media-login-error/social-media-login-error.component';
 
 @Component({
     selector: 'app-root',
@@ -34,6 +36,7 @@ export class AppComponent implements OnInit {
     constructor(private ngRedux: NgRedux<AppState>,
                 private router: Router,
                 private loginEpics: LoginEpics,
+                public dialog: MatDialog,
                 private loginActions: LoginActions,
                 private sweepsActions: SweepsActions,
                 private commonActions: CommonActions,
@@ -75,5 +78,11 @@ export class AppComponent implements OnInit {
         if (id) {
             this.loginActions.login({ id, fromCache: true });
         }
+
+        this.ngRedux.select(state => state.loginState.user).subscribe(user => {
+            if (user && user.unlinkedSocialMedias && user.unlinkedSocialMedias.length) {
+                this.dialog.open(SocialMediaLoginErrorComponent, {data: user.unlinkedSocialMedias});
+            }
+        })
     }
 }

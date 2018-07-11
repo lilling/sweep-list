@@ -30,6 +30,7 @@ import { ToDoComponent } from './to-do/to-do.component';
 import { HeaderComponent } from './header/header.component';
 import { ContainerComponent } from './container/container.component';
 import { DeleteAccountComponent } from './delete-account/delete-account.component';
+import { SocialMediaLoginErrorComponent } from './social-media-login-error/social-media-login-error.component';
 
 const fbLoginOptions: LoginOpt = {
     scope: 'public_profile , email, publish_actions',
@@ -68,6 +69,7 @@ const SOCIAL_CONFIG = new AuthServiceConfig([
         ToDoComponent,
         PositiveValidatorDirective,
         DeleteAccountComponent,
+        SocialMediaLoginErrorComponent,
     ],
     imports: [
         StateModule,
@@ -84,7 +86,7 @@ const SOCIAL_CONFIG = new AuthServiceConfig([
     providers: [UsersService, SweepsService, AuthGuard],
     bootstrap: [AppComponent],
     exports: [RouterModule],
-    entryComponents: [AddSweepComponent, EditSweepComponent, DeleteAccountComponent]
+    entryComponents: [AddSweepComponent, EditSweepComponent, DeleteAccountComponent, SocialMediaLoginErrorComponent]
 })
 export class AppModule {
 }

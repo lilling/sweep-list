@@ -4,6 +4,7 @@ import { user_account, SocialUserAndAccount, facebook_account } from '../../../s
 import { FacebookService } from './facebook.service'
 import { SocialMedia } from '../../../shared/models/social-media.enum'
 import { PaymentService } from './payment.service'
+import { SocialMediaError } from '../../../shared/models/social-media-error.enum';
 
 export class UserAccountService extends BaseService<user_account> {
     validProviders = [`facebook`];
@@ -56,15 +57,15 @@ export class UserAccountService extends BaseService<user_account> {
         for (const i_Provider of this.validProviders) {
             const status = await this.checkSocialMedia(i_Provider, user_account_id);
             if (status !== null) {
-                SocialMedias.push({ SocialMedia: SocialMedia[i_Provider], status: status });
+                SocialMedias.push({ socialMedia: SocialMedia[i_Provider], status });
             }
         }
         return SocialMedias;
     }
 
-    async checkSocialMedia(i_Provider: string, user_account_id: number): Promise<string> {
+    async checkSocialMedia(i_Provider: string, user_account_id: number): Promise<SocialMediaError> {
         const db = DbGetter.getDB();
-        let ret = ``;
+        let ret: SocialMediaError;
         let q = ``;
         switch (i_Provider) {
             case `facebook`: {
@@ -88,7 +89,7 @@ export class UserAccountService extends BaseService<user_account> {
                         `      ,updated         = current_timestamp\n` +
                         ` WHERE facebook_account_id = $<facebook_account_id>;\n`;
                     db.none(q, facebookAccount);
-                    ret = (facebookAccount.auth_error ? 'authentication error' : !publishGranted ? 'Publish not granted' : null);
+                    ret = (facebookAccount.auth_error ? SocialMediaError.authentication : !publishGranted ? SocialMediaError.publish : null);
                 }
                 break;
             }

@@ -1,0 +1,13 @@
+<mat-dialog-content>
+    <h2 mat-dialog-title>Oops! There are social media linking issues</h2>
+    <div style="max-width: 400px">
+        I will not be able to share your sweeps unless you login to the following social medias and allow me to post in your name.
+    </div>
+    <div *ngFor="let ettempt of data" style="margin: 20px">
+        <div style="display: flex; justify-content: space-around">
+            <i style="font-size: x-large" [class]="getIcon(ettempt.socialMedia)"></i>
+            <button mat-button class="main-button" (click)="login()">{{getMessage(ettempt)}}</button>
+        </div>
+    </div>
+    <button mat-raised-button (click)="dialogRef.close()">I Don't Care</button>
+</mat-dialog-content>
