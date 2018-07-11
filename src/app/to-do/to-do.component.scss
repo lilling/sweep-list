@@ -23,6 +23,7 @@
   .mat-fab {
     position: fixed;
     bottom: 5px;
+    z-index: 1;
     right: 5vh;
     background: $main-color;
 
