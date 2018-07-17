@@ -77,11 +77,11 @@ export class ReferralSweepDataComponent {
             return;
         }
         switch (candidate) {
-            case SocialMedia.facebook:
+            case SocialMedia.Facebook:
                 this.authService.signIn(FacebookLoginProvider.PROVIDER_ID).then(data => {
                     this.usersService.login({ ...data, user_account_id: undefined, expiration_date: undefined, auth_error: undefined })
                         .subscribe(() => {
-                            this.loggedSocialMedias.push(SocialMedia.facebook);
+                            this.loggedSocialMedias.push(SocialMedia.Facebook);
                         });
                 });
                 break;

@@ -31,7 +31,7 @@ export class SocialMediaLoginErrorComponent {
 
     getIcon(socialMedia: SocialMedia) {
         switch (socialMedia) {
-            case SocialMedia.facebook:
+            case SocialMedia.Facebook:
                 return 'fa fa-facebook-f';
         }
     }

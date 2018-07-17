@@ -15,7 +15,7 @@ export class ThankSweepDataComponent {
     @Output() thankToChange = new EventEmitter();
     @Output() isValidChange = new EventEmitter<boolean>();
     SocialMedia = SocialMedia;
-    socialMedias = [SocialMedia.google, SocialMedia.facebook];
+    socialMedias = [SocialMedia.google, SocialMedia.Facebook];
     loggedSocialMedias: SocialMedia[];
     private thanks_To: string;
     private selectedSocialMedia: number;

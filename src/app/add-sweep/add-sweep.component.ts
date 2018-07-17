@@ -17,7 +17,7 @@ export class AddSweepComponent {
     step: number;
     thankReferrer: boolean;
     SocialMedia = SocialMedia;
-    socialMedias = [SocialMedia.google, SocialMedia.facebook];
+    socialMedias = [SocialMedia.google, SocialMedia.Facebook];
     userAccountId: number;
     step1Valid: boolean;
     step2Valid: boolean;
