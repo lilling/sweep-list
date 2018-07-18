@@ -57,7 +57,7 @@ export class UserAccountService extends BaseService<user_account> {
         for (const i_Provider of this.validProviders) {
             const status = await this.checkSocialMedia(i_Provider, user_account_id);
             if (status !== null) {
-                SocialMedias.push({ socialMedia: SocialMedia[i_Provider], status });
+                SocialMedias.push({ socialMedia: SocialMedia[i_Provider.charAt(0).toUpperCase() + i_Provider.slice(1)], status });
             }
         }
         return SocialMedias;
@@ -107,7 +107,7 @@ export class UserAccountService extends BaseService<user_account> {
             await db.oneOrNone(q, { user_account_id })
                 .then(values => {
                     if (values.count > 0) {
-                        SocialMedias.push(SocialMedia[i_Provider]);
+                        SocialMedias.push(SocialMedia[i_Provider.charAt(0).toUpperCase() + i_Provider.slice(1)]);
                     }
                 });
         }
