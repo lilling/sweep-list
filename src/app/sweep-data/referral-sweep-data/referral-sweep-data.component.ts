@@ -11,7 +11,7 @@ import { UsersService } from '../../services/users.service';
 })
 export class ReferralSweepDataComponent {
 
-    userAccountId: number;
+    userAccountId: AAGUID;
     loggedSocialMedias: SocialMedia[];
     @Input() disabled: boolean;
     @Output() personalReferMessageChange = new EventEmitter();
@@ -66,7 +66,7 @@ export class ReferralSweepDataComponent {
     }
 
     constructor(private usersService: UsersService, private authService: AuthService) {
-        this.userAccountId = +localStorage.getItem(LocalStorageKeys.loggedUser);
+        this.userAccountId = localStorage.getItem(LocalStorageKeys.loggedUser);
         this.usersService.getUserSocialAccounts(this.userAccountId).subscribe(socialMedias => {
             this.loggedSocialMedias = socialMedias;
         });

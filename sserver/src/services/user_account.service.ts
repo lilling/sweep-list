@@ -17,24 +17,24 @@ export class UserAccountService extends BaseService<user_account> {
         this.PaymentService = new PaymentService();
     }
 
-    async CookieLogin(id: number): Promise<user_account> {
+    async CookieLogin(user_account_id: AAGUID): Promise<user_account> {
         const db = DbGetter.getDB();
         return db.task(`cookie-login`, innerDb => {
-            return this.CookieLoginInner(innerDb, id);
+            return this.CookieLoginInner(innerDb, user_account_id);
         });
     }
 
-    async CookieLoginInner(DB, id: number): Promise<user_account> {
+    async CookieLoginInner(DB, user_account_id: AAGUID): Promise<user_account> {
         const q =
             `SELECT user_account.*\n` +
             `  FROM sweepimp.user_account\n` +
-            ` WHERE user_account_id = $<user_account_id^>\n` +
+            ` WHERE user_account_id = $<user_account_id>\n` +
             `   AND is_deleted = false;\n` +
             `SELECT retired_user_account.*\n` +
             `  FROM sweepimp.retired_user_account\n` +
-            ` WHERE user_account_id = $<user_account_id^>\n` +
+            ` WHERE user_account_id = $<user_account_id>\n` +
             `   AND is_deleted = false`;
-        let UserAccounts = await DB.multi(q, { user_account_id: id });
+        let UserAccounts = await DB.multi(q, { user_account_id });
         while (!UserAccounts[0][0] && UserAccounts[1][0].replacement_user_account_id) {
             UserAccounts = await DB.multi(q, { user_account_id: UserAccounts[1][0].replacement_user_account_id });
         }
@@ -44,7 +44,7 @@ export class UserAccountService extends BaseService<user_account> {
         return ret;
     }
 
-    async GetSocialMedia(user_account_id: number, getExpired?: boolean): Promise<any> {
+    async GetSocialMedia(user_account_id: AAGUID, getExpired?: boolean): Promise<any> {
         if (getExpired) {
             return await this.getExpiredSocialMedia(user_account_id);
         } else {
@@ -52,7 +52,7 @@ export class UserAccountService extends BaseService<user_account> {
         }
     }
 
-    async getExpiredSocialMedia(user_account_id: number): Promise<any> {
+    async getExpiredSocialMedia(user_account_id: AAGUID): Promise<any> {
         const SocialMedias = [];
         for (const i_Provider of this.validProviders) {
             const status = await this.checkSocialMedia(i_Provider, user_account_id);
@@ -63,7 +63,7 @@ export class UserAccountService extends BaseService<user_account> {
         return SocialMedias;
     }
 
-    async checkSocialMedia(i_Provider: string, user_account_id: number): Promise<SocialMediaError> {
+    async checkSocialMedia(i_Provider: string, user_account_id: AAGUID): Promise<SocialMediaError> {
         const db = DbGetter.getDB();
         let ret: SocialMediaError;
         let q = ``;
@@ -71,7 +71,7 @@ export class UserAccountService extends BaseService<user_account> {
             case `facebook`: {
                 q = `SELECT facebook_account_id, auth_token, auth_error, expiration_date\n` +
                     `  FROM sweepimp.facebook_account\n` +
-                    ` WHERE user_account_id = $<user_account_id^>`;
+                    ` WHERE user_account_id = $<user_account_id>`;
                 const facebookAccount = await db.oneOrNone<facebook_account>(q, { user_account_id });
                 if (facebookAccount) {
                     const extention = await this.FacebookService.extendAccessToken(facebookAccount.auth_token);
@@ -97,13 +97,13 @@ export class UserAccountService extends BaseService<user_account> {
         return ret;
     }
 
-    async getAllSocialMedia(user_account_id: number): Promise<string[]> {
+    async getAllSocialMedia(user_account_id: AAGUID): Promise<string[]> {
         const db = DbGetter.getDB();
         const SocialMedias = [];
         for (const i_Provider of this.validProviders) {
             let q = `SELECT COUNT(*)\n` +
                     `  FROM sweepimp.${i_Provider}_account\n` +
-                    ` WHERE user_account_id = $<user_account_id^>`;
+                    ` WHERE user_account_id = $<user_account_id>`;
             await db.oneOrNone(q, { user_account_id })
                 .then(values => {
                     if (values.count > 0) {
@@ -185,10 +185,10 @@ export class UserAccountService extends BaseService<user_account> {
                 const q =
                     `SELECT COUNT(*)\n` +
                     `  FROM sweepimp.${i_Provider}_account\n` +
-                    ` WHERE user_account_id = $<cookie_user_account_id^>;\n` +
+                    ` WHERE user_account_id = $<cookie_user_account_id>;\n` +
                     `SELECT COUNT(*)\n` +
                     `  FROM sweepimp.${i_Provider}_account\n` +
-                    ` WHERE user_account_id = $<login_user_account_id^>`;
+                    ` WHERE user_account_id = $<login_user_account_id>`;
                 await DB.multi(q, { cookie_user_account_id: cookieUser.user_account_id, login_user_account_id: loginUser.user_account_id })
                     .then(values => {
                         if (values[0][0].count > 0 && values[1][0].count > 0) {
@@ -216,9 +216,9 @@ export class UserAccountService extends BaseService<user_account> {
     async MergeInner(merge, source: user_account, target: user_account, TablesToUpdate: string[]) {
         let q =
             `UPDATE sweepimp.$<table_name:name>\n` +
-            `   SET user_account_id = $<user_account_id_target^>\n` +
+            `   SET user_account_id = $<user_account_id_target>\n` +
             `      ,updated         = current_timestamp\n` +
-            ` WHERE user_account_id = $<user_account_id_source^>`;
+            ` WHERE user_account_id = $<user_account_id_source>`;
         const updates = [];
         for (const element of TablesToUpdate) {
             updates.push(merge.none(q, {
@@ -230,15 +230,15 @@ export class UserAccountService extends BaseService<user_account> {
         await Promise.all(updates);
         q = `INSERT INTO sweepimp.retired_user_account\n` +
             `    (user_account_id, first_name, last_name, replacement_user_account_id, created, updated)\n` +
-            `SELECT user_account_id, first_name, last_name, $<user_account_id_target^>, created, current_timestamp\n` +
+            `SELECT user_account_id, first_name, last_name, $<user_account_id_target>, created, current_timestamp\n` +
             `  FROM sweepimp.user_account\n` +
-            ` WHERE user_account_id = $<user_account_id_source^>`;
+            ` WHERE user_account_id = $<user_account_id_source>`;
         merge.none(q, {
             user_account_id_source: source.user_account_id,
             user_account_id_target: target.user_account_id,
         });
         q = `DELETE FROM sweepimp.user_account\n` +
-            ` WHERE user_account_id = $<user_account_id^>`;
+            ` WHERE user_account_id = $<user_account_id>`;
         await merge.none(q, source);
     }
 
@@ -256,7 +256,7 @@ export class UserAccountService extends BaseService<user_account> {
         const SelectUserAccount =
             `SELECT user_account.*\n` +
             `  FROM sweepimp.user_account\n` +
-            ` WHERE user_account_id = $<user_account_id^>\n` +
+            ` WHERE user_account_id = $<user_account_id>\n` +
             `   AND is_deleted = false`;
         let q = (CreateUserAccount ? InsertUserAccount : SelectUserAccount);
         // Split name into firstName and lastName
@@ -279,7 +279,7 @@ export class UserAccountService extends BaseService<user_account> {
             `    (${Provider}_account_id, user_account_id, first_name, last_name, email, photo_url, auth_token, id_token, expiration_date, auth_error, created, updated)\n` +
             `VALUES\n` +
             `    ($<id>\n` +
-            `    ,$<user_account_id^>\n` +
+            `    ,$<user_account_id>\n` +
             `    ,$<firstName>\n` +
             `    ,$<lastName>\n` +
             `    ,$<email>\n` +
@@ -333,7 +333,7 @@ export class UserAccountService extends BaseService<user_account> {
         }
     }
 
-    async deleteUserAccountConfirm(user_account_id: number) {
+    async deleteUserAccountConfirm(user_account_id: AAGUID) {
         const db = DbGetter.getDB();
         const q =
             `SELECT COALESCE(SUM(CASE WHEN is_frequency = true THEN 1 ELSE 0 END), 0) tasks\n` +
@@ -341,12 +341,12 @@ export class UserAccountService extends BaseService<user_account> {
             `      ,COALESCE(SUM(CASE WHEN end_date < now() THEN 1 ELSE 0 END), 0) ended\n` +
             `      ,COALESCE(SUM(CASE WHEN won_yn = true THEN 1 ELSE 0 END), 0) won\n` +
             `  FROM sweepimp.user_sweep\n` +
-            ` WHERE user_account_id = $<user_account_id^>\n`;
+            ` WHERE user_account_id = $<user_account_id>\n`;
         let PreDeleteData = await db.one(q, { user_account_id });
         return PreDeleteData;
     }
 
-    async deleteUserAccount(user_account_id: number): Promise<boolean> {
+    async deleteUserAccount(user_account_id: AAGUID): Promise<boolean> {
         const db = DbGetter.getDB();
         var flag = false;
         let q = ``;
@@ -356,11 +356,11 @@ export class UserAccountService extends BaseService<user_account> {
                 `      ,first_name = null\n` +
                 `      ,last_name  = null\n` +
                 `      ,updated    = current_timestamp\n` +
-                ` WHERE user_account_id = $<user_account_id^>\n`;
+                ` WHERE user_account_id = $<user_account_id>\n`;
             db.none(q, { user_account_id });
             this.validProviders.forEach(i_Provider => {
                 q = `DELETE FROM sweepimp.${i_Provider}_account\n` +
-                    ` WHERE user_account_id = $<user_account_id^>`;
+                    ` WHERE user_account_id = $<user_account_id>`;
                     db.none(q, {user_account_id});
             })
             flag = true;

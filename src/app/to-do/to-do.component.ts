@@ -27,7 +27,7 @@ export class ToDoComponent implements OnInit, AfterViewInit, OnDestroy {
     sweeps: user_sweep[] = [];
     subscriptions: { [index: string]: Subscription };
     mode: SweepsMode;
-    userAccountId: number;
+    userAccountId: AAGUID;
 
     constructor(private ngRedux: NgRedux<AppState>,
                 public dialog: MatDialog,
@@ -38,7 +38,7 @@ export class ToDoComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     ngOnInit() {
-        this.userAccountId = +localStorage.getItem(LocalStorageKeys.loggedUser);
+        this.userAccountId = localStorage.getItem(LocalStorageKeys.loggedUser);
         this.sweepsActions.goToSweeps(+this.activatedRoute.snapshot.params['mode']);
 
         this.subscriptions = {

@@ -1,7 +1,7 @@
 import { FBAccount } from './SocialUserAndAccount';
 
 export class PostToPublishRaw{
-    user_account_id: number;
+    user_account_id: AAGUID;
     user_sweep_id: number;
     link: string;
     message: string;
@@ -13,7 +13,7 @@ export class PostToPublishRaw{
 }
 
 export class PostToPublish{
-    user_account_id: number;
+    user_account_id: AAGUID;
     user_sweep_id: number;
     link: string;
     message: string;

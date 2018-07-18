@@ -27,6 +27,6 @@ export class PaymentController {
     @Post('make_payment')
     MakePayment(@Body() payment): Promise<number>{
         return this.PaymentService.makePayment(payment.user_account_id, payment.payment_package_id, payment.amount_to_pay, payment.isYearly);
-        //user_account_id: number, payment_package_id: number, amount_to_pay: number, isYearly: boolean
+        //user_account_id: AAGUID, payment_package_id: number, amount_to_pay: number, isYearly: boolean
     }
 }

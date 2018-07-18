@@ -26,11 +26,11 @@ export class LoginEpics extends BaseEpic {
         return action$.ofType(LoginActions.LOGIN)
             .switchMap(action => {
                 if (action.payload.fromCache) {
-                    return this.usersService.getUser(+action.payload.id).pipe(
+                    return this.usersService.getUser(action.payload.id).pipe(
                         map(res => {
                             res.created = new Date(res.created);
                             res.updated = new Date(res.updated);
-                            res.user_account_id = +res.user_account_id;
+                            res.user_account_id = res.user_account_id;
                             return { type: LoginActions.LOGIN_COMPLETED, payload: res };
                         }),
                         catchError(err => {
@@ -44,7 +44,7 @@ export class LoginEpics extends BaseEpic {
                             map(res => {
                                 res.created = new Date(res.created);
                                 res.updated = new Date(res.updated);
-                                res.user_account_id = +res.user_account_id;
+                                res.user_account_id = res.user_account_id;
                                 return { type: LoginActions.LOGIN_COMPLETED, payload: res };
                             }),
                             catchError(err => {
@@ -55,7 +55,7 @@ export class LoginEpics extends BaseEpic {
     }
 
     @Epic
-    logOff(action$: ActionsObservable<TypedAction<number>>) {
+    logOff(action$: ActionsObservable<TypedAction<AAGUID>>) {
         return action$.ofType(LoginActions.LOGOFF)
             .switchMap(action => {
                 return fromPromise(this.authService.signOut()).pipe(
@@ -70,7 +70,7 @@ export class LoginEpics extends BaseEpic {
     }
 
     @Epic
-    deleteAccount(action$: ActionsObservable<TypedAction<number>>) {
+    deleteAccount(action$: ActionsObservable<TypedAction<AAGUID>>) {
         return action$.ofType(LoginActions.DELETE_ACCOUNT)
             .switchMap(action => {
                 return fromPromise(this.authService.signOut()).switchMap(() => {

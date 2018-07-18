@@ -16,7 +16,7 @@ import { AppState, INITIAL_STATE } from '../state/store';
 })
 export class DeleteAccountComponent implements OnInit, OnDestroy {
 
-    userId: number;
+    userId: AAGUID;
     data: { tasks: string, active: string, ended: string, won: string };
     subscription: Subscription;
 
@@ -24,7 +24,7 @@ export class DeleteAccountComponent implements OnInit, OnDestroy {
                 public ngRedux: NgRedux<AppState>,
                 public loginActions: LoginActions,
                 private userService: UsersService) {
-        this.userId = +localStorage.getItem(LocalStorageKeys.loggedUser);
+        this.userId = localStorage.getItem(LocalStorageKeys.loggedUser);
     }
 
     ngOnInit() {

@@ -28,7 +28,7 @@ export class SweepListComponent implements OnInit {
     }[];
     subscriptions: { [index: string]: Subscription };
     Date = Date;
-    userAccountId: number;
+    userAccountId: AAGUID;
 
     constructor(public dialog: MatDialog,
                 private router: Router,
@@ -38,7 +38,7 @@ export class SweepListComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.userAccountId = +localStorage.getItem(LocalStorageKeys.loggedUser);
+        this.userAccountId = localStorage.getItem(LocalStorageKeys.loggedUser);
         this.sweepsActions.goToSweeps(SweepsMode.active);
 
         this.subscriptions = {

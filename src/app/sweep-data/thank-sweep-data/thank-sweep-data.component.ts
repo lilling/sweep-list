@@ -41,7 +41,7 @@ export class ThankSweepDataComponent {
     }
 
     constructor(private usersService: UsersService) {
-        const userAccountId = +localStorage.getItem(LocalStorageKeys.loggedUser);
+        const userAccountId = localStorage.getItem(LocalStorageKeys.loggedUser);
         this.usersService.getUserSocialAccounts(userAccountId).subscribe(socialMedias => {
             this.loggedSocialMedias = socialMedias;
         });
