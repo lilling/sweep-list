@@ -54,7 +54,7 @@ export class ServerService extends BaseService<PostToPublish> {
             allProvidersQuery = allProvidersQuery +
                 `SELECT '${Provider}' provider, acc.*\n` +
                 `  FROM sweepimp.${Provider}_account acc\n` +
-                ` WHERE user_account_id = $<user_account_id^>;\n`;
+                ` WHERE user_account_id = $<user_account_id>;\n`;
         });
         let allProvidersCred = await db.multi(allProvidersQuery, RawPostToPublish);
         let sweepShareDMLs = ``;

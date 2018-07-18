@@ -26,7 +26,7 @@ export class LoginActions {
         this.ngRedux.dispatch({ type: LoginActions.LOGOFF });
     }
 
-    deleteAccount(userId: number) {
+    deleteAccount(userId: AAGUID) {
         this.ngRedux.dispatch({ type: LoginActions.DELETE_ACCOUNT, payload: userId });
     }
 }

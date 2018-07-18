@@ -14,7 +14,6 @@ export interface sweep_share {
     share_url: string | null;
     created: Date;
     updated: Date;
-
 }
 
 export interface sweep_entry {
@@ -23,12 +22,11 @@ export interface sweep_entry {
     entry_date: Date;
     created: Date;
     updated: Date;
-
 }
 
 export interface user_sweep {
     user_sweep_id: number;
-    user_account_id: number;
+    user_account_id: AAGUID;
     sweep_id: number | null;
     sweep_name: string | null;
     sweep_url: string | null;
@@ -55,42 +53,38 @@ export interface user_sweep {
     deleted_yn: boolean | null;
     created: Date;
     updated: Date;
-
 }
 
 export interface user_social_extra {
     user_social_extra_id: number;
-    user_account_id: number;
+    user_account_id: AAGUID;
     social_media_field_id: number;
     social_media_id: number;
     social_media_field_value: string | null;
     created: Date;
     updated: Date;
-
 }
 
 export interface log {
     log_id: number;
     log_date: Date;
-    user_account_id: number;
+    user_account_id: AAGUID;
     log_action_id: number;
     parameters: string | null;
     error: string | null;
     created: Date;
     updated: Date;
-
 }
 
 export interface payment {
     payment_id: number;
-    user_account_id: number;
+    user_account_id: AAGUID;
     payment_package_id: number;
     amount_paid: number;
     payment_date: Date;
     paid_until: Date;
     created: Date;
     updated: Date;
-
 }
 
 export interface social_media_field {
@@ -99,12 +93,11 @@ export interface social_media_field {
     is_token_yn: boolean | null;
     created: Date;
     updated: Date;
-
 }
 
 export interface facebook_account {
     facebook_account_id: string;
-    user_account_id: number | null;
+    user_account_id: AAGUID | null;
     first_name: string | null;
     last_name: string | null;
     email: string | null;
@@ -115,12 +108,11 @@ export interface facebook_account {
     auth_error: string | null;
     created: Date;
     updated: Date;
-
 }
 
 export interface google_account {
     google_account_id: string;
-    user_account_id: number | null;
+    user_account_id: AAGUID | null;
     first_name: string | null;
     last_name: string | null;
     email: string | null;
@@ -131,11 +123,10 @@ export interface google_account {
     auth_error: string | null;
     created: Date;
     updated: Date;
-
 }
 
 export interface user_account {
-    user_account_id: number;
+    user_account_id: AAGUID;
     first_name: string | null;
     last_name: string | null;
     is_deleted: boolean;
@@ -150,7 +141,6 @@ export interface social_media {
     social_media_name: string;
     created: Date;
     updated: Date;
-
 }
 
 export interface log_action {
@@ -158,7 +148,6 @@ export interface log_action {
     log_action_name: string;
     created: Date;
     updated: Date;
-
 }
 
 export interface payment_package {
@@ -170,16 +159,14 @@ export interface payment_package {
     expire_date: Date | null;
     created: Date;
     updated: Date;
-
 }
 
 export interface retired_user_account {
-    user_account_id: number;
+    user_account_id: AAGUID;
     first_name: string | null;
     last_name: string | null;
     is_deleted: boolean;
-    replacement_user_account_id: number | null;
+    replacement_user_account_id: AAGUID | null;
     created: Date;
     updated: Date;
-
 }

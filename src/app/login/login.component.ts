@@ -33,7 +33,7 @@ export class LoginComponent implements OnInit {
         this.ngRedux.select(state => state.loginState.user).subscribe(user => {
             this.user = user;
             if (user) {
-                localStorage.setItem(LocalStorageKeys.loggedUser, user.user_account_id.toString());
+                localStorage.setItem(LocalStorageKeys.loggedUser, user.user_account_id);
                 this.facebook = user.allSocialMedias.indexOf(SocialMedia.Facebook) !== -1 &&
                     user.unlinkedSocialMedias.findIndex(unlinked => unlinked.socialMedia === SocialMedia.Facebook) === -1;
             } else {

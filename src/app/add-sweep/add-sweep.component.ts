@@ -18,7 +18,7 @@ export class AddSweepComponent {
     thankReferrer: boolean;
     SocialMedia = SocialMedia;
     socialMedias = [SocialMedia.google, SocialMedia.Facebook];
-    userAccountId: number;
+    userAccountId: AAGUID;
     step1Valid: boolean;
     step2Valid: boolean;
     step3Valid: boolean;
@@ -27,7 +27,7 @@ export class AddSweepComponent {
     constructor(public dialogRef: MatDialogRef<AddSweepComponent>,
                 private sweepsActions: SweepsActions,
                 @Inject(MAT_DIALOG_DATA) public data: any) {
-        this.userAccountId = +localStorage.getItem(LocalStorageKeys.loggedUser);
+        this.userAccountId = localStorage.getItem(LocalStorageKeys.loggedUser);
         this.clear();
     }
 

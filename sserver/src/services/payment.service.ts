@@ -6,17 +6,17 @@ export class PaymentService {
     constructor() {
     }
 
-    async getCurrentPayment(user_account_id: number): Promise<payment>{
+    async getCurrentPayment(user_account_id: AAGUID): Promise<payment>{
         const db = DbGetter.getDB();
         var q =
             `SELECT *\n` +
             `  FROM sweepimp.payment\n` +
-            ` WHERE user_account_id = $<user_account_id^>\n` +
+            ` WHERE user_account_id = $<user_account_id>\n` +
             `   AND current_timestamp BETWEEN payment_date AND paid_until`;
         return await db.oneOrNone<payment>(q, {user_account_id: user_account_id});
     };
 
-    async getLastPayment(user_account_id: number): Promise<payment>{
+    async getLastPayment(user_account_id: AAGUID): Promise<payment>{
         const db = DbGetter.getDB();
         var q =
             `SELECT *\n` +
@@ -24,22 +24,22 @@ export class PaymentService {
             ` WHERE payment_id = (SELECT CAST(SUBSTR(res, strpos(res, 'ZZZ') + 3) as bigint)\n` +
             `                       FROM (SELECT MAX(paid_until || 'ZZZ' || payment_id) res\n` +
             `                               FROM sweepimp.payment\n` +
-            `                              WHERE user_account_id = $<user_account_id^>) AS a)`;
+            `                              WHERE user_account_id = $<user_account_id>) AS a)`;
         return await db.oneOrNone<payment>(q, {user_account_id: user_account_id});
     };
 
-    async getCurrentPackage(user_account_id: number): Promise<payment_package>{
+    async getCurrentPackage(user_account_id: AAGUID): Promise<payment_package>{
         const db = DbGetter.getDB();
         var q =
             `SELECT payment_package.*\n` +
             `  FROM sweepimp.payment\n` +
             `  JOIN sweepimp.payment_package USING (payment_package_id)\n` +
-            ` WHERE user_account_id = $<user_account_id^>\n` +
+            ` WHERE user_account_id = $<user_account_id>\n` +
             `   AND current_timestamp BETWEEN payment_date AND paid_until`;
         return await db.oneOrNone<payment_package>(q, {user_account_id: user_account_id});
     };
 
-    async makePayment(user_account_id: number, payment_package_id: number, amount_to_pay: number, isYearly: boolean): Promise<number>{
+    async makePayment(user_account_id: AAGUID, payment_package_id: number, amount_to_pay: number, isYearly: boolean): Promise<number>{
         const db = DbGetter.getDB();
         const today = new Date();
         const nextMonth = new Date();
@@ -52,7 +52,7 @@ export class PaymentService {
             `SELECT DATE_PART('day', paid_until - now()) / DATE_PART('day', paid_until - payment_date) * amount_paid remaining_balance\n` +
             `      ,*\n` +
             `  FROM sweepimp.payment p\n` +
-            ` WHERE user_account_id = $<user_account_id^>\n` +
+            ` WHERE user_account_id = $<user_account_id>\n` +
             `   AND current_timestamp BETWEEN payment_date AND paid_until`;
         const currentPayment = await db.oneOrNone(q, {user_account_id: user_account_id});
         if (!currentPayment){//new user, never paid
@@ -69,7 +69,7 @@ export class PaymentService {
         }
     };
 
-    async InsertPayment(payment, user_account_id: number, payment_package_id: number, amount_to_pay: number, daysToAdd: number, payment_id?: number): Promise<number> {
+    async InsertPayment(payment, user_account_id: AAGUID, payment_package_id: number, amount_to_pay: number, daysToAdd: number, payment_id?: number): Promise<number> {
         if (payment_id){
             var q =
                 `UPDATE sweepimp.payment\n` +
@@ -87,7 +87,7 @@ export class PaymentService {
             `    ,created\n` +
             `    ,updated)\n` +
             `VALUES
-                ($<user_account_id^>
+                ($<user_account_id>
                 ,$<payment_package_id^>
                 ,$<amount_to_pay^>
                 ,current_timestamp

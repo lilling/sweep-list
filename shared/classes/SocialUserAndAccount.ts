@@ -1,7 +1,7 @@
 import { SocialUser } from 'angularx-social-login';
 
 export class SocialUserAndAccount extends SocialUser {
-    user_account_id: number;
+    user_account_id: AAGUID;
     expiration_date: Date | null;
     auth_error: string | null;
 
@@ -24,13 +24,13 @@ export class SocialUserAndAccount extends SocialUser {
 }
 
 export class Account {
-    user_account_id: number;
+    user_account_id: AAGUID;
 }
 
 export class FBAccount{
     provider: string;
     facebook_account_id: string;
-    user_account_id: number;
+    user_account_id: AAGUID;
     first_name: string;
     last_name: string;
     email: string;
