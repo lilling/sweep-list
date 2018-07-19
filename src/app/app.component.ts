@@ -17,6 +17,7 @@ import { SweepsActions } from './state/sweeps/sweeps.actions';
 import { CommonActions } from './state/common/common.actions';
 import { MatDialog } from '@angular/material';
 import { SocialMediaLoginErrorComponent } from './social-media-login-error/social-media-login-error.component';
+import { SocialMediaStatus } from '../../shared/models/social-media-status.enum';
 
 @Component({
     selector: 'app-root',
@@ -80,8 +81,9 @@ export class AppComponent implements OnInit {
         }
 
         this.ngRedux.select(state => state.loginState.user).subscribe(user => {
-            if (user && user.unlinkedSocialMedias && user.unlinkedSocialMedias.length) {
-                this.dialog.open(SocialMediaLoginErrorComponent, {data: user.unlinkedSocialMedias});
+            if (user && user.allSocialMedias && user.allSocialMedias.length
+                && user.allSocialMedias.findIndex(unlinked => unlinked.status !== SocialMediaStatus.OK) !== -1) {
+                this.dialog.open(SocialMediaLoginErrorComponent, {data: user.allSocialMedias});
             }
         })
     }

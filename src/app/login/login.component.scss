@@ -1,21 +1,29 @@
 @import '../../sass/styles';
 
 .logo {
-  @include header(25%);
+  @include header(20%);
 }
 
 .login-body {
-  height: 75%;
+  height: 70%;
   margin: 20px;
 
   .social-medias {
-    display: flex;
-    flex-direction: column;
+    //display: flex;
+    //flex-direction: column;
+    height: 100%;
+
+    .social-media-table{
+      width: 80%;
+      margin-left:10%; 
+      margin-right:10%;
+    }
 
     .social-media-row {
-      display: flex;
-      flex-direction: row;
+      //display: flex;
+      //flex-direction: row;
       justify-content: center;
+      line-height: 50px;
 
       i {
         &.fa-facebook-f {
@@ -37,25 +45,39 @@
       }
     }
   }
+  
+  .social-media-cell {
+    text-align: center;
+    margin-right: 2%;
+    margin-left: 2%;
+  }
 
   .buttons {
     .logoff-button {
       color: $main-color;
       font-weight: bold;
     }
+    text-align: center;
+    margin-right: 2%;
+    margin-left: 2%;
   }
 
   .continue-container {
     text-align: right;
-
+    position:absolute;
+    bottom: 20px;
+    right: 20px;
+    //position:relative;
+    //margin-top:100%;
       i {
         font-weight: bold;
       }
   }
 
   .delete-account {
-    bottom: 0;
+    bottom: 10px;
     position: absolute;
+    font-size: small;
     text-decoration: underline;
     color: $linkedin-color
   }

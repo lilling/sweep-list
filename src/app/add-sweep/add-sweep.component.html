@@ -34,7 +34,7 @@
     </form>
 </mat-dialog-content>
 <mat-dialog-actions>
-    <button mat-button *ngIf="1 < step" (click)="back()">Back</button>
+    <button mat-button *ngIf="1 < step" (click)="back()">BACK</button>
     <button mat-raised-button color="primary" (click)="step === 4 ? addSweep() : next()" [disabled]="isNextDisabled()">
-        {{step === 4 ? 'Submit' : 'Next'}}</button>
+        {{step === 4 ? 'SUBMIT' : 'NEXT'}}</button>
 </mat-dialog-actions>
