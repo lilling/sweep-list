@@ -16,4 +16,8 @@ export class HeaderComponent {
     toggleSideNav() {
         this.commonActions.toggleSideNav();
     }
+
+    sendMail(){
+        window.location.href = "mailto:support@sweepimp.com";
+    }
 }
