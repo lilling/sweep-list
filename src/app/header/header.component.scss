@@ -4,9 +4,20 @@
   display: flex;
   justify-content: space-between;
 
-  @include header(40px);
+  @include header(42px);
 
   .title {
     line-height: 2.5;
+  }
+
+  .header-table{
+    border-spacing: 0px;
+    width: 100%;
+  }
+
+  .header-td {
+    padding-left: 10px;
+    padding-right: 10px;
+    white-space: nowrap;
   }
 }
