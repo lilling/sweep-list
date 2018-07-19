@@ -280,7 +280,7 @@ export class UserSweepService extends BaseService<user_sweep> {
                 sweepRevive = 1;
             }
         }
-        if (activeSweeps){
+        if (activeSweeps && paymentPackage.max_active_sweeps > -1){
             if ((Number(activeSweeps.active_sweeps) + (new_user_sweep.user_sweep_id ? sweepRevive : 1)) > paymentPackage.max_active_sweeps){
                 throw new HttpException(`User monthly active sweeps reached plan maxinum (` + paymentPackage.max_active_sweeps.toString() + `)`, HttpStatus.FORBIDDEN);
             }
