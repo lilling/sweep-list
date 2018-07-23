@@ -6,11 +6,13 @@
             referrer name is required.
         </mat-error>
     </mat-form-field>
+    {{SocialMedias}}
     <mat-radio-group class="social-media-radio-group" [(ngModel)]="thanksSocialMediaId" name="referrerSocialMedia" id="referrerSocialMedia"
-                     required #referrerSocialMedia="ngModel" [disabled]="disabled">
-        <mat-radio-button class="social-media-radio-button" *ngFor="let socialMedia of socialMedias" [value]="socialMedia" [disabled]="!loggedSocialMedias?.includes(socialMedia)">
-            {{SocialMedia[socialMedia]}}
-        </mat-radio-button>
+                     required #referrerSocialMedia="ngModel" [disabled]="disabled" layout="row">
+            <mat-radio-button class="social-media-radio-button" *ngFor="let socialMedia of socialMedias" [value]="socialMedia"
+                            [disabled]="!loggedSocialMedias.includes(socialMedia)">
+                {{SocialMedia[socialMedia]}}
+            </mat-radio-button>
     </mat-radio-group>
     <mat-error *ngIf="referrerSocialMedia.invalid && (referrerSocialMedia.dirty || referrerSocialMedia.touched) && referrerSocialMedia.errors.required">
         social media is required.

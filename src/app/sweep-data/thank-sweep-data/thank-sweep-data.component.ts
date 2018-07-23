@@ -43,9 +43,10 @@ export class ThankSweepDataComponent {
 
     constructor(private usersService: UsersService) {
         const userAccountId = localStorage.getItem(LocalStorageKeys.loggedUser);
-        this.usersService.getUserSocialAccounts(userAccountId).subscribe(socialMedias => {
-            socialMedias.forEach(socialMediaEntry => {
-                if (socialMediaEntry.status = SocialMediaStatus.OK){
+        this.loggedSocialMedias = [];
+        this.usersService.getUserSocialAccounts(userAccountId).subscribe(userSocialMedias => {
+            userSocialMedias.forEach(socialMediaEntry => {
+                if (socialMediaEntry.status === SocialMediaStatus.OK){
                     this.loggedSocialMedias.push(socialMediaEntry.socialMedia);
                 }
             });
