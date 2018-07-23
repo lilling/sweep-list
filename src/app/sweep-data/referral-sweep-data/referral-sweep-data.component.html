@@ -1,8 +1,5 @@
 <div class="basic-container">
-    <mat-form-field>
-        <input matInput placeholder="Message with post" name="messageWithPost" id="messageWithPost"
-               [(ngModel)]="personalReferMessage" [disabled]="disabled">
-    </mat-form-field>
+    <br>
     <span>
         <span>Share every </span>
         <input matInput type="number" name="shareDuration" placeholder="XX" required [(ngModel)]="referralFrequency"
@@ -25,6 +22,10 @@
                           (change)="referFacebook = $event.checked">
         </mat-slide-toggle>
     </div>
+    <mat-form-field>
+        <input matInput placeholder="Message with post" name="messageWithPost" id="messageWithPost"
+               [(ngModel)]="personalReferMessage" [disabled]="disabled">
+    </mat-form-field>
     <ng-container *ngIf="shareDuration.invalid && (shareDuration.dirty || shareDuration.touched)">
         <mat-error *ngIf="shareDuration.errors.required">
             Duration is required.

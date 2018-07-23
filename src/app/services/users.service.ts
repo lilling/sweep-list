@@ -6,6 +6,7 @@ import { Observable } from 'rxjs/Observable';
 import { user_account, SocialUserAndAccount } from '../../../shared/classes';
 import { BaseService } from './base.service';
 import { SocialMedia } from '../../../shared/models/social-media.enum';
+import { SocialMediaStatus } from '../../../shared/models/social-media-status.enum';
 
 @Injectable()
 export class UsersService extends BaseService {
@@ -18,7 +19,7 @@ export class UsersService extends BaseService {
         return this.post<user_account>(`SocialMediaLogin`, model);
     }
 
-    getUserSocialAccounts(id: AAGUID): Observable<SocialMedia[]> {
+    getUserSocialAccounts(id: AAGUID): Observable<{socialMedia: SocialMedia, status: SocialMediaStatus}[]> {
         return this.get(`user_social_medias/${id}`);
     }
 

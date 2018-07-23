@@ -43,7 +43,7 @@ export class UserAccountService extends BaseService<user_account> {
         return ret;
     }
 
-    async GetSocialMedia(user_account_id: AAGUID): Promise<any> {
+    async GetSocialMedia(user_account_id: AAGUID): Promise<{socialMedia: SocialMedia, status: SocialMediaStatus}[]> {
         const SocialMedias = [];
         for (const i_Provider of this.validProviders) {
             const status = await this.checkSocialMedia(i_Provider, user_account_id);

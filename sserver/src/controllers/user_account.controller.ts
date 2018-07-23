@@ -1,6 +1,8 @@
 import { Get, Post, Body, Controller, Param } from '@nestjs/common';
 import { SocialUserAndAccount, Account , user_account } from '../../../shared/classes';
 import { UserAccountService } from '../services/user_account.service';
+import { SocialMedia } from '../../../shared/models/social-media.enum';
+import { SocialMediaStatus } from '../../../shared/models/social-media-status.enum';
 
 @Controller('api/user')
 export class UserController {
@@ -25,13 +27,8 @@ export class UserController {
     }
 
     @Get('user_social_medias/:user_account_id')
-    GetSocialMedia(@Param() params): Promise<string[]>{
+    GetSocialMedia(@Param() params): Promise<{socialMedia: SocialMedia, status: SocialMediaStatus}[]>{
         return this.UserAccountService.GetSocialMedia(params.user_account_id);
-    }
-
-    @Get('user_expired_social_medias/:user_account_id')
-    GetExpiredSocialMedia(@Param() params): Promise<string[]>{
-        return this.UserAccountService.GetSocialMedia(params.user_account_id, true);
     }
 
     @Post('SocialMediaLogin')

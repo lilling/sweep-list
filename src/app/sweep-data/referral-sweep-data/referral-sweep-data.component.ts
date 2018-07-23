@@ -3,6 +3,7 @@ import { SocialMedia } from '../../../../shared/models/social-media.enum';
 import { FacebookLoginProvider, GoogleLoginProvider, AuthService } from 'angularx-social-login';
 import { LocalStorageKeys } from '../../models/local-storage-keys.enum';
 import { UsersService } from '../../services/users.service';
+import { SocialMediaStatus } from '../../../../shared/models/social-media-status.enum';
 
 @Component({
     selector: 'app-referral-sweep-data',
@@ -67,8 +68,13 @@ export class ReferralSweepDataComponent {
 
     constructor(private usersService: UsersService, private authService: AuthService) {
         this.userAccountId = localStorage.getItem(LocalStorageKeys.loggedUser);
+        this.loggedSocialMedias = [];
         this.usersService.getUserSocialAccounts(this.userAccountId).subscribe(socialMedias => {
-            this.loggedSocialMedias = socialMedias;
+            socialMedias.forEach(socialMediaEntry => {
+                if (socialMediaEntry.status === SocialMediaStatus.OK){
+                    this.loggedSocialMedias.push(socialMediaEntry.socialMedia);
+                }
+            });
         });
     }
 
