@@ -1,12 +1,12 @@
 <div class="container">
     <app-header [title]="'Remember!'"></app-header>
-    <ng-container *ngIf="isSweepsLoading$ | async">
-        <div class="blocker"></div>
-        <i class="fa fa-spinner fa-spin centered"></i>
-    </ng-container>
     <mat-tab-group (selectedIndexChange)="selectedIndexChanged($event)" [selectedIndex]="mode - 1">
         <mat-tab [label]="label" *ngFor="let label of ['Today', 'Tomorrow', 'Upcoming']">
             <div class="body">
+                <ng-container *ngIf="isSweepsLoading$ | async">
+                    <div class="blocker"></div>
+                    <i class="fa fa-spinner fa-spin centered"></i>
+                </ng-container>
                 <mat-list>
                     <mat-list-item *ngFor="let sweep of sweeps"
                                    class="clickable" [ngClass]="{'deleted': sweep.deleted_yn}"
@@ -17,9 +17,7 @@
                         </div>
                         <div mat-line class="list-item-second">
                             <ng-container *ngIf="sweep.is_frequency">
-                                {{ nextVisit(sweep) }},
-                                last visit was {{ sweepsService.getTimePassedUntilLastVisit(sweep) }} ago.
-                                {{ sweep.total_entries }} total visits.
+                                {{ nextVisit(sweep) }}
                             </ng-container>
                         </div>
                         <mat-icon class="edit-sweep" (click)="editSweep(sweep, $event)">edit</mat-icon>

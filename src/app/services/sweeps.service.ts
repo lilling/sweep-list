@@ -52,7 +52,7 @@ export class SweepsService extends BaseService {
         sweep.user_account_id = sweep.user_account_id ? sweep.user_account_id : null;
     }
 
-    getTimePassedUntilLastVisit(sweep: user_sweep) {
+    getTimePassedSinceLastVisit(sweep: user_sweep) {
         if (!sweep.last_entry_date) {
             return '';
         }

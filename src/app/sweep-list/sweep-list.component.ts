@@ -70,6 +70,33 @@ export class SweepListComponent implements OnInit {
         this.router.navigate(['edit', sweep.user_sweep_id]);
     }
 
+    nextVisit(sweep: user_sweep) {
+        const nextVisit = sweep.frequency_days * 864e5 - (Date.now() - sweep.last_entry_date.getTime());
+
+        if (nextVisit < 0) {
+            return 'You should enter right now';
+        }
+
+        let returnValue = '';
+
+        const days = nextVisit / 864e5;
+
+        if (days > 1) {
+            returnValue = `${days.toFixed(0)} days`;
+        } else {
+            const hours = nextVisit / 36e5;
+            if (hours > 1) {
+                returnValue = `${hours.toFixed(0)} hours`;
+            } else {
+                const minutes = nextVisit / 6e4;
+
+                returnValue = `${minutes.toFixed(0)} minutes`;
+            }
+        }
+
+        return `${returnValue} left to next visit.`;
+    }
+
     openUrl(urlToOpen: string, sweepId: number) {
         this.sweepsActions.enterSweep(sweepId);
         let url = '';
