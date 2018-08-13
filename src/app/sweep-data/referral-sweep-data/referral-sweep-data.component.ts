@@ -3,6 +3,7 @@ import { SocialMedia } from '../../../../shared/models/social-media.enum';
 import { FacebookLoginProvider, GoogleLoginProvider, AuthService } from 'angularx-social-login';
 import { LocalStorageKeys } from '../../models/local-storage-keys.enum';
 import { UsersService } from '../../services/users.service';
+import { SocialMediaStatus } from '../../../../shared/models/social-media-status.enum';
 
 @Component({
     selector: 'app-referral-sweep-data',
@@ -11,7 +12,7 @@ import { UsersService } from '../../services/users.service';
 })
 export class ReferralSweepDataComponent {
 
-    userAccountId: number;
+    userAccountId: AAGUID;
     loggedSocialMedias: SocialMedia[];
     @Input() disabled: boolean;
     @Output() personalReferMessageChange = new EventEmitter();
@@ -66,9 +67,14 @@ export class ReferralSweepDataComponent {
     }
 
     constructor(private usersService: UsersService, private authService: AuthService) {
-        this.userAccountId = +localStorage.getItem(LocalStorageKeys.loggedUser);
+        this.userAccountId = localStorage.getItem(LocalStorageKeys.loggedUser);
+        this.loggedSocialMedias = [];
         this.usersService.getUserSocialAccounts(this.userAccountId).subscribe(socialMedias => {
-            this.loggedSocialMedias = socialMedias;
+            socialMedias.forEach(socialMediaEntry => {
+                if (socialMediaEntry.status === SocialMediaStatus.OK){
+                    this.loggedSocialMedias.push(socialMediaEntry.socialMedia);
+                }
+            });
         });
     }
 
@@ -77,11 +83,11 @@ export class ReferralSweepDataComponent {
             return;
         }
         switch (candidate) {
-            case SocialMedia.facebook:
+            case SocialMedia.Facebook:
                 this.authService.signIn(FacebookLoginProvider.PROVIDER_ID).then(data => {
                     this.usersService.login({ ...data, user_account_id: undefined, expiration_date: undefined, auth_error: undefined })
                         .subscribe(() => {
-                            this.loggedSocialMedias.push(SocialMedia.facebook);
+                            this.loggedSocialMedias.push(SocialMedia.Facebook);
                         });
                 });
                 break;

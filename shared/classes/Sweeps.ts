@@ -13,7 +13,7 @@ export class URL {
 }
 
 export class Search {
-    user_account_id: number;
+    user_account_id: AAGUID;
     lastUserSweep?: Partial<user_sweep>;
     nameSearch?: string;
     dateSearch?: {

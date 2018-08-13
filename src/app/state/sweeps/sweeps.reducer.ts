@@ -36,6 +36,7 @@ export function sweepsReducer(state: SweepsState = INITIAL_SWEEPS_STATE, action:
             };
         }
         case SweepsActions.ADD_SWEEP_COMPLETED: {
+//            action.payload.frequency_days
             return {
                 ...state,
                 sweeps: state.sweeps.addItem(action.payload, sort),
@@ -72,6 +73,9 @@ export function sweepsReducer(state: SweepsState = INITIAL_SWEEPS_STATE, action:
 }
 
 function sort(a: user_sweep, b: user_sweep) {
+// -1 is a before b
+    const aNextVisit = a.frequency_days * 864e5 - (Date.now() - a.last_entry_date.getTime());
+    const bNextVisit = b.frequency_days * 864e5 - (Date.now() - b.last_entry_date.getTime());
     if (!a.deleted_yn && b.deleted_yn) {
         return -1;
     } else if (a.deleted_yn && !b.deleted_yn) {
@@ -80,9 +84,9 @@ function sort(a: user_sweep, b: user_sweep) {
         return 1;
     } else if (a.end_date.getTime() < b.end_date.getTime()) {
         return -1;
-    } else if (a.last_entry_date.getTime() < b.last_entry_date.getTime()) {
+    } else if (aNextVisit < bNextVisit) {
         return -1;
-    } else if (a.last_entry_date.getTime() > b.last_entry_date.getTime()) {
+    } else if (aNextVisit > bNextVisit) {
         return 1;
     }
     return a.user_sweep_id > b.user_sweep_id ? -1 : 1;

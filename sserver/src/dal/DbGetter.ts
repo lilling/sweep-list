@@ -5,11 +5,11 @@ import * as pgMonitor from 'pg-monitor';
 
 const pgOptions = {};
 const pgConnect = {
-    host: 'ec2-79-125-110-209.eu-west-1.compute.amazonaws.com',
+    host: 'ec2-54-217-235-159.eu-west-1.compute.amazonaws.com',
     port: 5432,
-    database: 'd3aah4o2s9brq6',
-    user: 'uatfbjfsevdoty',
-    password: 'c0b2db4f5ee255f2510523d840db63919ee59b6f58a24f3f0f7b7b09e917947a',
+    database: 'd75paaqoaj1vte',
+    user: 'hugvfezcdslezy',
+    password: '6eaf13be7971e2bdf1c9457c84efa4f141fd5ae2e1f26e16fcfe3dfb7965c90b',
     ssl: true,
 };
 

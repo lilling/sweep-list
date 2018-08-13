@@ -11,7 +11,7 @@ import { environment } from '../environments/environment'; // Angular CLI enviro
 import { AppComponent } from './app.component';
 import { LoginComponent } from './login/login.component';
 import { MaterialModule } from './modules/material.module';
-import { SocialLoginModule, AuthServiceConfig, GoogleLoginProvider, FacebookLoginProvider, LoginOpt } from 'angularx-social-login';
+import { SocialLoginModule, AuthServiceConfig, FacebookLoginProvider, LoginOpt } from 'angularx-social-login';
 import { SweepListComponent } from './sweep-list/sweep-list.component';
 import { appRoutes } from './app.routes';
 import { AddSweepComponent } from './add-sweep/add-sweep.component';
@@ -33,16 +33,16 @@ import { DeleteAccountComponent } from './delete-account/delete-account.componen
 import { SocialMediaLoginErrorComponent } from './social-media-login-error/social-media-login-error.component';
 
 const fbLoginOptions: LoginOpt = {
-    scope: 'public_profile , email, publish_actions',
+    scope: 'public_profile , email',
     return_scopes: true,
     enable_profile_selector: true
   }; // https://developers.facebook.com/docs/reference/javascript/FB.login/v2.11
 
 const SOCIAL_CONFIG = new AuthServiceConfig([
-    {
-        id: GoogleLoginProvider.PROVIDER_ID,
-        provider: new GoogleLoginProvider('1057083499190-heocpiamo4h8ie9vpungc7ae6qg0m2s9.apps.googleusercontent.com')
-    },
+    //{
+    //    id: GoogleLoginProvider.PROVIDER_ID,
+    //    provider: new GoogleLoginProvider('1057083499190-heocpiamo4h8ie9vpungc7ae6qg0m2s9.apps.googleusercontent.com')
+    //},
     {
         id: FacebookLoginProvider.PROVIDER_ID,
         provider: new FacebookLoginProvider('1940493829534171', fbLoginOptions)

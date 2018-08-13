@@ -1,16 +1,13 @@
 <div class="basic-container">
-    <mat-form-field>
-        <input matInput placeholder="Message with post" name="messageWithPost" id="messageWithPost"
-               [(ngModel)]="personalReferMessage" [disabled]="disabled">
-    </mat-form-field>
-    <span>
+    <br>
+    <span [ngClass]="{'disabled-text': disabled}">
         <span>Share every </span>
         <input matInput type="number" name="shareDuration" placeholder="XX" required [(ngModel)]="referralFrequency"
                appPositive [disabled]="disabled" #shareDuration="ngModel">
         <span> days on:</span>
     </span>
     <div class="icons-holder">
-            <i class="fa fa-google social-icon" [ngClass]="{'logged': loggedSocialMedias?.includes(SocialMedia.google)}"
+            <i class="fa fa-google social-icon" [ngClass]="{'logged': loggedSocialMedias?.includes(SocialMedia.google) && !disabled}"
                (click)="login(SocialMedia.google)"></i>
             <mat-slide-toggle [checked]="referGoogle" [color]="'primary'"
                               [disabled]="!loggedSocialMedias?.includes(SocialMedia.google) || disabled"
@@ -18,13 +15,17 @@
             </mat-slide-toggle>
     </div>
     <div class="icons-holder">
-        <i class="fa fa-facebook-f social-icon" [ngClass]="{'logged': loggedSocialMedias?.includes(SocialMedia.facebook)}"
-           (click)="login(SocialMedia.facebook)"></i>
+        <i class="fa fa-facebook-f social-icon" [ngClass]="{'logged': loggedSocialMedias?.includes(SocialMedia.Facebook) && !disabled}"
+           (click)="login(SocialMedia.Facebook)"></i>
         <mat-slide-toggle [checked]="referFacebook" [color]="'primary'"
-                          [disabled]="!loggedSocialMedias?.includes(SocialMedia.facebook) || disabled"
+                          [disabled]="!loggedSocialMedias?.includes(SocialMedia.Facebook) || disabled"
                           (change)="referFacebook = $event.checked">
         </mat-slide-toggle>
     </div>
+    <mat-form-field>
+        <input matInput placeholder="Message with post" name="messageWithPost" id="messageWithPost"
+               [(ngModel)]="personalReferMessage" [disabled]="disabled">
+    </mat-form-field>
     <ng-container *ngIf="shareDuration.invalid && (shareDuration.dirty || shareDuration.touched)">
         <mat-error *ngIf="shareDuration.errors.required">
             Duration is required.

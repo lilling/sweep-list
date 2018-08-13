@@ -18,7 +18,7 @@ export class UserSweepService extends BaseService<user_sweep> {
         const q =
             `SELECT *\n` +
             `  FROM sweepimp.user_sweep\n` +
-            ` WHERE user_account_id = $<user_account_id^>\n`;
+            ` WHERE user_account_id = $<user_account_id>\n`;
         let where = ``;
         if (user_sweep_search.nameSearch) {
             where = where + `   AND upper(sweep_name) like '%' || upper($<nameSearch>) || '%'\n`;
@@ -52,7 +52,7 @@ export class UserSweepService extends BaseService<user_sweep> {
         return db.manyOrNone(q + where + order_by, user_sweep_search);
     }
 
-    async GetWins(id: number): Promise<Win[]> {
+    async GetWins(user_account_id: AAGUID): Promise<Win[]> {
         const db = DbGetter.getDB();
         const q =
             `SELECT EXTRACT(YEAR FROM end_date) win_year\n` +
@@ -60,7 +60,7 @@ export class UserSweepService extends BaseService<user_sweep> {
             `      ,EXTRACT(MONTH FROM end_date) month_numeric\n` +
             `      ,sum(prize_value) prize_value_sum\n` +
             `  FROM sweepimp.user_sweep\n` +
-            ` WHERE user_account_id = $<id^>\n` +
+            ` WHERE user_account_id = $<user_account_id>\n` +
             `   AND won_yn = true\n` +
             `GROUP BY EXTRACT(YEAR FROM end_date)\n` +
             `        ,to_char(end_date, 'TMMonth')\n` +
@@ -71,29 +71,29 @@ export class UserSweepService extends BaseService<user_sweep> {
             `      ,null month_numeric\n` +
             `      ,sum(prize_value) prize_value_sum\n` +
             `  FROM sweepimp.user_sweep\n` +
-            ` WHERE user_account_id = $<id^>\n` +
+            ` WHERE user_account_id = $<user_account_id>\n` +
             `   AND won_yn = true\n` +
             `GROUP BY EXTRACT(YEAR FROM end_date)\n` +
             `ORDER BY win_year desc, month_numeric desc`;
-        return db.manyOrNone(q, { id });
+        return db.manyOrNone(q, { user_account_id });
     }
 
-    async GetSweepURL(id: number): Promise<URL> {
+    async GetSweepURL(user_sweep_id: number): Promise<URL> {
         const db = DbGetter.getDB();
         const q =
             `SELECT user_sweep_id\n` +
             `      ,coalesce(frequency_url, sweep_url) sweep_url\n` +
             `  FROM sweepimp.user_sweep\n` +
-            ` WHERE user_sweep_id = $<id^>`;
-        const result = await db.oneOrNone<Promise<URL>>(q, { id });
-        this.ManageEntry([id]);
+            ` WHERE user_sweep_id = $<user_sweep_id^>`;
+        const result = await db.oneOrNone<Promise<URL>>(q, { user_sweep_id });
+        this.ManageEntry([user_sweep_id]);
         return result;
     }
 
-    async ToggleSweepState(column: string, id: number, state: boolean): Promise<user_sweep> {
+    async ToggleSweepState(column: string, user_sweep_id: number, state: boolean): Promise<user_sweep> {
         const db = DbGetter.getDB();
         // build new sweep
-        const new_user_sweep = await this.getItem(id, `user_sweep_id`);
+        const new_user_sweep = await this.getItem(user_sweep_id, `user_sweep_id`);
         switch (column){
             case `deleted_yn`: {
                 new_user_sweep.deleted_yn = state;
@@ -267,7 +267,7 @@ export class UserSweepService extends BaseService<user_sweep> {
         var q = 
             `SELECT COUNT(*) active_sweeps\n` +
             `  FROM sweepimp.user_sweep\n` +
-            ` WHERE user_account_id = $<user_account_id^>\n` +
+            ` WHERE user_account_id = $<user_account_id>\n` +
             `   AND deleted_yn = false\n` +
             `   AND end_date >= now();`;
         const activeSweeps = await db.oneOrNone(q, new_user_sweep);
@@ -280,7 +280,7 @@ export class UserSweepService extends BaseService<user_sweep> {
                 sweepRevive = 1;
             }
         }
-        if (activeSweeps){
+        if (activeSweeps && paymentPackage.max_active_sweeps > -1){
             if ((Number(activeSweeps.active_sweeps) + (new_user_sweep.user_sweep_id ? sweepRevive : 1)) > paymentPackage.max_active_sweeps){
                 throw new HttpException(`User monthly active sweeps reached plan maxinum (` + paymentPackage.max_active_sweeps.toString() + `)`, HttpStatus.FORBIDDEN);
             }
@@ -428,19 +428,19 @@ export class UserSweepService extends BaseService<user_sweep> {
             `RETURNING *` : ``);
     }
 
-    async GetSweepURLs(id: number): Promise<string[]> {
+    async GetSweepURLs(user_account_id: AAGUID): Promise<string[]> {
         const db = DbGetter.getDB();
         const q =
             `SELECT user_sweep_id\n` +
             `      ,coalesce(frequency_url, sweep_url) sweep_url\n` +
             `  FROM sweepimp.user_sweep\n` +
-            ` WHERE user_account_id = $<id^>\n` +
+            ` WHERE user_account_id = $<user_account_id>\n` +
             `   AND end_date >= now()\n` +
             `   AND (  last_entry_date is null\n` +
             `       OR last_entry_date < current_date - interval '1 DAY' * frequency_days)`;
         const sweeps = [];
         const urls = [];
-        const result = await db.manyOrNone<URL>(q, { id });
+        const result = await db.manyOrNone<URL>(q, { user_account_id });
         result.forEach(value => {
             sweeps.push(value.user_sweep_id);
             urls.push(value.sweep_url);

@@ -1,5 +1,5 @@
 <div class="basic-container">
-    <span>
+    <span [ngClass]="{'disabled-text': disabled}">
         <span>Every </span>
         <input matInput type="number" placeholder="XX" required [disabled]="disabled" name="recurringDuration"
                appPositive [(ngModel)]="frequencyDays" #recurringDuration="ngModel">

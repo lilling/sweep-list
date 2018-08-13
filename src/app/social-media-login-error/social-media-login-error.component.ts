@@ -1,7 +1,7 @@
 import { Component, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
 import { SocialMedia } from '../../../shared/models/social-media.enum';
-import { SocialMediaError } from '../../../shared/models/social-media-error.enum';
+import { SocialMediaStatus } from '../../../shared/models/social-media-status.enum';
 import { FacebookLoginProvider } from 'angularx-social-login';
 import { LoginActions } from '../state/login/login.actions';
 
@@ -16,22 +16,22 @@ export class SocialMediaLoginErrorComponent {
 
     constructor(public dialogRef: MatDialogRef<SocialMediaLoginErrorComponent>,
         private loginActions: LoginActions,
-        @Inject(MAT_DIALOG_DATA) public data: { socialMedia: SocialMedia, status: SocialMediaError }[]) {
+        @Inject(MAT_DIALOG_DATA) public data: { socialMedia: SocialMedia, status: SocialMediaStatus }[]) {
         this.dialogRef.disableClose = true;
     }
 
-    getMessage(attempt: { socialMedia: SocialMedia, status: SocialMediaError }) {
+    getMessage(attempt: { socialMedia: SocialMedia, status: SocialMediaStatus }) {
         switch (attempt.status) {
-            case SocialMediaError.publish:
-                return `Allow posts on ${SocialMedia[attempt.socialMedia]}`;
-            case SocialMediaError.authentication:
-                return `Log into ${SocialMedia[attempt.socialMedia]}`;
+            case SocialMediaStatus.publishNotGranted:
+                return `ALLOW POSTS ON ${SocialMedia[attempt.socialMedia].toUpperCase()}`;
+            case SocialMediaStatus.authenticationError:
+                return `LOG INTO ${SocialMedia[attempt.socialMedia].toUpperCase()}`;
         }
     }
 
     getIcon(socialMedia: SocialMedia) {
         switch (socialMedia) {
-            case SocialMedia.facebook:
+            case SocialMedia.Facebook:
                 return 'fa fa-facebook-f';
         }
     }

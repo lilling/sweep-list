@@ -40,8 +40,8 @@ export class SweepsActions {
         this.ngRedux.dispatch({ type: SweepsActions.ADD_SWEEP, payload: sweep });
     }
 
-    deleteSweep(id: number) {
-        this.ngRedux.dispatch({ type: SweepsActions.DELETE_SWEEP, payload: id });
+    deleteSweep(sweep_id: number) {
+        this.ngRedux.dispatch({ type: SweepsActions.DELETE_SWEEP, payload: sweep_id });
     }
 
     updateSweep(sweep: user_sweep) {

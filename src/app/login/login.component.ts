@@ -12,6 +12,7 @@ import { AppState } from '../state/store';
 import { DeleteAccountComponent } from '../delete-account/delete-account.component';
 import { user_account } from '../../../shared/classes';
 import { SocialMedia } from '../../../shared/models/social-media.enum';
+import { SocialMediaStatus } from '../../../shared/models/social-media-status.enum';
 
 @Component({
     selector: 'app-login',
@@ -33,9 +34,8 @@ export class LoginComponent implements OnInit {
         this.ngRedux.select(state => state.loginState.user).subscribe(user => {
             this.user = user;
             if (user) {
-                localStorage.setItem(LocalStorageKeys.loggedUser, user.user_account_id.toString());
-                this.facebook = user.allSocialMedias.indexOf(SocialMedia.facebook) !== -1 &&
-                    user.unlinkedSocialMedias.findIndex(unlinked => unlinked.socialMedia === SocialMedia.facebook) === -1;
+                localStorage.setItem(LocalStorageKeys.loggedUser, user.user_account_id);
+                this.facebook = user.allSocialMedias[user.allSocialMedias.findIndex(unlinked => unlinked.socialMedia === SocialMedia.Facebook)].status === SocialMediaStatus.OK;
             } else {
                 this.facebook = false;
             }

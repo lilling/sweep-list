@@ -49,10 +49,10 @@ export class SweepsService extends BaseService {
         sweep.total_shares = sweep.total_shares ? +sweep.total_shares : null;
         sweep.referral_frequency = sweep.referral_frequency ? +sweep.referral_frequency : null;
         sweep.frequency_days = sweep.frequency_days ? +sweep.frequency_days : null;
-        sweep.user_account_id = sweep.user_account_id ? +sweep.user_account_id : null;
+        sweep.user_account_id = sweep.user_account_id ? sweep.user_account_id : null;
     }
 
-    getTimePassedUntilLastVisit(sweep: user_sweep) {
+    getTimePassedSinceLastVisit(sweep: user_sweep) {
         if (!sweep.last_entry_date) {
             return '';
         }

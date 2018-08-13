@@ -2,6 +2,7 @@ import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { SocialMedia } from '../../../../shared/models/social-media.enum';
 import { UsersService } from '../../services/users.service';
 import { LocalStorageKeys } from '../../models/local-storage-keys.enum';
+import { SocialMediaStatus } from '../../../../shared/models/social-media-status.enum';
 
 @Component({
     selector: 'app-thank-sweep-data',
@@ -15,7 +16,7 @@ export class ThankSweepDataComponent {
     @Output() thankToChange = new EventEmitter();
     @Output() isValidChange = new EventEmitter<boolean>();
     SocialMedia = SocialMedia;
-    socialMedias = [SocialMedia.google, SocialMedia.facebook];
+    socialMedias = [SocialMedia.google, SocialMedia.Facebook];
     loggedSocialMedias: SocialMedia[];
     private thanks_To: string;
     private selectedSocialMedia: number;
@@ -41,9 +42,14 @@ export class ThankSweepDataComponent {
     }
 
     constructor(private usersService: UsersService) {
-        const userAccountId = +localStorage.getItem(LocalStorageKeys.loggedUser);
-        this.usersService.getUserSocialAccounts(userAccountId).subscribe(socialMedias => {
-            this.loggedSocialMedias = socialMedias;
+        const userAccountId = localStorage.getItem(LocalStorageKeys.loggedUser);
+        this.loggedSocialMedias = [];
+        this.usersService.getUserSocialAccounts(userAccountId).subscribe(userSocialMedias => {
+            userSocialMedias.forEach(socialMediaEntry => {
+                if (socialMediaEntry.status === SocialMediaStatus.OK){
+                    this.loggedSocialMedias.push(socialMediaEntry.socialMedia);
+                }
+            });
         });
     }
 

@@ -1,6 +1,8 @@
 import { Get, Post, Body, Controller, Param } from '@nestjs/common';
 import { SocialUserAndAccount, Account , user_account } from '../../../shared/classes';
 import { UserAccountService } from '../services/user_account.service';
+import { SocialMedia } from '../../../shared/models/social-media.enum';
+import { SocialMediaStatus } from '../../../shared/models/social-media-status.enum';
 
 @Controller('api/user')
 export class UserController {
@@ -9,9 +11,9 @@ export class UserController {
         this.UserAccountService = new UserAccountService();
     }
 
-    /*@Get('user_accounts/:id')
+    /*@Get('user_accounts/:user_account_id')
     root(@Param() params): Promise<user_account> {
-        return this.UserAccountService.getItem(params.id, 'user_account_id');
+        return this.UserAccountService.getItem(params.user_account_id, 'user_account_id');
     }*/
 
     @Get('user_accounts')
@@ -19,19 +21,14 @@ export class UserController {
         return this.UserAccountService.getAll();
     }
 
-    @Get('user_accounts/:id')
+    @Get('user_accounts/:user_account_id')
     CookieLogin(@Param() params): Promise<user_account>{
-        return this.UserAccountService.CookieLogin(params.id);
+        return this.UserAccountService.CookieLogin(params.user_account_id);
     }
 
-    @Get('user_social_medias/:id')
-    GetSocialMedia(@Param() params): Promise<string[]>{
-        return this.UserAccountService.GetSocialMedia(params.id);
-    }
-
-    @Get('user_expired_social_medias/:id')
-    GetExpiredSocialMedia(@Param() params): Promise<string[]>{
-        return this.UserAccountService.GetSocialMedia(params.id, true);
+    @Get('user_social_medias/:user_account_id')
+    GetSocialMedia(@Param() params): Promise<{socialMedia: SocialMedia, status: SocialMediaStatus}[]>{
+        return this.UserAccountService.GetSocialMedia(params.user_account_id);
     }
 
     @Post('SocialMediaLogin')
@@ -44,13 +41,13 @@ export class UserController {
         this.UserAccountService.extendFacebookUserAccounts();
     }
 
-    @Get('deleteUserAccountConfirm/:id')
+    @Get('deleteUserAccountConfirm/:user_account_id')
     deleteUserAccountConfirm(@Param() params): Promise<{tasks: string, active: string, ended: string, won: string}>{
-        return this.UserAccountService.deleteUserAccountConfirm(params.id);
+        return this.UserAccountService.deleteUserAccountConfirm(params.user_account_id);
     }
 
     @Post('deleteUserAccount')
-    deleteUserAccount(@Body() user_account_id: any): Promise<boolean>{
-        return this.UserAccountService.deleteUserAccount(user_account_id.user_account_id);
+    deleteUserAccount(@Body() user_account: any): Promise<boolean>{
+        return this.UserAccountService.deleteUserAccount(user_account.user_account_id);
     }
 }
