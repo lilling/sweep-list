@@ -33,7 +33,7 @@ import { DeleteAccountComponent } from './delete-account/delete-account.componen
 import { SocialMediaLoginErrorComponent } from './social-media-login-error/social-media-login-error.component';
 
 const fbLoginOptions: LoginOpt = {
-    scope: 'public_profile , email, publish_actions',
+    scope: 'public_profile , email',
     return_scopes: true,
     enable_profile_selector: true
   }; // https://developers.facebook.com/docs/reference/javascript/FB.login/v2.11
