@@ -1,7 +1,7 @@
 import * as pgPromise from 'pg-promise';
 import { IDatabase } from 'pg-promise';
-
 import * as pgMonitor from 'pg-monitor';
+import { isDebugMode } from '../../../debugMode';
 
 const pgOptions = {};
 const pgConnect = {
@@ -19,7 +19,10 @@ export class DbGetter {
     static getDB() {
         if (!this.db) {
             this.db = pgPromise(pgOptions)(pgConnect);
-            pgMonitor.attach(pgOptions);
+console.log(isDebugMode.getMode());
+            if (isDebugMode.getMode()){
+                pgMonitor.attach(pgOptions);
+            }
         }
         return this.db;
     }
