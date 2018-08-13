@@ -33,6 +33,7 @@ npm-debug.log
 testem.log
 /typings
 yarn-error.log
+debugMode.ts
 
 # e2e
 /e2e/*.js
