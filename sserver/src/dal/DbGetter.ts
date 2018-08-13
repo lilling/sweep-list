@@ -5,11 +5,11 @@ import { isDebugMode } from '../../../debugMode';
 
 const pgOptions = {};
 const pgConnect = {
-    host: 'ec2-54-217-235-159.eu-west-1.compute.amazonaws.com',
+    host: '35.184.77.103',
     port: 5432,
     database: 'd75paaqoaj1vte',
     user: 'hugvfezcdslezy',
-    password: '6eaf13be7971e2bdf1c9457c84efa4f141fd5ae2e1f26e16fcfe3dfb7965c90b',
+    password: 'k7t9dw3WFkVDEAV8cjPrGkcCSuxkfmzTDu4Sc3M6cPLQw4CPHNJrRfNz2UpuQt4u',
     ssl: true,
 };
 
