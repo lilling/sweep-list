@@ -9,8 +9,8 @@ import { DbGetter } from './dal/DbGetter';
 
 async function bootstrap() {
     const httpsOptions = {
-        key: fs.readFileSync('./ssl/localhost.key'),
-        cert: fs.readFileSync('./ssl/localhost.crt'),
+        key: fs.readFileSync('./ssl/private.key'),
+        cert: fs.readFileSync('./ssl/certificate.crt'),
     };
 
     DbGetter.getDB();
