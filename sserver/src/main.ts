@@ -6,6 +6,7 @@ import * as fs from 'fs';
 import * as https from 'https';
 import * as http from 'http';
 import { DbGetter } from './dal/DbGetter';
+import { isDebugMode } from '../../debugMode';
 
 async function bootstrap() {
     const httpsOptions = {
@@ -23,7 +24,9 @@ async function bootstrap() {
     await app.init();
 
     http.createServer(server).listen(3000);
-    https.createServer(httpsOptions, server).listen(443);
+    if (isDebugMode.getMode()){
+        https.createServer(httpsOptions, server).listen(443);
+    }
 }
 
 bootstrap();

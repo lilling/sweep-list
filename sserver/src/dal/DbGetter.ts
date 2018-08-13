@@ -19,7 +19,6 @@ export class DbGetter {
     static getDB() {
         if (!this.db) {
             this.db = pgPromise(pgOptions)(pgConnect);
-console.log(isDebugMode.getMode());
             if (isDebugMode.getMode()){
                 pgMonitor.attach(pgOptions);
             }
