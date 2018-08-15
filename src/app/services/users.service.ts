@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 //
 import { Observable } from 'rxjs/Observable';
 //
-import { user_account, SocialUserAndAccount } from '../../../shared/classes';
+import { user_account, ExtandedSocialUser } from '../../../shared/classes';
 import { BaseService } from './base.service';
 import { SocialMedia } from '../../../shared/models/social-media.enum';
 import { SocialMediaStatus } from '../../../shared/models/social-media-status.enum';
@@ -15,7 +15,7 @@ export class UsersService extends BaseService {
         super(http, 'api/user/');
     }
 
-    login(model: {userAccount: SocialUserAndAccount, regular: {username: string, password: string}}): Observable<user_account> {
+    login(model: ExtandedSocialUser): Observable<user_account> {
         return this.post<user_account>(`SocialMediaLogin`, model);
     }
 
