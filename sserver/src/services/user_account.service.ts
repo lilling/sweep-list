@@ -1,6 +1,6 @@
 import { DbGetter } from '../dal/DbGetter';
 import { BaseService } from './base.service';
-import { user_account, extandedSocialUser, facebook_account } from '../../../shared/classes';
+import { user_account, ExtandedSocialUser, facebook_account } from '../../../shared/classes';
 import { FacebookService } from './facebook.service'
 import { SocialMedia } from '../../../shared/models/social-media.enum'
 import { PaymentService } from './payment.service'
@@ -41,7 +41,7 @@ export class UserAccountService extends BaseService<user_account> {
         return ret;
     }
 
-    async Login(account_param: extandedSocialUser): Promise<user_account> {
+    async Login(account_param: ExtandedSocialUser): Promise<user_account> {
         const db = DbGetter.getDB();
         let ret;
         let q =
@@ -49,12 +49,10 @@ export class UserAccountService extends BaseService<user_account> {
             `  FROM sweepimp.user_account\n` +
             ` WHERE is_deleted = false\n` +
             `   AND email = $<email>\n` +
-            (account_param.isSocial ? '' :
+            (account_param.photoUrl ? '' :
             `   AND hashed_password = crypt($<password>, hashed_password)`);
-console.log(account_param);
-console.log(q);
         const loginUser = await db.oneOrNone<user_account>(q, account_param);
-        if (loginUser === null && account_param.isSocial) { // new social user
+        if (loginUser === null && account_param.photoUrl) { // new social user
             const newUser = await this.CreateUser(db, account_param);;
             ret = newUser;
         } else if (loginUser === null){ // email not exist or wrong password
@@ -65,7 +63,7 @@ console.log(q);
         return ret;
     }
 
-    async CreateUser(DB, account: extandedSocialUser): Promise<user_account> {
+    async CreateUser(DB, account: ExtandedSocialUser): Promise<user_account> {
         const q =
             `INSERT INTO sweepimp.user_account\n` +
             `    (first_name, last_name, is_deleted, email, hashed_password, photo_url, created, updated)\n` +
@@ -74,7 +72,7 @@ console.log(q);
             `    ,$<lastName>\n` +
             `    ,false\n` +
             `    ,$<email>\n` +
-            (account.isSocial ? `` :
+            (account.photoUrl ? `` :
             `    ,crypt($<password>, gen_salt('bf', 8))\n`) +
             `    ,$<photo_url>\n` +
             `    ,current_timestamp\n` +

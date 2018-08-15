@@ -4,6 +4,7 @@ import { NgRedux } from '@angular-redux/store';
 import { SocialUser } from 'angularx-social-login';
 //
 import { AppState } from '../store';
+import { ExtandedSocialUser } from '../../../../shared/classes';
 
 @Injectable()
 export class LoginActions {
@@ -20,7 +21,22 @@ export class LoginActions {
     }
 
     login(options: {id?: string, regular?: {email: string, password: string}, user?: SocialUser, fromCache: boolean}) {
-        this.ngRedux.dispatch({ type: LoginActions.LOGIN, payload: options });
+        const userConst = new ExtandedSocialUser;
+        if (options.user){
+            userConst.provider = options.user.provider;
+            userConst.id = options.user.id;
+            userConst.email = options.user.email;
+            userConst.name = options.user.name;
+            userConst.photoUrl = options.user.photoUrl;
+            userConst.firstName = options.user.firstName;
+            userConst.lastName = options.user.lastName;
+            userConst.authToken = options.user.authToken;
+            userConst.idToken = options.user.idToken;
+        } else if (options.regular){
+            userConst.email = options.regular.email;
+            userConst.password = options.regular.password;
+        }
+        this.ngRedux.dispatch({ type: LoginActions.LOGIN, payload: {id: options.id, user: userConst, fromCache: options.fromCache} });
     }
 
     logOff() {

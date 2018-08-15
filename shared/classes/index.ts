@@ -14,5 +14,5 @@ export {
     user_social_extra,
     user_sweep
 } from './DB';
-export { Account, SocialUserAndAccount, FBAccount, extandedSocialUser } from './SocialUserAndAccount';
+export { Account, SocialUserAndAccount, FBAccount, ExtandedSocialUser } from './SocialUserAndAccount';
 export { URL, Win, Search } from './Sweeps';

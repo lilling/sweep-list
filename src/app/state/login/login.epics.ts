@@ -4,7 +4,7 @@ import { ActionsObservable } from 'redux-observable';
 import { fromPromise } from 'rxjs/observable/fromPromise';
 import { catchError, map } from 'rxjs/operators';
 import { of } from 'rxjs/observable/of';
-import { AuthService, SocialUser } from 'angularx-social-login';
+import { AuthService } from 'angularx-social-login';
 //
 import { TypedAction } from '../models/typed-action';
 import { BaseEpic } from '../models/base-epic';
@@ -13,6 +13,7 @@ import { LoginActions } from './login.actions';
 import { UsersService } from '../../services/users.service';
 import { generateError } from '../models/error';
 import { LocalStorageKeys } from '../../models/local-storage-keys.enum';
+import { ExtandedSocialUser } from '../../../../shared/classes';
 
 @Injectable()
 export class LoginEpics extends BaseEpic {
@@ -22,7 +23,7 @@ export class LoginEpics extends BaseEpic {
     }
 
     @Epic
-    login(action$: ActionsObservable<TypedAction<{id?: string, regular?: {email: string, password: string}, user?: SocialUser, fromCache: boolean}>>) {
+    login(action$: ActionsObservable<TypedAction<{id?: string, user?: ExtandedSocialUser, fromCache: boolean}>>) {
         return action$.ofType(LoginActions.LOGIN)
             .switchMap(action => {
                 if (action.payload.fromCache) {
@@ -38,8 +39,7 @@ export class LoginEpics extends BaseEpic {
                         }));
                 }
                 
-                const userAccount = { ...action.payload.user, user_account_id: undefined, expiration_date: undefined, auth_error: undefined };
-                return this.usersService.login({userAccount, regular: action.payload.regular}).pipe(
+                return this.usersService.login(action.payload.user).pipe(
                     map(res => {
                         res.created = new Date(res.created);
                         res.updated = new Date(res.updated);

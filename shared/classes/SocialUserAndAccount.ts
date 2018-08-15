@@ -23,7 +23,7 @@ export class SocialUserAndAccount extends SocialUser {
     }
 }
 
-export class extandedSocialUser extends SocialUser {
+export class ExtandedSocialUser extends SocialUser {
     password?: string;
     isSocial: boolean;
 }
