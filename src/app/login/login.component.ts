@@ -36,7 +36,7 @@ export class LoginComponent implements OnInit {
             this.user = user;
             if (user) {
                 localStorage.setItem(LocalStorageKeys.loggedUser, user.user_account_id);
-                this.facebook = user.allSocialMedias[user.allSocialMedias.findIndex(unlinked => unlinked.socialMedia === SocialMedia.Facebook)].status === SocialMediaStatus.OK;
+                //this.facebook = user.allSocialMedias[user.allSocialMedias.findIndex(unlinked => unlinked.socialMedia === SocialMedia.Facebook)].status === SocialMediaStatus.OK;
             } else {
                 this.facebook = false;
             }
@@ -48,12 +48,12 @@ export class LoginComponent implements OnInit {
         localStorage.clear();
     }
 
-    private login(model: {regular?: {username: string, password: string}, user?: SocialUser}) {
+    private login(model: {regular?: {email: string, password: string}, user?: SocialUser}) {
         this.loginActions.login({ ...model, fromCache: false });
     }
 
-    regularLogin(username: string, password: string) {
-        this.login({regular: {username, password}});
+    regularLogin(email: string, password: string) {
+        this.login({regular: {email, password}});
     }
 
     socialLogin(socialMedia: SocialMedia) {

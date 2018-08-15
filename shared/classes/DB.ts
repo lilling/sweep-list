@@ -129,6 +129,9 @@ export interface user_account {
     first_name: string | null;
     last_name: string | null;
     is_deleted: boolean;
+    email: string | null;
+    hashed_password: string | null;
+    photo_url: string | null;
     created: Date;
     updated: Date;
 }

@@ -22,7 +22,7 @@ export class LoginEpics extends BaseEpic {
     }
 
     @Epic
-    login(action$: ActionsObservable<TypedAction<{id?: string, regular?: {username: string, password: string}, user?: SocialUser, fromCache: boolean}>>) {
+    login(action$: ActionsObservable<TypedAction<{id?: string, regular?: {email: string, password: string}, user?: SocialUser, fromCache: boolean}>>) {
         return action$.ofType(LoginActions.LOGIN)
             .switchMap(action => {
                 if (action.payload.fromCache) {

@@ -15,8 +15,8 @@ export class UsersService extends BaseService {
         super(http, 'api/user/');
     }
 
-    login(model: {userAccount: SocialUserAndAccount, regular: {username: string, password: string}}): Observable<user_account> {
-        return this.post<user_account>(`SocialMediaLogin`, model);
+    login(model: {userAccount: SocialUserAndAccount, regular: {email: string, password: string}}): Observable<user_account> {
+        return this.post<user_account>(`Login`, model);
     }
 
     getUserSocialAccounts(id: AAGUID): Observable<{socialMedia: SocialMedia, status: SocialMediaStatus}[]> {

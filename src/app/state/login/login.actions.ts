@@ -19,7 +19,7 @@ export class LoginActions {
     constructor(private ngRedux: NgRedux<AppState>) {
     }
 
-    login(options: {id?: string, regular?: {username: string, password: string}, user?: SocialUser, fromCache: boolean}) {
+    login(options: {id?: string, regular?: {email: string, password: string}, user?: SocialUser, fromCache: boolean}) {
         this.ngRedux.dispatch({ type: LoginActions.LOGIN, payload: options });
     }
 

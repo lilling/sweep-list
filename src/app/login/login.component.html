@@ -3,16 +3,16 @@
         <a title="Sweep Imp" tabindex="-1">Sweep Imp</a>
     </h1>
     <div class="login-body">
-        <label for="userName">
-            <span>Username or Email Address</span>
-            <input mdInput id="userName" type="text" [(ngModel)]="username" />
+        <label for="email">
+            <span>Email</span>
+            <input mdInput id="email" type="text" [(ngModel)]="email" />
         </label>
         <label for="password">
             <span>password</span>
             <input id="password" type="password" [(ngModel)]="password" />
         </label>
         <div class="regular-login-button">
-            <button class="main-button" mat-button (click)="regularLogin(username, password)">Login</button>
+            <button class="main-button" mat-button (click)="regularLogin(email, password)">Login</button>
         </div>
         <div class="separator"><span class="separator-text">Or</span></div>
 
