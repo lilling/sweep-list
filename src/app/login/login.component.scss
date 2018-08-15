@@ -1,48 +1,27 @@
 @import '../../sass/styles';
 
-.logo {
-  @include header(20%);
-}
+.login {
+  width: 320px;
+  padding: 8% 0 0;
+  margin: auto;
 
-.login-body {
-  height: 70%;
-  margin: 20px;
+  a {
+    text-decoration: none;
+    color: #555d66;
+    font-size: 13px
+  }
 
-  .social-medias {
-    //display: flex;
-    //flex-direction: column;
-    height: 100%;
+  h1 {
+    text-align: center;
 
-    .social-media-table{
-      width: 80%;
-      margin-left:10%; 
-      margin-right:10%;
-    }
-
-    .social-media-row {
-      //display: flex;
-      //flex-direction: row;
-      justify-content: center;
-      line-height: 50px;
-
-      i {
-        &.fa-facebook-f {
-          color: $facebook-color;
-        }
-        &.fa-twitter {
-          color: $twitter-color;
-        }
-
-        &.fa-linkedin {
-          color: $linkedin-color;
-        }
-
-        &.fa-pinterest-p {
-          color: $pintereset-color;
-        }
-        font-size: x-large;
-        margin-right: 6px;
-      }
+    a {
+      background: url(../../assets/icons/appIcon.png) center top no-repeat;
+      background-size: 84px;
+      height: 84px;
+      margin: 0 auto 25px;
+      width: 84px;
+      text-indent: -9999px;
+      display: block;
     }
   }
   
@@ -52,29 +31,64 @@
     margin-left: 2%;
   }
 
-  .buttons {
-    .logoff-button {
-      color: $main-color;
-      font-weight: bold;
+  .login-body {
+    background: white;
+    margin-top: 20px;
+    margin-left: 0;
+    padding: 26px 24px 46px;
+    box-shadow: 0 1px 3px rgba(0,0,0,.13);
+
+    label {
+      color: #72777c;
+      font-size: 14px;
+
+      input {
+        font-size: 24px;
+        width: 100%;
+        padding: 3px;
+        margin: 2px 6px 16px 0;
+      }
     }
-    text-align: center;
-    margin-right: 2%;
-    margin-left: 2%;
-  }
 
-  .continue-container {
-    text-align: right;
-    position:absolute;
-    bottom: 20px;
-    right: 20px;
-  }
+    .regular-login-button {
+      display: flex;
+      justify-content: flex-end;
+    }
 
-  .delete-account {
-    bottom: 10px;
-    position: absolute;
-    font-size: small;
-    text-decoration: underline;
-    color: $linkedin-color
+    .separator {
+      margin: 20px 0;
+      border-top: 1px solid #CCCCCC;
+      position: relative;
+
+      .separator-text {
+        display: flex;
+        justify-content: center;
+        position: absolute;
+        top: -10px;
+        left: 50%;
+        margin-left: -22px;
+        padding: 0px 10px;
+        background: white;
+        color: #72777c;
+      }
+    }
+
+    .social-login-container {
+      display: block;
+      padding: 20px 0 0;
+
+      .login-button {
+        color: white;
+        width: 100%;
+        margin-top: 5px;
+
+        &.google {
+          background: $google-color;
+        }
+        &.facebook {
+          background: $facebook-color;
+        }
+      }
+    }
   }
 }
-

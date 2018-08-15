@@ -1,33 +1,28 @@
-<div class="logo"> logo</div>
-<div class="login-body">
-    <div class="social-medias">
-        <table class="social-media-table">
-            <tr class="social-media-row">
-                <td class="social-media-cell">
-                    <i class="fa fa-facebook-f social-icon"></i>
-                </td>
-                <td class="social-media-cell">
-                    <span>Facebook is {{facebook ? 'linked' : 'not linked'}}</span>
-                </td>
-                <td class="buttons">
-                    <button class="main-button" *ngIf="!facebook" mat-button (click)="login()">LINK</button>
-                    <button class="logoff-button" *ngIf="facebook" mat-button (click)="logoff()">UNLINK</button>
-                </td>
-            </tr>
-            <tr class="social-media-row">
-                <td colspan="3">
-                    More social media links are on their way...
-                </td>
-            </tr>
-        </table>
-        <span class="continue-container">
-            <button class="main-button" mat-button (click)="goToList()" *ngIf="facebook">
-                CONTINUE
-            </button>
-        </span>
+<div class="login">
+    <h1>
+        <a title="Sweep Imp" tabindex="-1">Sweep Imp</a>
+    </h1>
+    <div class="login-body">
+        <label for="userName">
+            <span>Username or Email Address</span>
+            <input mdInput id="userName" type="text" [(ngModel)]="username" />
+        </label>
+        <label for="password">
+            <span>password</span>
+            <input id="password" type="password" [(ngModel)]="password" />
+        </label>
+        <div class="regular-login-button">
+            <button class="main-button" mat-button (click)="regularLogin(username, password)">Login</button>
+        </div>
+        <div class="separator"><span class="separator-text">Or</span></div>
+
+        <div class="social-login-container">
+            <button class="google login-button" mat-button (click)="socialLogin(SocialMedia.google)">Continue with <b>Google</b></button>
+            <button class="facebook login-button" mat-button (click)="socialLogin(SocialMedia.Facebook)">Continue with <b>Facebook</b></button>
+        </div>
     </div>
-    <span *ngIf="user" class="delete-account clickable" (click)="deleteAccount()">Delete my account</span>
+    <p id="nav">
+        <a class="clickable" (click)="isRegister = !isRegister">Register</a> |
+        <a href="https://try-nextend-social-login.nextendweb.com/my-account/lost-password/">Lost your password?</a>
+    </p>
 </div>
-
-
-

@@ -23,6 +23,11 @@ export class SocialUserAndAccount extends SocialUser {
     }
 }
 
+export class extandedSocialUser extends SocialUser {
+    password?: string;
+    isSocial: boolean;
+}
+
 export class Account {
     user_account_id: AAGUID;
 }

@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 //
 import { NgRedux } from '@angular-redux/store';
+import { SocialUser } from 'angularx-social-login';
 //
 import { AppState } from '../store';
 
@@ -18,7 +19,7 @@ export class LoginActions {
     constructor(private ngRedux: NgRedux<AppState>) {
     }
 
-    login(options: {id: string, fromCache: boolean}) {
+    login(options: {id?: string, regular?: {username: string, password: string}, user?: SocialUser, fromCache: boolean}) {
         this.ngRedux.dispatch({ type: LoginActions.LOGIN, payload: options });
     }
 
