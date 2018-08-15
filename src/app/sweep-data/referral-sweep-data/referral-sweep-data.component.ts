@@ -78,30 +78,6 @@ export class ReferralSweepDataComponent {
         });
     }
 
-    login(candidate: SocialMedia) {
-        if (this.loggedSocialMedias.includes(candidate)) {
-            return;
-        }
-        switch (candidate) {
-            case SocialMedia.Facebook:
-                this.authService.signIn(FacebookLoginProvider.PROVIDER_ID).then(data => {
-                    this.usersService.login({ ...data, user_account_id: undefined, expiration_date: undefined, auth_error: undefined })
-                        .subscribe(() => {
-                            this.loggedSocialMedias.push(SocialMedia.Facebook);
-                        });
-                });
-                break;
-            case SocialMedia.google:
-                this.authService.signIn(GoogleLoginProvider.PROVIDER_ID).then(data => {
-                    this.usersService.login({ ...data, user_account_id: undefined, expiration_date: undefined, auth_error: undefined })
-                        .subscribe(() => {
-                            this.loggedSocialMedias.push(SocialMedia.google);
-                        });
-                });
-                break;
-        }
-    }
-
     private changeIsValid() {
         this.isValidChange.emit((this.facebook || this.google) && this.frequency > 0);
     }

@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 //
-import { AuthService, FacebookLoginProvider } from 'angularx-social-login';
+import { AuthService, FacebookLoginProvider, GoogleLoginProvider, SocialUser } from 'angularx-social-login';
 import { MatDialog } from '@angular/material';
 import { NgRedux } from '@angular-redux/store';
 //
@@ -22,6 +22,7 @@ import { SocialMediaStatus } from '../../../shared/models/social-media-status.en
 export class LoginComponent implements OnInit {
 
     user: user_account;
+    SocialMedia = SocialMedia;
     facebook: boolean;
 
     constructor(private authService: AuthService,
@@ -47,8 +48,29 @@ export class LoginComponent implements OnInit {
         localStorage.clear();
     }
 
-    login() {
-        this.loginActions.login({ id: FacebookLoginProvider.PROVIDER_ID, fromCache: false });
+    private login(model: {regular?: {username: string, password: string}, user?: SocialUser}) {
+        this.loginActions.login({ ...model, fromCache: false });
+    }
+
+    regularLogin(username: string, password: string) {
+        this.login({regular: {username, password}});
+    }
+
+    socialLogin(socialMedia: SocialMedia) {
+        let signinPromise: Promise<SocialUser>;
+        switch (socialMedia) {
+            case SocialMedia.Facebook: 
+                signinPromise = this.authService.signIn(FacebookLoginProvider.PROVIDER_ID)
+                break;
+            case SocialMedia.google: 
+                signinPromise = this.authService.signIn(GoogleLoginProvider.PROVIDER_ID)
+                break;
+        }
+
+        signinPromise.then(user => {
+            this.login({user});
+        })
+        
     }
 
     goToList() {
