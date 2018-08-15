@@ -1,4 +1,3 @@
-import { graph } from 'fbgraph';
 import  FB from 'fb';
 import { FacebookExtention } from '../../classes';
 
@@ -7,28 +6,12 @@ export class FacebookService {
     appSecret: string;
 
     constructor() {
-        FB.options({
+        /*FB.options({
             appId: 1940493829534171,
             appSecret: '021ed0b1952127c7ad9df8d0f6db7d97',
-        });
+        });*/
         this.appId = 1940493829534171;
         this.appSecret = '021ed0b1952127c7ad9df8d0f6db7d97';
-    }
-
-    checkGrantedPublish(account_id: string, client_access_token: string): Promise<boolean>{
-        FB.setAccessToken(client_access_token);
-        return new Promise<boolean>((resolve, reject) => {
-            FB.api(account_id + '/permissions', function (res) {
-                let granted = true;
-                for (const iPermission of res.data) {
-                    if (iPermission.status == `declined` && iPermission.permission == `publish_actions`) {
-                        granted = false;
-                    }
-                }
-                return resolve(granted);
-            });
-        });
-
     }
 
     extendAccessToken(client_access_token: string): Promise<FacebookExtention>{
@@ -55,20 +38,5 @@ export class FacebookService {
             });
         });
     }
-
-    publishPost(access_token: string, account_id: string, message: string, link: string): string{
-        FB.setAccessToken(access_token);
-        return FB.api(account_id + '/feed', 'post', { 
-            message: message,
-            link: link
-        }, function (res) {
-            if(!res || res.error) {
-              console.log(!res ? 'error occurred' : res.error);
-              return null;
-            }
-            console.log('Post Id: ' + res.id);
-            return res.id;
-          });
-    };
 }
 

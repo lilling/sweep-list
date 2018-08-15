@@ -78,10 +78,5 @@ export class SweepController {
     ManageSweep(@Body() user_sweep: user_sweep): Promise<user_sweep>{
         return this.UserSweepService.ManageSweep(user_sweep);
     }
-/*
-    @Get('user_sweep_urls/:user_account_id')
-    GetSweepsURL(@Param() params): Promise<string[]> {
-        return this.UserSweepService.GetSweepURLs(params.user_account_id);
-    }
-*/
+
 }

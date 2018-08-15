@@ -427,32 +427,4 @@ export class UserSweepService extends BaseService<user_sweep> {
             ` WHERE user_sweep_id = $<user_sweep_id^>\n` +
             `RETURNING *` : ``);
     }
-
-    async GetSweepURLs(user_account_id: AAGUID): Promise<string[]> {
-        const db = DbGetter.getDB();
-        const q =
-            `SELECT user_sweep_id\n` +
-            `      ,coalesce(frequency_url, sweep_url) sweep_url\n` +
-            `  FROM sweepimp.user_sweep\n` +
-            ` WHERE user_account_id = $<user_account_id>\n` +
-            `   AND end_date >= now()\n` +
-            `   AND (  last_entry_date is null\n` +
-            `       OR last_entry_date < current_date - interval '1 DAY' * frequency_days)`;
-        const sweeps = [];
-        const urls = [];
-        const result = await db.manyOrNone<URL>(q, { user_account_id });
-        result.forEach(value => {
-            sweeps.push(value.user_sweep_id);
-            urls.push(value.sweep_url);
-        });
-        if (result.length > 0){
-            try {
-                await this.ManageEntry(sweeps);
-            } catch(err) {
-                urls.splice(0,urls.length);
-                console.log(`Error in ManageEntry`);
-            }
-        }
-        return urls;
-    }
 }

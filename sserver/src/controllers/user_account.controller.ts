@@ -2,7 +2,6 @@ import { Get, Post, Body, Controller, Param } from '@nestjs/common';
 import { SocialUserAndAccount, Account , user_account } from '../../../shared/classes';
 import { UserAccountService } from '../services/user_account.service';
 import { SocialMedia } from '../../../shared/models/social-media.enum';
-import { SocialMediaStatus } from '../../../shared/models/social-media-status.enum';
 
 @Controller('api/user')
 export class UserController {
@@ -26,19 +25,9 @@ export class UserController {
         return this.UserAccountService.CookieLogin(params.user_account_id);
     }
 
-    @Get('user_social_medias/:user_account_id')
-    GetSocialMedia(@Param() params): Promise<{socialMedia: SocialMedia, status: SocialMediaStatus}[]>{
-        return this.UserAccountService.GetSocialMedia(params.user_account_id);
-    }
-
     @Post('SocialMediaLogin')
     SocialMediaLogin(@Body() social_media_account: SocialUserAndAccount): Promise<user_account>{
         return this.UserAccountService.SocialMediaLogin(social_media_account);
-    }
-
-    @Post('extendUserAccounts')
-    extendUserAccounts(){
-        this.UserAccountService.extendFacebookUserAccounts();
     }
 
     @Get('deleteUserAccountConfirm/:user_account_id')

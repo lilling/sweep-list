@@ -4,7 +4,6 @@ example: schemats generate -c postgres://hsrbfqoh:OASQR0O7qDLnHlIBgWcHiD_dKwz4dB
 */
 
 import { SocialMedia } from '../models/social-media.enum';
-import { SocialMediaStatus } from '../models/social-media-status.enum';
 
 export interface sweep_share {
     sweep_share_id: number;
@@ -132,7 +131,6 @@ export interface user_account {
     is_deleted: boolean;
     created: Date;
     updated: Date;
-    allSocialMedias?: { socialMedia: SocialMedia, status: SocialMediaStatus }[];
 }
 
 export interface social_media {
