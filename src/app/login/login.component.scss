@@ -76,6 +76,7 @@
     .social-login-container {
       display: block;
       padding: 20px 0 0;
+      text-align: center;
 
       .login-button {
         color: white;
@@ -84,9 +85,11 @@
 
         &.google {
           background: $google-color;
+          margin: 10px 0;
         }
         &.facebook {
           background: $facebook-color;
+          margin: 10px 0;
         }
       }
     }
