@@ -1,9 +1,9 @@
 <div class="basic-container">
     <span [ngClass]="{'disabled-text': disabled}">
-        <span>Every </span>
+        <span>Enter every </span>
         <input matInput type="number" placeholder="XX" required [disabled]="disabled" name="recurringDuration"
                appPositive [(ngModel)]="frequencyDays" #recurringDuration="ngModel">
-        <span>days</span>
+        <span>days.</span>
     </span>
     <ng-container *ngIf="recurringDuration.invalid && (recurringDuration.dirty || recurringDuration.touched)">
         <mat-error *ngIf="recurringDuration.errors.required">

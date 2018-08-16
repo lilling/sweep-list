@@ -18,26 +18,13 @@ export class UserAccountService extends BaseService<user_account> {
 
     async CookieLogin(user_account_id: AAGUID): Promise<user_account> {
         const db = DbGetter.getDB();
-        return db.task(`cookie-login`, innerDb => {
-            return this.CookieLoginInner(innerDb, user_account_id);
-        });
-    }
-
-    async CookieLoginInner(DB, user_account_id: AAGUID): Promise<user_account> {
         const q =
             `SELECT user_account.*\n` +
             `  FROM sweepimp.user_account\n` +
             ` WHERE user_account_id = $<user_account_id>\n` +
-            `   AND is_deleted = false;\n` +
-            `SELECT retired_user_account.*\n` +
-            `  FROM sweepimp.retired_user_account\n` +
-            ` WHERE user_account_id = $<user_account_id>\n` +
             `   AND is_deleted = false`;
-        let UserAccounts = await DB.multi(q, { user_account_id });
-        while (!UserAccounts[0][0] && UserAccounts[1][0].replacement_user_account_id) {
-            UserAccounts = await DB.multi(q, { user_account_id: UserAccounts[1][0].replacement_user_account_id });
-        }
-        const ret = UserAccounts[0][0];
+        const UserAccount = await db.oneOrNone<user_account>(q, {user_account_id: user_account_id });
+        const ret = UserAccount;
         return ret;
     }
 
@@ -45,7 +32,7 @@ export class UserAccountService extends BaseService<user_account> {
         const db = DbGetter.getDB();
         let ret;
         let q =
-            `SELECT user_account.*\n` +
+            `SELECT user_account_id, first_name, last_name, email, photo_url\n` +
             `  FROM sweepimp.user_account\n` +
             ` WHERE is_deleted = false\n` +
             `   AND email = $<email>\n` +
@@ -108,17 +95,15 @@ export class UserAccountService extends BaseService<user_account> {
         let q = ``;
         await db.tx(`delete-user-account`, del => {
             q = `UPDATE sweepimp.user_account\n` +
-                `   SET is_deleted = true\n` +
-                `      ,first_name = null\n` +
-                `      ,last_name  = null\n` +
-                `      ,updated    = current_timestamp\n` +
+                `   SET is_deleted      = true\n` +
+                `      ,first_name      = null\n` +
+                `      ,last_name       = null\n` +
+                `      ,email           = null\n` +
+                `      ,hashed_password = null\n` +
+                `      ,photo_url       = null\n` +
+                `      ,updated         = current_timestamp\n` +
                 ` WHERE user_account_id = $<user_account_id>\n`;
             db.none(q, { user_account_id });
-            this.validProviders.forEach(i_Provider => {
-                q = `DELETE FROM sweepimp.${i_Provider}_account\n` +
-                    ` WHERE user_account_id = $<user_account_id>`;
-                    db.none(q, {user_account_id});
-            })
             flag = true;
         });
         return flag;

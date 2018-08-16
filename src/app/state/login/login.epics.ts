@@ -29,8 +29,6 @@ export class LoginEpics extends BaseEpic {
                 if (action.payload.fromCache) {
                     return this.usersService.getUser(action.payload.id).pipe(
                         map(res => {
-                            res.created = new Date(res.created);
-                            res.updated = new Date(res.updated);
                             res.user_account_id = res.user_account_id;
                             return { type: LoginActions.LOGIN_COMPLETED, payload: res };
                         }),
@@ -41,8 +39,6 @@ export class LoginEpics extends BaseEpic {
                 
                 return this.usersService.login(action.payload.user).pipe(
                     map(res => {
-                        res.created = new Date(res.created);
-                        res.updated = new Date(res.updated);
                         res.user_account_id = res.user_account_id;
                         return { type: LoginActions.LOGIN_COMPLETED, payload: res };
                     }),

@@ -13,7 +13,6 @@ import { SocialMediaStatus } from '../../../../shared/models/social-media-status
 export class ReferralSweepDataComponent {
 
     userAccountId: AAGUID;
-    loggedSocialMedias: SocialMedia[];
     @Input() disabled: boolean;
     @Output() personalReferMessageChange = new EventEmitter();
     @Output() referralFrequencyChange = new EventEmitter();
@@ -68,14 +67,6 @@ export class ReferralSweepDataComponent {
 
     constructor(private usersService: UsersService, private authService: AuthService) {
         this.userAccountId = localStorage.getItem(LocalStorageKeys.loggedUser);
-        this.loggedSocialMedias = [];
-        this.usersService.getUserSocialAccounts(this.userAccountId).subscribe(socialMedias => {
-            socialMedias.forEach(socialMediaEntry => {
-                if (socialMediaEntry.status === SocialMediaStatus.OK){
-                    this.loggedSocialMedias.push(socialMediaEntry.socialMedia);
-                }
-            });
-        });
     }
 
     private changeIsValid() {

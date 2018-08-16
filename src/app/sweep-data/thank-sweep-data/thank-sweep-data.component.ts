@@ -17,7 +17,6 @@ export class ThankSweepDataComponent {
     @Output() isValidChange = new EventEmitter<boolean>();
     SocialMedia = SocialMedia;
     socialMedias = [SocialMedia.google, SocialMedia.Facebook];
-    loggedSocialMedias: SocialMedia[];
     private thanks_To: string;
     private selectedSocialMedia: number;
 
@@ -32,7 +31,7 @@ export class ThankSweepDataComponent {
     }
 
     @Input() get thanksSocialMediaId() {
-        return this.selectedSocialMedia;
+        return this.selectedSocialMedia + 1;
     }
 
     set thanksSocialMediaId(val: number) {
@@ -43,18 +42,10 @@ export class ThankSweepDataComponent {
 
     constructor(private usersService: UsersService) {
         const userAccountId = localStorage.getItem(LocalStorageKeys.loggedUser);
-        this.loggedSocialMedias = [];
-        this.usersService.getUserSocialAccounts(userAccountId).subscribe(userSocialMedias => {
-            userSocialMedias.forEach(socialMediaEntry => {
-                if (socialMediaEntry.status === SocialMediaStatus.OK){
-                    this.loggedSocialMedias.push(socialMediaEntry.socialMedia);
-                }
-            });
-        });
     }
 
     private changeIsValid() {
-        this.isValidChange.emit(!!this.thanksTo && ![null, undefined].includes(this.thanksSocialMediaId) );
+        this.isValidChange.emit(!!this.thanksTo && ![null, undefined].includes(this.thanksSocialMediaId));
     }
 
 }
