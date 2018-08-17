@@ -14,6 +14,7 @@ import { Subscription } from 'rxjs/Subscription';
 import { Observable } from 'rxjs/Observable';
 import { AddSweepComponent } from '../add-sweep/add-sweep.component';
 import { MatDialog } from '@angular/material';
+import { $ } from 'protractor';
 
 @Component({
     selector: 'app-to-do',
@@ -28,6 +29,28 @@ export class ToDoComponent implements OnInit, AfterViewInit, OnDestroy {
     subscriptions: { [index: string]: Subscription };
     mode: SweepsMode;
     userAccountId: AAGUID;
+
+    socialColumns = [
+        //{columnDef: 'FB', cell: (sweep: user_sweep, id: string) => this.getFacebookURL(sweep, id) },
+        {columnDef: 'FB', cell: (element: Element) => `Facebook`  },
+        {columnDef: 'TW', cell: (element: Element) => `Twitter`  },
+        {columnDef: 'GO', cell: (element: Element) => `Google`   },
+        {columnDef: 'PT', cell: (element: Element) => `Pinterest`},
+        {columnDef: 'LI', cell: (element: Element) => `Linkedin` },
+    ];
+    displayedSocialColumns = this.socialColumns.map(c => c.columnDef);
+
+    getFacebookURL(sweep: user_sweep, id: string){
+        let frag = document.createRange().createContextualFragment('<div class="fb-share-button" data-href='+sweep.sweep_url+' data-layout="button_count" data-size="large" data-mobile-iframe="true">'+
+        '<a target="_blank" href="https://www.facebook.com/sharer/sharer.php?u='+encodeURI(sweep.sweep_url)+'%2F&amp;src=sdkpreparse" class="fb-xfbml-parse-ignore">' +
+        'Share</a></div>');
+//console.log(id);
+        let placementNode = document.getElementById(id);
+//console.log(placementNode);
+        //        let placementNode = document.querySelector(id);
+        placementNode.appendChild(frag);
+        return;
+    }
 
     constructor(private ngRedux: NgRedux<AppState>,
                 public dialog: MatDialog,

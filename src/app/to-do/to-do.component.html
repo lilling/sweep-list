@@ -10,6 +10,25 @@
     fjs.parentNode.insertBefore(js, fjs);
 }(document, 'script', 'facebook-jssdk'));
 </script-->
+<!-- End Load Facebook SDK for JavaScript -->
+<!-- Load Twitter SDK for JavaScript -->
+<!--script>
+window.twttr = (function(d, s, id) {
+    var js, fjs = d.getElementsByTagName(s)[0], t = window.twttr || {};
+    if (d.getElementById(id)) return t;
+    js = d.createElement(s);
+    js.id = id;
+    js.src = "https://platform.twitter.com/widgets.js";
+    fjs.parentNode.insertBefore(js, fjs);
+    t._e = [];
+    t.ready = function(f) {
+        t._e.push(f);
+    };
+    return t;
+}(document, "script", "twitter-wjs"));
+</script-->
+<!-- END Load Twitter SDK for JavaScript -->
+<!--script src="//platform.linkedin.com/in.js" type="text/javascript"> lang: en_US</script-->
 
 <div class="container">
     <app-header [title]="'Remember!'"></app-header>
@@ -41,9 +60,32 @@
             Share
             </a>
         </div>
+<a class="twitter-share-button" 
+    href="https://twitter.com/share"
+    data-url="https://www.TWEETTHIS.com"
+    data-size="large"
+    data-via="SweepImp"
+    data-show-count="false">Tweet
+</a>
     </ng-container>
 </div-->
+<!--script type="IN/Share" data-url="bla"></script-->
                         <mat-icon class="edit-sweep" (click)="editSweep(sweep, $event)">edit</mat-icon>
+<!-- placeholders -->
+<div mat-line class="list-item-second">
+    <ng-container *ngIf="sweep.is_referral">
+        <table>
+            <tr>
+                <ng-container *ngFor="let socialColumn of socialColumns">
+                <!--ng-container cdkColumnDef="FB"-->
+                    <!--mat-cell>Facebook</mat-cell-->
+                    <!--td id="{{sweep.user_sweep_id}}+{{socialColumn.columnDef}}">{{socialColumn.cell(sweep, sweep.user_sweep_id.toString()+'+'+socialColumn.columnDef)}}</td-->
+                    <td id="{{sweep.user_sweep_id}}+{{socialColumn.columnDef}}">{{socialColumn.cell()}}</td>
+                </ng-container>
+            </tr>
+        </table>
+    </ng-container>
+</div>
                     </mat-list-item>
                 </mat-list>
             </div>
