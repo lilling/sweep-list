@@ -61,7 +61,7 @@ export class UserAccountService extends BaseService<user_account> {
             `    ,$<email>\n` +
             (account.photoUrl ? `` :
             `    ,crypt($<password>, gen_salt('bf', 8))\n`) +
-            `    ,$<photo_url>\n` +
+            `    ,$<photoUrl>\n` +
             `    ,current_timestamp\n` +
             `    ,current_timestamp)\n` +
             `RETURNING *`;
