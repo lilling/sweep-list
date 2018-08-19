@@ -36,10 +36,10 @@ export class UserAccountService extends BaseService<user_account> {
             `  FROM sweepimp.user_account\n` +
             ` WHERE is_deleted = false\n` +
             `   AND email = $<email>\n` +
-            (account_param.photoUrl ? '' :
+            (account_param.isSocial ? '' :
             `   AND hashed_password = crypt($<password>, hashed_password)`);
         const loginUser = await db.oneOrNone<user_account>(q, account_param);
-        if (loginUser === null && account_param.photoUrl) { // new social user
+        if (loginUser === null && account_param.isSocial) { // new social user
             const newUser = await this.CreateUserInner(db, account_param);
             ret = newUser;
         } else if (loginUser === null){ // email not exist or wrong password
@@ -85,7 +85,7 @@ export class UserAccountService extends BaseService<user_account> {
             `    ,$<lastName>\n` +
             `    ,false\n` +
             `    ,$<email>\n` +
-            (account.photoUrl ? `` :
+            (account.isSocial ? `` :
             `    ,crypt($<password>, gen_salt('bf', 8))\n`) +
             `    ,$<photoUrl>\n` +
             `    ,current_timestamp\n` +

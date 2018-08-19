@@ -32,9 +32,11 @@ export class LoginActions {
             userConst.lastName = options.user.lastName;
             userConst.authToken = options.user.authToken;
             userConst.idToken = options.user.idToken;
+            userConst.isSocial = true;
         } else if (options.regular){
             userConst.email = options.regular.email;
             userConst.password = options.regular.password;
+            userConst.isSocial = false;
         }
         this.ngRedux.dispatch({ type: LoginActions.LOGIN, payload: {id: options.id, user: userConst, fromCache: options.fromCache} });
     }
