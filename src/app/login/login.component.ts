@@ -5,14 +5,12 @@ import { AuthService, FacebookLoginProvider, GoogleLoginProvider, SocialUser } f
 import { MatDialog } from '@angular/material';
 import { NgRedux } from '@angular-redux/store';
 //
-import { UsersService } from '../services/users.service';
 import { LocalStorageKeys } from '../models/local-storage-keys.enum';
 import { LoginActions } from '../state/login/login.actions';
 import { AppState } from '../state/store';
 import { DeleteAccountComponent } from '../delete-account/delete-account.component';
 import { user_account } from '../../../shared/classes';
 import { SocialMedia } from '../../../shared/models/social-media.enum';
-import { SocialMediaStatus } from '../../../shared/models/social-media-status.enum';
 
 @Component({
     selector: 'app-login',
@@ -29,7 +27,6 @@ export class LoginComponent implements OnInit {
                 private activatedRoute: ActivatedRoute,
                 private ngRedux: NgRedux<AppState>,
                 private router: Router,
-                private userService: UsersService,
                 private loginActions: LoginActions) {
         this.ngRedux.select(state => state.loginState.user).subscribe(user => {
             this.user = user;

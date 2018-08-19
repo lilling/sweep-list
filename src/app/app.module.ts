@@ -10,6 +10,7 @@ import { environment } from '../environments/environment'; // Angular CLI enviro
 //
 import { AppComponent } from './app.component';
 import { LoginComponent } from './login/login.component';
+import { PasswordComponent } from './components/password/password.component';
 import { MaterialModule } from './modules/material.module';
 import { SocialLoginModule, AuthServiceConfig, FacebookLoginProvider, LoginOpt, GoogleLoginProvider } from 'angularx-social-login';
 import { SweepListComponent } from './sweep-list/sweep-list.component';
@@ -64,6 +65,7 @@ const SOCIAL_CONFIG = new AuthServiceConfig([
         ThankSweepDataComponent,
         AppComponent,
         LoginComponent,
+        PasswordComponent,
         SweepListComponent,
         HeaderComponent,
         ToDoComponent,
