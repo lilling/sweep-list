@@ -3,25 +3,24 @@
         <a title="Sweep Imp" tabindex="-1">Sweep Imp</a>
     </h1>
     <div class="login-body">
-        <div class="social-login-container">
-                <button class="facebook login-button" mat-button (click)="socialLogin(SocialMedia.Facebook)">Continue with <b>Facebook</b></button>
-                <button class="google login-button" mat-button (click)="socialLogin(SocialMedia.google)">Continue with <b>Google</b></button>
-        </div>
-        <div class="separator"><span class="separator-text">Or</span></div>
-        <label for="email">
-            <span>eMail</span>
-            <input mdInput id="email" type="text" [(ngModel)]="email" />
-        </label>
-        <label for="password">
-            <span>password</span>
-            <input id="password" type="password" [(ngModel)]="password" />
-        </label>
-        <div class="regular-login-button">
-            <button class="main-button" mat-button (click)="regularLogin(email, password)">Login</button>
-        </div>
+        <ng-container *ngIf="!isRegister">
+            <div class="social-login-container">
+                    <button class="facebook login-button" mat-button (click)="socialLogin(SocialMedia.Facebook)">Continue with <b>Facebook</b></button>
+                    <button class="google login-button" mat-button (click)="socialLogin(SocialMedia.google)">Continue with <b>Google</b></button>
+            </div>
+            <div class="separator"><span class="separator-text">Or</span></div>
+        </ng-container>
+            <label for="email">
+                <span>eMail</span>
+                <input mdInput id="email" type="text" [(ngModel)]="email" />
+            </label>
+            <app-password [(password)]="password"></app-password>
+            <div class="regular-login-button">
+                <button class="main-button" mat-button (click)="regularLogin(email, password)">Login</button>
+            </div>
     </div>
     <p id="nav">
-        <a class="clickable" (click)="isRegister = !isRegister">Register</a> |
+        <a class="clickable" (click)="isRegister = !isRegister">{{isRegister ? 'Login' : 'Register'}}</a> |
         <a href="https://try-nextend-social-login.nextendweb.com/my-account/lost-password/">Lost your password?</a>
     </p>
 </div>
