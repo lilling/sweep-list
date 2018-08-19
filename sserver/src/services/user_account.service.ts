@@ -40,7 +40,7 @@ export class UserAccountService extends BaseService<user_account> {
             `   AND hashed_password = crypt($<password>, hashed_password)`);
         const loginUser = await db.oneOrNone<user_account>(q, account_param);
         if (loginUser === null && account_param.photoUrl) { // new social user
-            const newUser = await this.CreateUser(db, account_param);;
+            const newUser = await this.CreateUserInner(db, account_param);
             ret = newUser;
         } else if (loginUser === null){ // email not exist or wrong password
             ret = null;
@@ -50,7 +50,33 @@ export class UserAccountService extends BaseService<user_account> {
         return ret;
     }
 
-    async CreateUser(DB, account: ExtandedSocialUser): Promise<user_account> {
+    async checkEmailAvailability(email: string): Promise<boolean>{
+        const db = DbGetter.getDB();
+        let q =
+            `SELECT 1\n` +
+            `  FROM sweepimp.user_account\n` +
+            ` WHERE is_deleted = false\n` +
+            `   AND email = $<email>\n`;
+        const loginUser = await db.oneOrNone(q, email);
+        if (!loginUser){
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    async CreateUser(account_param: ExtandedSocialUser): Promise<user_account> {
+        const db = DbGetter.getDB();
+        let ret;
+        if (this.checkEmailAvailability(account_param.email)){
+            ret = this.CreateUserInner(db, account_param);
+        } else {
+            ret = null;
+        }
+        return ret;
+    }
+
+    async CreateUserInner(DB, account: ExtandedSocialUser): Promise<user_account> {
         const q =
             `INSERT INTO sweepimp.user_account\n` +
             `    (first_name, last_name, is_deleted, email, hashed_password, photo_url, created, updated)\n` +

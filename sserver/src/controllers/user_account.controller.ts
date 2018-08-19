@@ -30,6 +30,16 @@ export class UserController {
         return this.UserAccountService.Login(account);
     }
 
+    @Post('email_available')
+    checkEmailAvailability(@Body() email: string): Promise<boolean>{
+        return this.UserAccountService.checkEmailAvailability(email);
+    }
+
+    @Post('create_user')
+    CreateUser(@Body() account: ExtandedSocialUser): Promise<user_account>{
+        return this.UserAccountService.CreateUser(account);
+    }
+
     @Get('deleteUserAccountConfirm/:user_account_id')
     deleteUserAccountConfirm(@Param() params): Promise<{tasks: string, active: string, ended: string, won: string}>{
         return this.UserAccountService.deleteUserAccountConfirm(params.user_account_id);
