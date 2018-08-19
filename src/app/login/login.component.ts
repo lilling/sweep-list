@@ -23,7 +23,6 @@ export class LoginComponent implements OnInit {
 
     user: user_account;
     SocialMedia = SocialMedia;
-    facebook: boolean;
 
     constructor(private authService: AuthService,
                 public dialog: MatDialog,
@@ -36,9 +35,7 @@ export class LoginComponent implements OnInit {
             this.user = user;
             if (user) {
                 localStorage.setItem(LocalStorageKeys.loggedUser, user.user_account_id);
-                //this.facebook = user.allSocialMedias[user.allSocialMedias.findIndex(unlinked => unlinked.socialMedia === SocialMedia.Facebook)].status === SocialMediaStatus.OK;
-            } else {
-                this.facebook = false;
+                this.router.navigate(['/todo', 1]);
             }
         });
     }

@@ -1,5 +1,5 @@
 import { Get, Post, Body, Controller, Param } from '@nestjs/common';
-import { extandedSocialUser, Account , user_account } from '../../../shared/classes';
+import { ExtandedSocialUser, Account , user_account } from '../../../shared/classes';
 import { UserAccountService } from '../services/user_account.service';
 import { SocialMedia } from '../../../shared/models/social-media.enum';
 
@@ -26,7 +26,7 @@ export class UserController {
     }
 
     @Post('Login')
-    Login(@Body() account: extandedSocialUser): Promise<user_account>{
+    Login(@Body() account: ExtandedSocialUser): Promise<user_account>{
         return this.UserAccountService.Login(account);
     }
 
