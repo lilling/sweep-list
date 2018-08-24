@@ -88,10 +88,32 @@ window.twttr = (function(d, s, id) {
 </div>
                     </mat-list-item>
                 </mat-list>
+                <div class="whole-screen" *ngIf="!(isSweepsLoading$ | async) && sweeps.length == 0">
+                    <div class="no-sweeps" *ngIf="mode == 1">
+                        <h2>Great job!</h2>
+                        You have completed all your shares and entries for today!
+                        <p>
+                            <span>Now go ahead and sign up for more sweeps, I'll manage them for you.</span>
+                            <span style="font-size: 0.75em; font-weight: bold;">(Don't forget to add them here using the '+' button below!)</span>
+                        </p>
+                    </div>
+                    <div class="no-sweeps" *ngIf="!(isSweepsLoading$ | async) && sweeps.length == 0 && mode == 2">
+                        No shares or entries due for tomorrow. Do you have any due for today?
+                        <p>
+                        Sign up to more sweeps and then let me manage them for you using the '+' button below!
+                        </p>
+                    </div>
+                    <div class="no-sweeps" *ngIf="!(isSweepsLoading$ | async) && sweeps.length == 0 && mode == 3">
+                        No upcoming shares or entries. Do you have any due for today?
+                        <p>
+                        Sign up to more sweeps and then let me manage them for you using the '+' button below!
+                        </p>
+                    </div>
+                </div>
+                <button mat-fab (click)="addSweep()">
+                    <mat-icon>add</mat-icon>
+                </button>
             </div>
         </mat-tab>
     </mat-tab-group>
-    <button mat-fab (click)="addSweep()">
-        <mat-icon>add</mat-icon>
-    </button>
 </div>
