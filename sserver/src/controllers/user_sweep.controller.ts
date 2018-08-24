@@ -51,7 +51,12 @@ export class SweepController {
 
     @Get('user_sweep_url/:user_sweep_id')
     GetSweepURL(@Param() params): Promise<URL> {
-        return this.UserSweepService.GetSweepURL(params.user_sweep_id);
+        return this.UserSweepService.GetSweepURL(params.user_sweep_id, true);
+    }
+
+    @Get('user_sweep_url_show/:user_sweep_id')
+    ShowSweepURL(@Param() params): Promise<URL> {
+        return this.UserSweepService.GetSweepURL(params.user_sweep_id, false);
     }
 
     @Get('del_sweep/:user_sweep_id')

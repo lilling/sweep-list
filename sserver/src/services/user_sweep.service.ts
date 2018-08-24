@@ -78,7 +78,7 @@ export class UserSweepService extends BaseService<user_sweep> {
         return db.manyOrNone(q, { user_account_id });
     }
 
-    async GetSweepURL(user_sweep_id: number): Promise<URL> {
+    async GetSweepURL(user_sweep_id: number, count_as_entry: boolean): Promise<URL> {
         const db = DbGetter.getDB();
         const q =
             `SELECT user_sweep_id\n` +
@@ -86,7 +86,9 @@ export class UserSweepService extends BaseService<user_sweep> {
             `  FROM sweepimp.user_sweep\n` +
             ` WHERE user_sweep_id = $<user_sweep_id^>`;
         const result = await db.oneOrNone<Promise<URL>>(q, { user_sweep_id });
-        this.ManageEntry([user_sweep_id]);
+        if (count_as_entry){
+            this.ManageEntry(user_sweep_id);
+        }
         return result;
     }
 
@@ -221,30 +223,24 @@ export class UserSweepService extends BaseService<user_sweep> {
         return where;
     }
 
-    async ManageEntry(sweep_ids: number[]) {
+    async ManageEntry(user_sweep_id: number) {
         const db = DbGetter.getDB();
         let insert =
             `INSERT INTO sweepimp.sweep_entry\n` +
             `    (user_sweep_id\n` +
             `    ,entry_date\n` +
             `    ,created\n` +
-            `    ,updated)\n`;
-        sweep_ids.forEach(value => {
-            insert = insert +
-                `SELECT ${value}, current_timestamp, current_timestamp, current_timestamp\n` +
-                `UNION ALL\n`;
-        });
-        // replace last UNION ALL\n with a ;
-        insert = insert.replace(new RegExp(`UNION ALL\n$`), `;`);
+            `    ,updated)\n`+
+            `SELECT $<user_sweep_id>, current_timestamp, current_timestamp, current_timestamp`;
         const update =
             `UPDATE sweepimp.user_sweep\n` +
             `   SET total_entries = coalesce(total_entries, 0) + 1\n` +
             `      ,last_entry_date = current_timestamp\n` +
             `      ,updated = current_timestamp\n` +
-            ` WHERE user_sweep_id IN ($<user_sweep_ids:csv>)`;
+            ` WHERE user_sweep_id = $<user_sweep_id>`;
         await db.tx(`entry`, async DB => {
-            await DB.oneOrNone(insert);
-            await DB.oneOrNone(update, { user_sweep_ids: sweep_ids });
+            await DB.oneOrNone(insert, { user_sweep_id: user_sweep_id });
+            await DB.oneOrNone(update, { user_sweep_id: user_sweep_id });
         });
     }
 
