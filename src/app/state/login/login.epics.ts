@@ -36,6 +36,17 @@ export class LoginEpics extends BaseEpic {
                             return of(generateError(err, LoginActions.LOGIN_COMPLETED));
                         }));
                 }
+
+                if (!action.payload.user.isSocial) {
+                    return this.usersService.register(action.payload.user).pipe(
+                        map(res => {
+                            res.user_account_id = res.user_account_id;
+                            return { type: LoginActions.LOGIN_COMPLETED, payload: res };
+                        }),
+                        catchError(err => {
+                            return of(generateError(err, LoginActions.LOGIN));
+                        }));
+                }
                 
                 return this.usersService.login(action.payload.user).pipe(
                     map(res => {

@@ -42,12 +42,12 @@ export class LoginComponent implements OnInit {
         localStorage.clear();
     }
 
-    private login(model: {regular?: {email: string, password: string}, user?: SocialUser}) {
+    private login(model: { regular?: { email: string, password: string, name: string }, user?: SocialUser }) {
         this.loginActions.login({ ...model, fromCache: false });
     }
 
-    regularLogin(email: string, password: string) {
-        this.login({regular: {email, password}});
+    regularLogin(email: string, password: string, name: string) {
+        this.login({regular: { email, password, name }});
     }
 
     socialLogin(socialMedia: SocialMedia) {

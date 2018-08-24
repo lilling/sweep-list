@@ -7,7 +7,7 @@ import { Component, Output, EventEmitter, Input, ViewChild, ElementRef } from '@
 })
 export class PasswordComponent {
     _password: string;
-    isHoveredOn: boolean;
+    showPassword: boolean;
 
     @ViewChild('passwordInput')
     private elPassword : ElementRef;
@@ -21,8 +21,8 @@ export class PasswordComponent {
 
     @Output() passwordChange = new EventEmitter();
 
-    mouseHover() {
-        this.isHoveredOn = !this.isHoveredOn;
+    togglePassword() {
+        this.showPassword = !this.showPassword;
         this.elPassword.nativeElement.focus();
     }
 }
