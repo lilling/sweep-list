@@ -98,7 +98,7 @@ export class UserAccountService extends BaseService<user_account> {
         if (account.name) {
             if(account.name.indexOf(` `) > 0) {
                 account.firstName = account.name.substr(0, account.name.indexOf(` `));
-                account.lastName = account.name.substr(account.name.indexOf(` `));
+                account.lastName = account.name.substr(account.name.indexOf(` `)+1);
             } else {
                 account.firstName = account.name;
                 account.lastName = ``;
