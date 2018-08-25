@@ -85,9 +85,12 @@ export class UserAccountService extends BaseService<user_account> {
             `    ,$<lastName>\n` +
             `    ,false\n` +
             `    ,$<email>\n` +
-            (account.isSocial ? `` :
+            (account.isSocial ?
+            `    ,null\n` :
             `    ,crypt($<password>, gen_salt('bf', 8))\n`) +
-            `    ,$<photoUrl>\n` +
+            (account.isSocial ?
+            `    ,$<photoUrl>\n` :
+            `    ,null\n` ) +
             `    ,current_timestamp\n` +
             `    ,current_timestamp)\n` +
             `RETURNING *`;
