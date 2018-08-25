@@ -10,14 +10,18 @@
             </div>
             <div class="separator"><span class="separator-text">Or</span></div>
         </ng-container>
-            <label for="email">
-                <span>eMail</span>
-                <input mdInput id="email" type="text" [(ngModel)]="email" />
-            </label>
-            <app-password [(password)]="password"></app-password>
-            <div class="regular-login-button">
-                <button class="main-button" mat-button (click)="regularLogin(email, password)">Login</button>
-            </div>
+        <label *ngIf="isRegister" for="name">
+            <span>Name</span>
+            <input mdInput id="name" type="text" [(ngModel)]="name" />
+        </label>
+        <label for="email">
+            <span>E-Mail</span>
+            <input mdInput id="email" type="text" [(ngModel)]="email" />
+        </label>
+        <app-password [(password)]="password"></app-password>
+        <div class="regular-login-button">
+            <button class="main-button" mat-button (click)="regularLogin(email, password, name)">{{!isRegister ? 'Login' : 'Register'}}</button>
+        </div>
     </div>
     <p id="nav">
         <a class="clickable" (click)="isRegister = !isRegister">{{isRegister ? 'Login' : 'Register'}}</a> |

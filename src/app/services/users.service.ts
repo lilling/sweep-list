@@ -19,6 +19,10 @@ export class UsersService extends BaseService {
         return this.post<user_account>(`Login`, model);
     }
 
+    register(model: ExtandedSocialUser): Observable<user_account> {
+        return this.post<user_account>(`create_user`, model);
+    }
+
     getUserSocialAccounts(id: AAGUID): Observable<{socialMedia: SocialMedia, status: SocialMediaStatus}[]> {
         return this.get(`user_social_medias/${id}`);
     }

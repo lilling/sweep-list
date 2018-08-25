@@ -20,7 +20,7 @@ export class LoginActions {
     constructor(private ngRedux: NgRedux<AppState>) {
     }
 
-    login(options: {id?: string, regular?: {email: string, password: string}, user?: SocialUser, fromCache: boolean}) {
+    login(options: {id?: string, regular?: { email: string, password: string, name: string }, user?: SocialUser, fromCache: boolean}) {
         const userConst = new ExtandedSocialUser;
         if (options.user){
             userConst.provider = options.user.provider;
@@ -36,6 +36,7 @@ export class LoginActions {
         } else if (options.regular){
             userConst.email = options.regular.email;
             userConst.password = options.regular.password;
+            userConst.name = options.regular.name;
             userConst.isSocial = false;
         }
         this.ngRedux.dispatch({ type: LoginActions.LOGIN, payload: {id: options.id, user: userConst, fromCache: options.fromCache} });
