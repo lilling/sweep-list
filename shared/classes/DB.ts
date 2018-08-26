@@ -40,11 +40,11 @@ export interface user_sweep {
     total_shares: number | null;
     referral_frequency: number | null;
     personal_refer_message: string | null;
-    refer_facebook: boolean | null;
-    refer_twitter: boolean | null;
-    refer_google: boolean | null;
-    refer_linkedin: boolean | null;
-    refer_pinterest: boolean | null;
+    last_facebook_share: Date | null;
+    last_twitter_share: Date | null;
+    last_google_share: Date | null;
+    last_linkedin_share: Date | null;
+    last_pinterest_share: Date | null;
     thanks_to: string | null;
     thanks_social_media_id: number | null;
     won_yn: boolean | null;

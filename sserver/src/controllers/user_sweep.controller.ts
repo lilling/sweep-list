@@ -1,6 +1,7 @@
 import { Get, Post, Body, Controller, Param } from '@nestjs/common';
 import { user_sweep, Win, Search, URL } from '../../../shared/classes';
 import { UserSweepService } from '../services/user_sweep.service';
+import { URLClickTypes } from '../models/URL-click-type.enum';
 
 @Controller('api/sweep')
 export class SweepController {
@@ -49,14 +50,19 @@ export class SweepController {
         return this.UserSweepService.GetWins(params.user_account_id);
     }
 
-    @Get('user_sweep_url/:user_sweep_id')
-    GetSweepURL(@Param() params): Promise<URL> {
-        return this.UserSweepService.GetSweepURL(params.user_sweep_id, true);
+    @Get('user_sweep_url_share/:user_sweep_id/:social_media')
+    ShareSweepURL(@Param() params): Promise<URL> {
+        return this.UserSweepService.GetSweepURL(params.user_sweep_id, URLClickTypes.share, params.social_media);
+    }
+
+    @Get('user_sweep_url_enter/:user_sweep_id')
+    EnterSweepURL(@Param() params): Promise<URL> {
+        return this.UserSweepService.GetSweepURL(params.user_sweep_id, URLClickTypes.enter);
     }
 
     @Get('user_sweep_url_show/:user_sweep_id')
     ShowSweepURL(@Param() params): Promise<URL> {
-        return this.UserSweepService.GetSweepURL(params.user_sweep_id, false);
+        return this.UserSweepService.GetSweepURL(params.user_sweep_id, URLClickTypes.none);
     }
 
     @Get('del_sweep/:user_sweep_id')

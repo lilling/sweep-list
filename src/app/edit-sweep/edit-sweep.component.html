@@ -41,9 +41,12 @@
                                           (change)="changeIsReferral($event, referralPanel)">
                         </mat-slide-toggle>
                     </mat-expansion-panel-header>
-                    <app-referral-sweep-data (isValidChange)="step3Valid = $event" [disabled]="!sweep.is_referral"
+                    <!--app-referral-sweep-data (isValidChange)="step3Valid = $event" [disabled]="!sweep.is_referral"
                                              [(personalReferMessage)]="sweep.personal_refer_message"
                                              [(referFacebook)]="sweep.refer_facebook" [(referGoogle)]="sweep.refer_google"
+                                             [(referralFrequency)]="sweep.referral_frequency"></app-referral-sweep-data-->
+                    <app-referral-sweep-data (isValidChange)="step3Valid = $event" [disabled]="!sweep.is_referral"
+                                             [(personalReferMessage)]="sweep.personal_refer_message"
                                              [(referralFrequency)]="sweep.referral_frequency"></app-referral-sweep-data>
                 </mat-expansion-panel>
                 <mat-expansion-panel #thankPanel [expanded]="thankReferrer"  [disabled]="!thankReferrer">

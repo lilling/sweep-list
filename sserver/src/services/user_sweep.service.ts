@@ -3,6 +3,8 @@ import { BaseService } from './base.service';
 import { Win, URL, user_sweep, payment_package, Search } from '../../../shared/classes';
 import { PaymentService } from './payment.service'
 import { HttpException, HttpStatus } from '@nestjs/common';
+import { URLClickTypes } from '../models/URL-click-type.enum';
+import { SocialMedia } from '../../../shared/models/social-media.enum';
 
 export class UserSweepService extends BaseService<user_sweep> {
     PaymentService: PaymentService;
@@ -78,7 +80,7 @@ export class UserSweepService extends BaseService<user_sweep> {
         return db.manyOrNone(q, { user_account_id });
     }
 
-    async GetSweepURL(user_sweep_id: number, count_as_entry: boolean): Promise<URL> {
+    async GetSweepURL(user_sweep_id: number, click_type: URLClickTypes, social_media?: SocialMedia): Promise<URL> {
         const db = DbGetter.getDB();
         const q =
             `SELECT user_sweep_id\n` +
@@ -86,8 +88,15 @@ export class UserSweepService extends BaseService<user_sweep> {
             `  FROM sweepimp.user_sweep\n` +
             ` WHERE user_sweep_id = $<user_sweep_id^>`;
         const result = await db.oneOrNone<Promise<URL>>(q, { user_sweep_id });
-        if (count_as_entry){
-            this.ManageEntry(user_sweep_id);
+        switch (click_type){
+            case URLClickTypes.enter: {
+                this.ManageEntry(user_sweep_id);
+                break;
+            }
+            case URLClickTypes.share: {
+                this.ManageShare(user_sweep_id, social_media);
+                break;
+            }
         }
         return result;
     }
@@ -223,6 +232,28 @@ export class UserSweepService extends BaseService<user_sweep> {
         return where;
     }
 
+    async ManageShare(user_sweep_id: number, social_media_id: SocialMedia) {
+        const db = DbGetter.getDB();
+        let insert =
+            `INSERT INTO sweepimp.sweep_share\n` +
+            `    (user_sweep_id\n` +
+            `    ,social_media_id\n` +
+            `    ,share_date\n` +
+            `    ,created\n` +
+            `    ,updated)\n`+
+            `SELECT $<user_sweep_id>, $<social_media_id>, current_timestamp, current_timestamp, current_timestamp`;
+        const update =
+            `UPDATE sweepimp.user_sweep\n` +
+            `   SET total_shares = coalesce(total_shares, 0) + 1\n` +
+            `      ,last_` + SocialMedia[social_media_id].toLowerCase() + `_share = current_timestamp\n` +
+            `      ,updated = current_timestamp\n` +
+            ` WHERE user_sweep_id = $<user_sweep_id>`;
+            await db.tx(`share`, async DB => {
+                await DB.oneOrNone(insert, { user_sweep_id: user_sweep_id, social_media_id: social_media_id });
+                await DB.oneOrNone(update, { user_sweep_id: user_sweep_id });
+            });
+    }
+
     async ManageEntry(user_sweep_id: number) {
         const db = DbGetter.getDB();
         let insert =
@@ -322,11 +353,11 @@ export class UserSweepService extends BaseService<user_sweep> {
             `    ,total_shares\n` +
             `    ,referral_frequency\n` +
             `    ,personal_refer_message\n` +
-            `    ,refer_facebook\n` +
-            `    ,refer_twitter\n` +
-            `    ,refer_google\n` +
-            `    ,refer_linkedin\n` +
-            `    ,refer_pinterest\n` +
+            `    ,last_facebook_share\n` +
+            `    ,last_twitter_share\n` +
+            `    ,last_google_share\n` +
+            `    ,last_linkedin_share\n` +
+            `    ,last_pinterest_share\n` +
             `    ,thanks_to\n` +
             `    ,thanks_social_media_id\n` +
             `    ,won_yn\n` +
@@ -349,11 +380,11 @@ export class UserSweepService extends BaseService<user_sweep> {
             `    ,0\n` +
             `    ,$<referral_frequency>\n` +
             `    ,$<personal_refer_message>\n` +
-            `    ,$<refer_facebook>\n` +
-            `    ,$<refer_twitter>\n` +
-            `    ,$<refer_google>\n` +
-            `    ,$<refer_linkedin>\n` +
-            `    ,$<refer_pinterest>\n` +
+            `    ,$<last_facebook_share>\n` +
+            `    ,$<last_twitter_share>\n` +
+            `    ,$<last_google_share>\n` +
+            `    ,$<last_linkedin_share>\n` +
+            `    ,$<last_pinterest_share>\n` +
             `    ,$<thanks_to>\n` +
             `    ,$<thanks_social_media_id>\n` +
             `    ,false\n` +
@@ -378,11 +409,11 @@ export class UserSweepService extends BaseService<user_sweep> {
             referral_url: false,
             referral_frequency: false,
             personal_refer_message: false,
-            refer_facebook: false,
-            refer_twitter: false,
-            refer_google: false,
-            refer_linkedin: false,
-            refer_pinterest: false,
+            last_facebook_share: false,
+            last_twitter_share: false,
+            last_google_share: false,
+            last_linkedin_share: false,
+            last_pinterest_share: false,
             thanks_to: false,
             thanks_social_media_id: false,
             won_yn: false,

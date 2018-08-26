@@ -33,7 +33,7 @@ export class SweepsService extends BaseService {
     }
 
     enterSweep(sweepId: number): Observable<URL> {
-        return this.get(`user_sweep_url/${sweepId}`);
+        return this.get(`user_sweep_url_enter/${sweepId}`);
     }
 
     deleteSweep(id: number) {
