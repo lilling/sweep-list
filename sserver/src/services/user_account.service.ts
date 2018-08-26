@@ -53,12 +53,12 @@ export class UserAccountService extends BaseService<user_account> {
     async checkEmailAvailability(email: string): Promise<boolean>{
         const db = DbGetter.getDB();
         let q =
-            `SELECT 1\n` +
+            `SELECT SUM(1) email_exists\n` +
             `  FROM sweepimp.user_account\n` +
             ` WHERE is_deleted = false\n` +
             `   AND email = $<email>\n`;
-        const loginUser = await db.oneOrNone(q, email);
-        if (!loginUser){
+        const emailExists = await db.oneOrNone(q, {email: email});
+        if (!emailExists.email_exists){
             return true;
         } else {
             return false;
@@ -68,7 +68,7 @@ export class UserAccountService extends BaseService<user_account> {
     async CreateUser(account_param: ExtandedSocialUser): Promise<user_account> {
         const db = DbGetter.getDB();
         let ret;
-        if (this.checkEmailAvailability(account_param.email)){
+        if (await this.checkEmailAvailability(account_param.email)){
             ret = this.CreateUserInner(db, account_param);
         } else {
             ret = null;
@@ -85,16 +85,24 @@ export class UserAccountService extends BaseService<user_account> {
             `    ,$<lastName>\n` +
             `    ,false\n` +
             `    ,$<email>\n` +
-            (account.isSocial ? `` :
+            (account.isSocial ?
+            `    ,null\n` :
             `    ,crypt($<password>, gen_salt('bf', 8))\n`) +
-            `    ,$<photoUrl>\n` +
+            (account.isSocial ?
+            `    ,$<photoUrl>\n` :
+            `    ,null\n` ) +
             `    ,current_timestamp\n` +
             `    ,current_timestamp)\n` +
             `RETURNING *`;
         // Split name into firstName and lastName
         if (account.name) {
-            account.firstName = account.name.substr(0, account.name.indexOf(` `));
-            account.lastName = account.name.substr(account.name.indexOf(` `));
+            if(account.name.indexOf(` `) > 0) {
+                account.firstName = account.name.substr(0, account.name.indexOf(` `));
+                account.lastName = account.name.substr(account.name.indexOf(` `)+1);
+            } else {
+                account.firstName = account.name;
+                account.lastName = ``;
+            }
         }
         const UserAccount = await DB.one(q, account);
         // create free payment plan for new user
