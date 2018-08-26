@@ -21,6 +21,7 @@ export class LoginComponent implements OnInit {
 
     user: user_account;
     SocialMedia = SocialMedia;
+    mode: LoginMode;
 
     constructor(private authService: AuthService,
                 public dialog: MatDialog,
@@ -28,6 +29,7 @@ export class LoginComponent implements OnInit {
                 private ngRedux: NgRedux<AppState>,
                 private router: Router,
                 private loginActions: LoginActions) {
+        this.mode = LoginMode.login;
         this.ngRedux.select(state => state.loginState.user).subscribe(user => {
             this.user = user;
             if (user) {
@@ -83,3 +85,6 @@ export class LoginComponent implements OnInit {
         this.dialog.open(DeleteAccountComponent);
     }
 }
+
+
+export enum LoginMode { register, login, lost }
