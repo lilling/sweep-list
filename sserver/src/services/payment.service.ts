@@ -70,9 +70,9 @@ export class PaymentService {
     };
 
     async InsertPayment(payment, user_account_id: AAGUID, payment_package_id: number, amount_to_pay: number, daysToAdd: number, payment_id?: number): Promise<number> {
+        var q = ``;
         if (payment_id){
-            var q =
-                `UPDATE sweepimp.payment\n` +
+            q = `UPDATE sweepimp.payment\n` +
                 `   SET paid_until = current_timestamp\n` +
                 `      ,updated    = current_timestamp\n` +
                 ` WHERE payment_id = $<payment_id^>`;
@@ -91,15 +91,15 @@ export class PaymentService {
                 ,$<payment_package_id^>
                 ,$<amount_to_pay^>
                 ,current_timestamp
-                ,current_timestamp + interval '$<daysToAdd^>' day
+                ,current_timestamp + interval '$<daysToAdd^> DAY'
                 ,current_timestamp
                 ,current_timestamp)
             RETURNING payment_id`;
         return payment.one(q, {
-            user_account_id: user_account_id,
-            payment_package_id: payment_package_id,
-            amount_to_pay: amount_to_pay,
-            daysToAdd: daysToAdd
+            user_account_id,
+            payment_package_id,
+            amount_to_pay,
+            daysToAdd
         })
     }
 }

@@ -99,6 +99,21 @@ export class UserAccountService extends BaseService<user_account> {
         return UserAccount;
     }
 
+    async UpdateUser(SMs: user_account): Promise<user_account> {
+        const db = DbGetter.getDB();
+        const q =
+            `UPDATE sweepimp.user_account\n` +
+            `   SET has_facebook  = $<has_facebook>\n` +
+            `      ,has_twitter   = $<has_twitter>\n` +
+            `      ,has_google    = $<has_google>\n` +
+            `      ,has_linkedin  = $<has_linkedin>\n` +
+            `      ,has_pinterest = $<has_pinterest>\n` +
+            ` WHERE user_account_id = $<user_account_id>\n` +
+            `RETURNING *`;
+        const UserAccount = await db.one(q, SMs);
+        return UserAccount;
+    }
+
     async deleteUserAccountConfirm(user_account_id: AAGUID) {
         const db = DbGetter.getDB();
         const q =

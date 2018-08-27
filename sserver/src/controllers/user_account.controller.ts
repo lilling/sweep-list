@@ -40,6 +40,11 @@ export class UserController {
         return this.UserAccountService.CreateUser(account);
     }
 
+    @Post('update_user')
+    UpdateUser(@Body() SMs: user_account): Promise<user_account>{
+        return this.UserAccountService.UpdateUser(SMs);
+    }
+
     @Get('deleteUserAccountConfirm/:user_account_id')
     deleteUserAccountConfirm(@Param() params): Promise<{tasks: string, active: string, ended: string, won: string}>{
         return this.UserAccountService.deleteUserAccountConfirm(params.user_account_id);

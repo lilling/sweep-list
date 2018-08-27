@@ -141,25 +141,40 @@ export class UserSweepService extends BaseService<user_sweep> {
         let where = ``;
         var lastSweep = ``;
         const todoWhere =
-            `   AND is_frequency = true\n` +
+            `   AND (  is_frequency = true\n` +
+            `       OR is_referral = true)\n` +
             `   AND end_date >= now()\n` +
             `   AND deleted_yn = false\n` +
             `   AND won_yn = false\n`;
         switch (status) {
             case `today`: {
                 where = where + todoWhere + 
-                    `   AND date_trunc('DAY', last_entry_date) + (interval '1 DAY' * frequency_days) <= date_trunc('DAY', current_timestamp)\n`;
+                    `   AND (  date_trunc('DAY', last_entry_date) + (interval '1 DAY' * frequency_days) <= date_trunc('DAY', current_timestamp)\n` +
+                    `       OR date_trunc('DAY', last_facebook_share) + (interval '1 DAY' * referral_frequency) <= date_trunc('DAY', current_timestamp)\n` +
+                    `       OR date_trunc('DAY', last_twitter_share) + (interval '1 DAY' * referral_frequency) <= date_trunc('DAY', current_timestamp)\n` +
+                    `       OR date_trunc('DAY', last_google_share) + (interval '1 DAY' * referral_frequency) <= date_trunc('DAY', current_timestamp)\n` +
+                    `       OR date_trunc('DAY', last_linkedin_share) + (interval '1 DAY' * referral_frequency) <= date_trunc('DAY', current_timestamp)\n` +
+                    `       OR date_trunc('DAY', last_pinterest_share) + (interval '1 DAY' * referral_frequency) <= date_trunc('DAY', current_timestamp))\n`;
                 break;
             }
             case `tomorrow`: {
                 where = where + todoWhere +
-                    `   AND date_trunc('DAY', last_entry_date) + (interval '1 DAY' * frequency_days) between date_trunc('DAY', current_timestamp)\n` +
-                    `       AND date_trunc('DAY', current_timestamp) + interval '1 DAY'\n`;
+                    `   AND (  date_trunc('DAY', last_entry_date) + (interval '1 DAY' * frequency_days) between date_trunc('DAY', current_timestamp) AND date_trunc('DAY', current_timestamp) + interval '1 DAY'\n` +
+                    `       OR date_trunc('DAY', last_facebook_share) + (interval '1 DAY' * referral_frequency) between date_trunc('DAY', current_timestamp) AND date_trunc('DAY', current_timestamp) + interval '1 DAY'\n` +
+                    `       OR date_trunc('DAY', last_twitter_share) + (interval '1 DAY' * referral_frequency) between date_trunc('DAY', current_timestamp) AND date_trunc('DAY', current_timestamp) + interval '1 DAY'\n` +
+                    `       OR date_trunc('DAY', last_google_share) + (interval '1 DAY' * referral_frequency) between date_trunc('DAY', current_timestamp) AND date_trunc('DAY', current_timestamp) + interval '1 DAY'\n` +
+                    `       OR date_trunc('DAY', last_linkedin_share) + (interval '1 DAY' * referral_frequency) between date_trunc('DAY', current_timestamp) AND date_trunc('DAY', current_timestamp) + interval '1 DAY'\n` +
+                    `       OR date_trunc('DAY', last_pinterest_share) + (interval '1 DAY' * referral_frequency) between date_trunc('DAY', current_timestamp) AND date_trunc('DAY', current_timestamp) + interval '1 DAY')\n`;
                 break;
             }
             case `upcoming`: {
                 where = where + todoWhere +
-                `   AND date_trunc('DAY', last_entry_date) + (interval '1 DAY' * frequency_days) > date_trunc('DAY', current_timestamp) + interval '1 DAY'\n`;
+                    `   AND (  date_trunc('DAY', last_entry_date) + (interval '1 DAY' * frequency_days) > date_trunc('DAY', current_timestamp) + interval '1 DAY'\n` +
+                    `       OR date_trunc('DAY', last_facebook_share) + (interval '1 DAY' * referral_frequency) > date_trunc('DAY', current_timestamp) + interval '1 DAY'\n` +
+                    `       OR date_trunc('DAY', last_twitter_share) + (interval '1 DAY' * referral_frequency) > date_trunc('DAY', current_timestamp) + interval '1 DAY'\n` +
+                    `       OR date_trunc('DAY', last_google_share) + (interval '1 DAY' * referral_frequency) > date_trunc('DAY', current_timestamp) + interval '1 DAY'\n` +
+                    `       OR date_trunc('DAY', last_linkedin_share) + (interval '1 DAY' * referral_frequency) > date_trunc('DAY', current_timestamp) + interval '1 DAY'\n` +
+                    `       OR date_trunc('DAY', last_pinterest_share) + (interval '1 DAY' * referral_frequency) > date_trunc('DAY', current_timestamp) + interval '1 DAY')\n`;
                 break;
             }
         }

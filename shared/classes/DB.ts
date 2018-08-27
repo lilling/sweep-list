@@ -132,6 +132,11 @@ export interface user_account {
     email: string | null;
     hashed_password: string | null;
     photo_url: string | null;
+    has_facebook: boolean | null;
+    has_twitter: boolean | null;
+    has_google: boolean | null;
+    has_linkedin: boolean | null;
+    has_pinterest: boolean | null;
     created: Date;
     updated: Date;
 }
