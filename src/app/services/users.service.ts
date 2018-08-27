@@ -15,12 +15,12 @@ export class UsersService extends BaseService {
         super(http, 'api/user/');
     }
 
-    login(model: ExtandedSocialUser): Observable<user_account> {
-        return this.post<user_account>(`Login`, model);
+    login(model: ExtandedSocialUser): Observable<{ user: user_account, isNew?: boolean }> {
+        return this.post<{ user: user_account, isNew?: boolean }>(`Login`, model);
     }
 
-    register(model: ExtandedSocialUser): Observable<user_account> {
-        return this.post<user_account>(`create_user`, model);
+    register(model: ExtandedSocialUser): Observable<{ user: user_account, isNew?: boolean }> {
+        return this.post<{ user: user_account, isNew?: boolean }>(`create_user`, model);
     }
 
     getUserSocialAccounts(id: AAGUID): Observable<{socialMedia: SocialMedia, status: SocialMediaStatus}[]> {
