@@ -23,34 +23,19 @@ export class LoginEpics extends BaseEpic {
     }
 
     @Epic
-    login(action$: ActionsObservable<TypedAction<{id?: string, user?: ExtandedSocialUser, fromCache: boolean}>>) {
+    login(action$: ActionsObservable<TypedAction<{ id?: string, user?: ExtandedSocialUser, fromCache: boolean }>>) {
         return action$.ofType(LoginActions.LOGIN)
             .switchMap(action => {
+                let observer;
                 if (action.payload.fromCache) {
-                    return this.usersService.getUser(action.payload.id).pipe(
-                        map(res => {
-                            res.user_account_id = res.user_account_id;
-                            return { type: LoginActions.LOGIN_COMPLETED, payload: res };
-                        }),
-                        catchError(err => {
-                            return of(generateError(err, LoginActions.LOGIN_COMPLETED));
-                        }));
+                    observer = this.usersService.getUser(action.payload.id);
+                } else if (!action.payload.user.isSocial && action.payload.user.name) {
+                    observer = this.usersService.register(action.payload.user);
+                } else {
+                    observer = this.usersService.login(action.payload.user);
                 }
-
-                if (!action.payload.user.isSocial) {
-                    return this.usersService.register(action.payload.user).pipe(
-                        map(res => {
-                            res.user_account_id = res.user_account_id;
-                            return { type: LoginActions.LOGIN_COMPLETED, payload: res };
-                        }),
-                        catchError(err => {
-                            return of(generateError(err, LoginActions.LOGIN));
-                        }));
-                }
-                
-                return this.usersService.login(action.payload.user).pipe(
+                return observer.pipe(
                     map(res => {
-                        res.user_account_id = res.user_account_id;
                         return { type: LoginActions.LOGIN_COMPLETED, payload: res };
                     }),
                     catchError(err => {
