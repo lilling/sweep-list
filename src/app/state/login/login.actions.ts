@@ -4,7 +4,7 @@ import { NgRedux } from '@angular-redux/store';
 import { SocialUser } from 'angularx-social-login';
 //
 import { AppState } from '../store';
-import { ExtandedSocialUser } from '../../../../shared/classes';
+import { ExtandedSocialUser } from '../../../../shared/classes/SocialUserAndAccount';
 
 @Injectable()
 export class LoginActions {
@@ -20,26 +20,10 @@ export class LoginActions {
     constructor(private ngRedux: NgRedux<AppState>) {
     }
 
-    login(options: {id?: string, regular?: { email: string, password: string, name: string }, user?: SocialUser, fromCache: boolean}) {
-        const userConst = new ExtandedSocialUser;
-        if (options.user){
-            userConst.provider = options.user.provider;
-            userConst.id = options.user.id;
-            userConst.email = options.user.email;
-            userConst.name = options.user.name;
-            userConst.photoUrl = options.user.photoUrl;
-            userConst.firstName = options.user.firstName;
-            userConst.lastName = options.user.lastName;
-            userConst.authToken = options.user.authToken;
-            userConst.idToken = options.user.idToken;
-            userConst.isSocial = true;
-        } else if (options.regular){
-            userConst.email = options.regular.email;
-            userConst.password = options.regular.password;
-            userConst.name = options.regular.name;
-            userConst.isSocial = false;
-        }
-        this.ngRedux.dispatch({ type: LoginActions.LOGIN, payload: {id: options.id, user: userConst, fromCache: options.fromCache} });
+    login(options: { id?: string, regular?: { email: string, password: string, name: string }, user?: SocialUser, fromCache: boolean }) {
+        const user: ExtandedSocialUser =
+            <ExtandedSocialUser>(options.user ? { ...options.user, isSocial: true } : { ...options.regular, isSocial: false });
+        this.ngRedux.dispatch({ type: LoginActions.LOGIN, payload: { id: options.id, user, fromCache: options.fromCache } });
     }
 
     logOff() {
