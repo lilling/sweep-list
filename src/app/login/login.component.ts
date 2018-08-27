@@ -18,7 +18,6 @@ import { SocialMedia } from '../../../shared/models/social-media.enum';
     styleUrls: ['login.component.scss']
 })
 export class LoginComponent implements OnInit {
-
     user: user_account;
     SocialMedia = SocialMedia;
     mode: LoginMode;
@@ -44,29 +43,24 @@ export class LoginComponent implements OnInit {
         localStorage.clear();
     }
 
-    private login(model: { regular?: { email: string, password: string, name: string }, user?: SocialUser }) {
-        this.loginActions.login({ ...model, fromCache: false });
-    }
-
     regularLogin(email: string, password: string, name: string) {
-        this.login({regular: { email, password, name }});
+        this.login({ regular: { email, password, name } });
     }
 
     socialLogin(socialMedia: SocialMedia) {
         let signinPromise: Promise<SocialUser>;
         switch (socialMedia) {
-            case SocialMedia.Facebook: 
-                signinPromise = this.authService.signIn(FacebookLoginProvider.PROVIDER_ID)
+            case SocialMedia.Facebook:
+                signinPromise = this.authService.signIn(FacebookLoginProvider.PROVIDER_ID);
                 break;
-            case SocialMedia.google: 
-                signinPromise = this.authService.signIn(GoogleLoginProvider.PROVIDER_ID)
+            case SocialMedia.google:
+                signinPromise = this.authService.signIn(GoogleLoginProvider.PROVIDER_ID);
                 break;
         }
 
         signinPromise.then(user => {
-            this.login({user});
-        })
-        
+            this.login({ user });
+        });
     }
 
     goToList() {
@@ -83,6 +77,10 @@ export class LoginComponent implements OnInit {
 
     deleteAccount() {
         this.dialog.open(DeleteAccountComponent);
+    }
+
+    private login(model: { regular?: { email: string, password: string, name: string }, user?: SocialUser }) {
+        this.loginActions.login({ ...model, fromCache: false });
     }
 }
 

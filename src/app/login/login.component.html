@@ -12,11 +12,11 @@
         </ng-container>
         <label *ngIf="isRegister" for="name">
             <span>Name</span>
-            <input mdInput id="name" type="text" [(ngModel)]="name" />
+            <input id="name" type="text" [(ngModel)]="name" />
         </label>
         <label for="email">
             <span>E-Mail</span>
-            <input mdInput id="email" type="text" [(ngModel)]="email" />
+            <input id="email" type="text" [(ngModel)]="email" />
         </label>
         <app-password [(password)]="password"></app-password>
         <div class="regular-login-button">
