@@ -1,3 +1,5 @@
+import { HttpErrorResponse } from '@angular/common/http';
+
 export interface IClientError {
     /**
      * Epic correct path.
@@ -6,13 +8,5 @@ export interface IClientError {
     /**
      * Original error
      */
-    error: Error;
-    /**
-     * Optional more data
-     */
-    body?: any;
-    /**
-     * Is critical - system wide errors such as connection issues
-     */
-    isCritical?: boolean;
+    error: HttpErrorResponse;
 }

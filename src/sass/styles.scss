@@ -15,6 +15,10 @@
 .main-button {
   background: $main-color;
   color: $main-color-foreground !important;
+  &:disabled {
+    cursor: not-allowed !important;
+    background: $disabled-color !important;
+  }
 }
 
 .clickable {
@@ -45,4 +49,8 @@
         }
       }
     }
+}
+
+.error-message {
+  color: red;
 }

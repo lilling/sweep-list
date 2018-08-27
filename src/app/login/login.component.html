@@ -12,19 +12,21 @@
         </ng-container>
         <label *ngIf="isRegister" for="name">
             <span>Name</span>
-            <input id="name" type="text" [(ngModel)]="name" />
+            <input id="name" type="text" [(ngModel)]="name"/>
         </label>
         <label for="email">
-            <span>E-Mail</span>
+            <span>E-Mail</span><span class="error-message" *ngIf="email?.length > 0 && !isEmail(email)"> not an E-Mail</span>
             <input id="email" type="text" [(ngModel)]="email" />
         </label>
         <app-password [(password)]="password"></app-password>
-        <div class="regular-login-button">
-            <button class="main-button" mat-button (click)="regularLogin(email, password, name)">{{!isRegister ? 'Login' : 'Register'}}</button>
+        <div class="regular-login-button" [style.justify-content]="(error$ | async) ? 'space-between' : 'flex-end'">
+            <span class="error-message" *ngIf="error$ | async"> {{(error$ | async).error.error.message}} </span>
+            <button class="main-button" mat-button (click)="regularLogin(email, password, name)"
+                    [disabled]="!isEmail(email) || !password || (isRegister ? !name : false)">{{!isRegister ? 'Login' : 'Register'}}</button>
         </div>
     </div>
     <p id="nav">
-        <a class="clickable" (click)="isRegister = !isRegister">{{isRegister ? 'Login' : 'Register'}}</a> |
+        <a class="clickable" (click)="toggleRegister()">{{isRegister ? 'Login' : 'Register'}}</a> |
         <a class="clickable" (click)="isRegister = !isRegister">Lost your password?</a>
     </p>
 </div>

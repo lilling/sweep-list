@@ -1,12 +1,11 @@
 import { DbGetter } from '../dal/DbGetter';
 import { BaseService } from './base.service';
-import { user_account, ExtandedSocialUser, facebook_account } from '../../../shared/classes';
-import { FacebookService } from './facebook.service'
-import { SocialMedia } from '../../../shared/models/social-media.enum'
-import { PaymentService } from './payment.service'
+import { user_account, ExtandedSocialUser } from '../../../shared/classes';
+import { FacebookService } from './facebook.service';
+import { PaymentService } from './payment.service';
+import { ForbiddenException } from '@nestjs/common';
 
 export class UserAccountService extends BaseService<user_account> {
-    validProviders = [`facebook`];
     FacebookService: FacebookService;
     PaymentService: PaymentService;
 
@@ -23,15 +22,13 @@ export class UserAccountService extends BaseService<user_account> {
             `  FROM sweepimp.user_account\n` +
             ` WHERE user_account_id = $<user_account_id>\n` +
             `   AND is_deleted = false`;
-        const UserAccount = await db.oneOrNone<user_account>(q, {user_account_id: user_account_id });
-        const ret = UserAccount;
-        return ret;
+        const UserAccount = await db.oneOrNone<user_account>(q, { user_account_id });
+        return UserAccount;
     }
 
     async Login(account_param: ExtandedSocialUser): Promise<user_account> {
         const db = DbGetter.getDB();
-        let ret;
-        let q =
+        const q =
             `SELECT user_account_id, first_name, last_name, email, photo_url\n` +
             `  FROM sweepimp.user_account\n` +
             ` WHERE is_deleted = false\n` +
@@ -40,40 +37,31 @@ export class UserAccountService extends BaseService<user_account> {
             `   AND hashed_password = crypt($<password>, hashed_password)`);
         const loginUser = await db.oneOrNone<user_account>(q, account_param);
         if (loginUser === null && account_param.isSocial) { // new social user
-            const newUser = await this.CreateUserInner(db, account_param);
-            ret = newUser;
+            return await this.CreateUserInner(db, account_param);
         } else if (loginUser === null){ // email not exist or wrong password
-            ret = null;
-        } else { // correct login
-            ret = loginUser;
+            return null;
         }
-        return ret;
+        return loginUser;
     }
 
     async checkEmailAvailability(email: string): Promise<boolean>{
         const db = DbGetter.getDB();
-        let q =
+        const q =
             `SELECT SUM(1) email_exists\n` +
             `  FROM sweepimp.user_account\n` +
             ` WHERE is_deleted = false\n` +
             `   AND email = $<email>\n`;
-        const emailExists = await db.oneOrNone(q, {email: email});
-        if (!emailExists.email_exists){
-            return true;
-        } else {
-            return false;
-        }
+        const emailExists = await db.oneOrNone(q, { email });
+        return !emailExists.email_exists;
     }
 
     async CreateUser(account_param: ExtandedSocialUser): Promise<user_account> {
         const db = DbGetter.getDB();
-        let ret;
-        if (await this.checkEmailAvailability(account_param.email)){
-            ret = this.CreateUserInner(db, account_param);
-        } else {
-            ret = null;
+        if (await this.checkEmailAvailability(account_param.email)) {
+            return this.CreateUserInner(db, account_param);
         }
-        return ret;
+
+        throw new ForbiddenException('email already in use');
     }
 
     async CreateUserInner(DB, account: ExtandedSocialUser): Promise<user_account> {
@@ -96,9 +84,10 @@ export class UserAccountService extends BaseService<user_account> {
             `RETURNING *`;
         // Split name into firstName and lastName
         if (account.name) {
-            if(account.name.indexOf(` `) > 0) {
-                account.firstName = account.name.substr(0, account.name.indexOf(` `));
-                account.lastName = account.name.substr(account.name.indexOf(` `)+1);
+            const indexOfSpace = account.name.indexOf(` `);
+            if (indexOfSpace > 0) {
+                account.firstName = account.name.substr(0, indexOfSpace);
+                account.lastName = account.name.substr(indexOfSpace + 1);
             } else {
                 account.firstName = account.name;
                 account.lastName = ``;
@@ -119,16 +108,15 @@ export class UserAccountService extends BaseService<user_account> {
             `      ,COALESCE(SUM(CASE WHEN won_yn = true THEN 1 ELSE 0 END), 0) won\n` +
             `  FROM sweepimp.user_sweep\n` +
             ` WHERE user_account_id = $<user_account_id>\n`;
-        let PreDeleteData = await db.one(q, { user_account_id });
+        const PreDeleteData = await db.one(q, { user_account_id });
         return PreDeleteData;
     }
 
     async deleteUserAccount(user_account_id: AAGUID): Promise<boolean> {
         const db = DbGetter.getDB();
-        var flag = false;
-        let q = ``;
+        let flag = false;
         await db.tx(`delete-user-account`, del => {
-            q = `UPDATE sweepimp.user_account\n` +
+            const q = `UPDATE sweepimp.user_account\n` +
                 `   SET is_deleted      = true\n` +
                 `      ,first_name      = null\n` +
                 `      ,last_name       = null\n` +
