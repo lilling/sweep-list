@@ -26,7 +26,7 @@ export class UserAccountService extends BaseService<user_account> {
         return UserAccount;
     }
 
-    async Login(account_param: ExtandedSocialUser): Promise<user_account> {
+    async Login(account_param: ExtandedSocialUser): Promise<{ user: user_account, isNew?: boolean }> {
         const db = DbGetter.getDB();
         const q =
             `SELECT user_account_id, first_name, last_name, email, photo_url\n` +
@@ -37,11 +37,12 @@ export class UserAccountService extends BaseService<user_account> {
             `   AND hashed_password = crypt($<password>, hashed_password)`);
         const loginUser = await db.oneOrNone<user_account>(q, account_param);
         if (loginUser === null && account_param.isSocial) { // new social user
-            return await this.CreateUserInner(db, account_param);
+            const user = await this.CreateUserInner(db, account_param);
+            return { user, isNew: true };
         } else if (loginUser === null){ // email not exist or wrong password
-            return null;
+            throw new ForbiddenException('Email does not exist or wrong password');
         }
-        return loginUser;
+        return { user: loginUser };
     }
 
     async checkEmailAvailability(email: string): Promise<boolean>{
@@ -55,10 +56,11 @@ export class UserAccountService extends BaseService<user_account> {
         return !emailExists.email_exists;
     }
 
-    async CreateUser(account_param: ExtandedSocialUser): Promise<user_account> {
+    async CreateUser(account_param: ExtandedSocialUser): Promise<{ user: user_account, isNew?: boolean }> {
         const db = DbGetter.getDB();
         if (await this.checkEmailAvailability(account_param.email)) {
-            return this.CreateUserInner(db, account_param);
+            const user = await this.CreateUserInner(db, account_param);
+            return { user, isNew: true };
         }
 
         throw new ForbiddenException('email already in use');
