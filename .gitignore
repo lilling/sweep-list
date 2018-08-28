@@ -48,3 +48,4 @@ Thumbs.db
 /.editorconfig
 */node_modules/*
 *.orig
+.eslintrc.json

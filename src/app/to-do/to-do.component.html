@@ -73,18 +73,21 @@ window.twttr = (function(d, s, id) {
                         <mat-icon class="edit-sweep" (click)="editSweep(sweep, $event)">edit</mat-icon>
 <!-- placeholders -->
 <div mat-line class="list-item-second">
-    <ng-container *ngIf="sweep.is_referral">
-        <table>
-            <tr>
+    <table>
+        <tr>
+            <ng-container *ngIf="sweep.is_frequency">
+                <td id="{{sweep.user_sweep_id}}+NT">Enter</td>
+            </ng-container>
+            <ng-container *ngIf="sweep.is_referral">
                 <ng-container *ngFor="let socialColumn of socialColumns">
                 <!--ng-container cdkColumnDef="FB"-->
                     <!--mat-cell>Facebook</mat-cell-->
                     <!--td id="{{sweep.user_sweep_id}}+{{socialColumn.columnDef}}">{{socialColumn.cell(sweep, sweep.user_sweep_id.toString()+'+'+socialColumn.columnDef)}}</td-->
                     <td id="{{sweep.user_sweep_id}}+{{socialColumn.columnDef}}">{{socialColumn.cell()}}</td>
                 </ng-container>
-            </tr>
-        </table>
-    </ng-container>
+            </ng-container>
+        </tr>
+    </table>
 </div>
                     </mat-list-item>
                 </mat-list>

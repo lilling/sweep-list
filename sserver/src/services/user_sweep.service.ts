@@ -1,17 +1,20 @@
 import { DbGetter } from '../dal/DbGetter';
 import { BaseService } from './base.service';
-import { Win, URL, user_sweep, payment_package, Search } from '../../../shared/classes';
+import { Win, URL, user_sweep, payment_package, Search, user_account } from '../../../shared/classes';
 import { PaymentService } from './payment.service'
 import { HttpException, HttpStatus } from '@nestjs/common';
 import { URLClickTypes } from '../models/URL-click-type.enum';
 import { SocialMedia } from '../../../shared/models/social-media.enum';
+import { UserAccountService } from './user_account.service';
 
 export class UserSweepService extends BaseService<user_sweep> {
     PaymentService: PaymentService;
+    UserAccountService: UserAccountService;
 
     constructor() {
         super(`user_sweep`);
         this.PaymentService = new PaymentService();
+        this.UserAccountService = new UserAccountService();
     }
 
     async GetSweeps(user_sweep_search: Search, status: string): Promise<user_sweep[]> {
@@ -30,7 +33,7 @@ export class UserSweepService extends BaseService<user_sweep> {
             case `today`:
             case `tomorrow`:
             case `upcoming`: {
-                where = this.BuildTodoSweepsWhere(user_sweep_search, status);
+                where = await this.BuildTodoSweepsWhere(user_sweep_search, status);
                 order_by = `ORDER BY frequency_days*24*60*60 - ((EXTRACT(EPOCH FROM current_timestamp) - EXTRACT(EPOCH FROM last_entry_date))) nulls first, end_date, user_sweep_id\n`;
                 break;
             }
@@ -137,47 +140,13 @@ export class UserSweepService extends BaseService<user_sweep> {
             : str;
     }
 
-    BuildTodoSweepsWhere(user_sweep_search: Search, status: string): string {
-        let where = ``;
-        var lastSweep = ``;
-        const todoWhere =
-            `   AND (  is_frequency = true\n` +
-            `       OR is_referral = true)\n` +
+    async BuildTodoSweepsWhere(user_sweep_search: Search, status: string): Promise<string> {
+        let where = 
+            `   AND ` + await this.BuildAllTimingPredicates(user_sweep_search, status) + `\n` +
             `   AND end_date >= now()\n` +
             `   AND deleted_yn = false\n` +
             `   AND won_yn = false\n`;
-        switch (status) {
-            case `today`: {
-                where = where + todoWhere + 
-                    `   AND (  date_trunc('DAY', last_entry_date) + (interval '1 DAY' * frequency_days) <= date_trunc('DAY', current_timestamp)\n` +
-                    `       OR date_trunc('DAY', last_facebook_share) + (interval '1 DAY' * referral_frequency) <= date_trunc('DAY', current_timestamp)\n` +
-                    `       OR date_trunc('DAY', last_twitter_share) + (interval '1 DAY' * referral_frequency) <= date_trunc('DAY', current_timestamp)\n` +
-                    `       OR date_trunc('DAY', last_google_share) + (interval '1 DAY' * referral_frequency) <= date_trunc('DAY', current_timestamp)\n` +
-                    `       OR date_trunc('DAY', last_linkedin_share) + (interval '1 DAY' * referral_frequency) <= date_trunc('DAY', current_timestamp)\n` +
-                    `       OR date_trunc('DAY', last_pinterest_share) + (interval '1 DAY' * referral_frequency) <= date_trunc('DAY', current_timestamp))\n`;
-                break;
-            }
-            case `tomorrow`: {
-                where = where + todoWhere +
-                    `   AND (  date_trunc('DAY', last_entry_date) + (interval '1 DAY' * frequency_days) between date_trunc('DAY', current_timestamp) AND date_trunc('DAY', current_timestamp) + interval '1 DAY'\n` +
-                    `       OR date_trunc('DAY', last_facebook_share) + (interval '1 DAY' * referral_frequency) between date_trunc('DAY', current_timestamp) AND date_trunc('DAY', current_timestamp) + interval '1 DAY'\n` +
-                    `       OR date_trunc('DAY', last_twitter_share) + (interval '1 DAY' * referral_frequency) between date_trunc('DAY', current_timestamp) AND date_trunc('DAY', current_timestamp) + interval '1 DAY'\n` +
-                    `       OR date_trunc('DAY', last_google_share) + (interval '1 DAY' * referral_frequency) between date_trunc('DAY', current_timestamp) AND date_trunc('DAY', current_timestamp) + interval '1 DAY'\n` +
-                    `       OR date_trunc('DAY', last_linkedin_share) + (interval '1 DAY' * referral_frequency) between date_trunc('DAY', current_timestamp) AND date_trunc('DAY', current_timestamp) + interval '1 DAY'\n` +
-                    `       OR date_trunc('DAY', last_pinterest_share) + (interval '1 DAY' * referral_frequency) between date_trunc('DAY', current_timestamp) AND date_trunc('DAY', current_timestamp) + interval '1 DAY')\n`;
-                break;
-            }
-            case `upcoming`: {
-                where = where + todoWhere +
-                    `   AND (  date_trunc('DAY', last_entry_date) + (interval '1 DAY' * frequency_days) > date_trunc('DAY', current_timestamp) + interval '1 DAY'\n` +
-                    `       OR date_trunc('DAY', last_facebook_share) + (interval '1 DAY' * referral_frequency) > date_trunc('DAY', current_timestamp) + interval '1 DAY'\n` +
-                    `       OR date_trunc('DAY', last_twitter_share) + (interval '1 DAY' * referral_frequency) > date_trunc('DAY', current_timestamp) + interval '1 DAY'\n` +
-                    `       OR date_trunc('DAY', last_google_share) + (interval '1 DAY' * referral_frequency) > date_trunc('DAY', current_timestamp) + interval '1 DAY'\n` +
-                    `       OR date_trunc('DAY', last_linkedin_share) + (interval '1 DAY' * referral_frequency) > date_trunc('DAY', current_timestamp) + interval '1 DAY'\n` +
-                    `       OR date_trunc('DAY', last_pinterest_share) + (interval '1 DAY' * referral_frequency) > date_trunc('DAY', current_timestamp) + interval '1 DAY')\n`;
-                break;
-            }
-        }
+        var lastSweep = ``;
         if (user_sweep_search.lastUserSweep) {
             lastSweep = (user_sweep_search.lastUserSweep.last_entry_date ? (user_sweep_search.lastUserSweep.frequency_days*24*60*60 - Math.floor((new Date(Date.UTC(new Date().getFullYear(), 0, 1)).getTime() - new Date(user_sweep_search.lastUserSweep.last_entry_date).getTime())/1000)).toString() : `0`)
                     + (user_sweep_search.lastUserSweep.end_date ? new Date(user_sweep_search.lastUserSweep.end_date).getTime().toString() : `0000000000000`)
@@ -188,6 +157,67 @@ export class UserSweepService extends BaseService<user_sweep> {
                 `     || LPAD(user_sweep_id :: text, 20, '0')) :: numeric > ` + lastSweep + `\n`;
         }
         return where;
+    }
+
+    async BuildAllTimingPredicates(user_sweep_search: Search, status: string): Promise<string>{
+        const user = await this.UserAccountService.CookieLogin(user_sweep_search.user_account_id);
+        const userHasSocialMedias = user.has_facebook || user.has_twitter || user.has_google || user.has_linkedin || user.has_pinterest;
+        let hadPrevSocialMedia = false;
+        let ret = ``;
+        if (!userHasSocialMedias){
+            ret = `is_frequency = true\n` + 
+                `   AND ` + this.BuildSingleTimingPredicate(status);
+        } else {
+            ret = `(  (   is_frequency = true\n` +
+           `          AND ` + this.BuildSingleTimingPredicate(status) + `\n` +
+           `          )\n` +
+           `       OR\n` +
+           `          (   is_referral = true\n` +
+           `          AND (  ` + (user.has_facebook  ? this.BuildSingleTimingPredicate(status, `facebook` ) : `null`) + `\n` +
+           `              OR ` + (user.has_twitter   ? this.BuildSingleTimingPredicate(status, `twitter`  ) : `null`) + `\n` +
+           `              OR ` + (user.has_google    ? this.BuildSingleTimingPredicate(status, `google`   ) : `null`) + `\n` +
+           `              OR ` + (user.has_linkedin  ? this.BuildSingleTimingPredicate(status, `linkedin` ) : `null`) + `\n` +
+           `              OR ` + (user.has_pinterest ? this.BuildSingleTimingPredicate(status, `pinterest`) : `null`) + `\n` +
+           (status === `today` ?
+           `              OR (   last_facebook_share IS NULL\n` +
+           `                 AND last_twitter_share IS NULL\n` +
+           `                 AND last_google_share IS NULL\n` +
+           `                 AND last_linkedin_share IS NULL\n` +
+           `                 AND last_pinterest_share IS NULL)\n`
+           : ``) +
+           `              )\n` +
+           `          )\n` +
+           `       )`;
+        }
+        return ret;
+    }
+
+    BuildSingleTimingPredicate(status: string, socialMedia?: string): string{
+        let ret = ``;
+        let checkColumn = ``;
+        let freqColumn = ``;
+        if (socialMedia){
+            checkColumn = `last_` + socialMedia + `_share`;
+            freqColumn = `referral_frequency`;
+        } else {
+            checkColumn = `last_entry_date`;
+            freqColumn = `frequency_days`;
+        }
+        switch (status) {
+            case `today`: {
+                ret = `date_trunc('DAY', ` + checkColumn + `) + (interval '1 DAY' * ` + freqColumn + `) <= date_trunc('DAY', current_timestamp)`;
+                break;
+            }
+            case `tomorrow`: {
+                ret = `date_trunc('DAY', ` + checkColumn + `) + (interval '1 DAY' * ` + freqColumn + `) BETWEEN date_trunc('DAY', current_timestamp) AND date_trunc('DAY', current_timestamp) + interval '1 DAY'`;
+                break;
+            }
+            case `upcoming`: {
+                ret = `date_trunc('DAY', ` + checkColumn + `) + (interval '1 DAY' * ` + freqColumn + `) > date_trunc('DAY', current_timestamp) + interval '1 DAY'`;
+                break;
+            }
+        }
+        return ret;
     }
 
     BuildActiveSweepsWhere(user_sweep_search: Search): string {

@@ -23,7 +23,6 @@
                                      [(referFacebook)]="newSweep.refer_facebook" [(referGoogle)]="newSweep.refer_google"
                                      [(referralFrequency)]="newSweep.referral_frequency"></app-referral-sweep-data -->
             <app-referral-sweep-data (isValidChange)="step3Valid = $event" [disabled]="!newSweep.is_referral"
-                                     [(personalReferMessage)]="newSweep.personal_refer_message"
                                      [(referralFrequency)]="newSweep.referral_frequency"></app-referral-sweep-data>
         </ng-container>
         <ng-container *ngIf="step === 4">

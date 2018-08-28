@@ -14,46 +14,10 @@ export class ReferralSweepDataComponent {
 
     userAccountId: AAGUID;
     @Input() disabled: boolean;
-    @Output() personalReferMessageChange = new EventEmitter();
     @Output() referralFrequencyChange = new EventEmitter();
-    @Output() referFacebookChange = new EventEmitter();
-    @Output() referGoogleChange = new EventEmitter();
     @Output() isValidChange = new EventEmitter<boolean>();
     SocialMedia = SocialMedia;
-    private message: string;
     private frequency: number;
-    private google: boolean;
-    private facebook: boolean;
-
-    @Input() get referGoogle() {
-        return this.google;
-    }
-
-    set referGoogle(val: boolean) {
-        this.google = val;
-        this.changeIsValid();
-        this.referGoogleChange.emit(this.google);
-    }
-
-    @Input() get referFacebook() {
-        return this.facebook;
-    }
-
-    set referFacebook(val: boolean) {
-        this.facebook = val;
-        this.changeIsValid();
-        this.referFacebookChange.emit(this.facebook);
-    }
-
-    @Input() get personalReferMessage() {
-        return this.message;
-    }
-
-    set personalReferMessage(val: string) {
-        this.message = val;
-        this.changeIsValid();
-        this.personalReferMessageChange.emit(this.message);
-    }
 
     @Input() get referralFrequency() {
         return this.frequency;
@@ -70,6 +34,6 @@ export class ReferralSweepDataComponent {
     }
 
     private changeIsValid() {
-        this.isValidChange.emit((this.facebook || this.google) && this.frequency > 0);
+        this.isValidChange.emit(this.frequency > 0);
     }
 }

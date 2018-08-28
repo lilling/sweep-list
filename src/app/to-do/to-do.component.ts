@@ -29,14 +29,14 @@ export class ToDoComponent implements OnInit, AfterViewInit, OnDestroy {
     subscriptions: { [index: string]: Subscription };
     mode: SweepsMode;
     userAccountId: AAGUID;
-
+    
     socialColumns = [
         //{columnDef: 'FB', cell: (sweep: user_sweep, id: string) => this.getFacebookURL(sweep, id) },
-        {columnDef: 'FB', cell: (element: Element) => `Facebook`  },
+        {columnDef: 'FB', cell: (element: Element) => `Facebook` },
         {columnDef: 'TW', cell: (element: Element) => `Twitter`  },
         {columnDef: 'GO', cell: (element: Element) => `Google`   },
-        {columnDef: 'PT', cell: (element: Element) => `Pinterest`},
         {columnDef: 'LI', cell: (element: Element) => `Linkedin` },
+        {columnDef: 'PT', cell: (element: Element) => `Pinterest`}
     ];
     displayedSocialColumns = this.socialColumns.map(c => c.columnDef);
 
@@ -76,6 +76,13 @@ export class ToDoComponent implements OnInit, AfterViewInit, OnDestroy {
                 this.sweeps = sweeps.array;
             })
         };
+/*console.log('this.ngRedux.getState().loginState.user.has_facebook: ', this.ngRedux.getState().loginState.user.has_facebook);
+        if (this.ngRedux.getState().loginState.user.has_facebook) {this.socialColumns.push({columnDef: 'FB', cell: (element: Element) => `Facebook` })};
+        if (this.ngRedux.getState().loginState.user.has_twitter)  {this.socialColumns.push({columnDef: 'TW', cell: (element: Element) => `Twitter`  })};
+        if (this.ngRedux.getState().loginState.user.has_google)   {this.socialColumns.push({columnDef: 'GO', cell: (element: Element) => `Google`   })};
+        if (this.ngRedux.getState().loginState.user.has_linkedin) {this.socialColumns.push({columnDef: 'LI', cell: (element: Element) => `Linkedin` })};
+        if (this.ngRedux.getState().loginState.user.has_pinterest){this.socialColumns.push({columnDef: 'PT', cell: (element: Element) => `Pinterest`})};
+        this.displayedSocialColumns = this.socialColumns.map(c => c.columnDef);*/
     }
 
     ngAfterViewInit() {

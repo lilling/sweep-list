@@ -12,7 +12,8 @@ export class PaymentService {
             `SELECT *\n` +
             `  FROM sweepimp.payment\n` +
             ` WHERE user_account_id = $<user_account_id>\n` +
-            `   AND current_timestamp BETWEEN payment_date AND paid_until`;
+            `   AND (  current_timestamp BETWEEN payment_date AND paid_until\n` +
+            `       OR is_lifetime)`;
         return await db.oneOrNone<payment>(q, {user_account_id});
     };
 
@@ -35,7 +36,8 @@ export class PaymentService {
             `  FROM sweepimp.payment\n` +
             `  JOIN sweepimp.payment_package USING (payment_package_id)\n` +
             ` WHERE user_account_id = $<user_account_id>\n` +
-            `   AND current_timestamp BETWEEN payment_date AND paid_until`;
+            `   AND (  current_timestamp BETWEEN payment_date AND paid_until\n` +
+            `       OR is_lifetime)`;
         return await db.oneOrNone<payment_package>(q, {user_account_id: user_account_id});
     };
 
