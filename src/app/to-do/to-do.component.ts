@@ -15,6 +15,7 @@ import { Observable } from 'rxjs/Observable';
 import { AddSweepComponent } from '../add-sweep/add-sweep.component';
 import { MatDialog } from '@angular/material';
 import { $ } from 'protractor';
+import { SocialMedia } from '../../../shared/models/social-media.enum';
 
 @Component({
     selector: 'app-to-do',
@@ -30,6 +31,7 @@ export class ToDoComponent implements OnInit, AfterViewInit, OnDestroy {
     mode: SweepsMode;
     user: user_account;
     userAccountId: AAGUID;
+    SocialMedia = SocialMedia;
 
     getFacebookURL(sweep: user_sweep, id: string){
         const frag = document.createRange().createContextualFragment('<div class="fb-share-button" data-href=' + sweep.sweep_url + ' data-layout="button_count" data-size="large" data-mobile-iframe="true">' +
@@ -39,6 +41,11 @@ export class ToDoComponent implements OnInit, AfterViewInit, OnDestroy {
         placementNode.appendChild(frag);
         return;
     }
+
+    getUserSocialMediaEnabled(SM: string):boolean{
+        return !!(this.user.enabled_social_media_bitmap & Math.pow(2, SocialMedia[SM]));
+    }
+
     constructor(private ngRedux: NgRedux<AppState>,
                 public dialog: MatDialog,
                 public sweepsService: SweepsService,

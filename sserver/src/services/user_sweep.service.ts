@@ -161,23 +161,22 @@ export class UserSweepService extends BaseService<user_sweep> {
 
     async BuildAllTimingPredicates(user_sweep_search: Search, status: string): Promise<string>{
         const user = await this.UserAccountService.CookieLogin(user_sweep_search.user_account_id);
-        const userHasSocialMedias = user.has_facebook || user.has_twitter || user.has_google || user.has_linkedin || user.has_pinterest;
         let hadPrevSocialMedia = false;
         let ret = ``;
-        if (!userHasSocialMedias){
+        if (!user.enabled_social_media_bitmap){
             ret = `is_frequency = true\n` + 
-                `   AND ` + this.BuildSingleTimingPredicate(status);
+                `   AND ` + this.BuildSingleTiming(status);
         } else {
             ret = `(  (   is_frequency = true\n` +
-           `          AND ` + this.BuildSingleTimingPredicate(status) + `\n` +
+           `          AND ` + this.BuildSingleTiming(status) + `\n` +
            `          )\n` +
            `       OR\n` +
            `          (   is_referral = true\n` +
-           `          AND (  ` + (user.has_facebook  ? this.BuildSingleTimingPredicate(status, `facebook` ) : `null`) + `\n` +
-           `              OR ` + (user.has_twitter   ? this.BuildSingleTimingPredicate(status, `twitter`  ) : `null`) + `\n` +
-           `              OR ` + (user.has_google    ? this.BuildSingleTimingPredicate(status, `google`   ) : `null`) + `\n` +
-           `              OR ` + (user.has_linkedin  ? this.BuildSingleTimingPredicate(status, `linkedin` ) : `null`) + `\n` +
-           `              OR ` + (user.has_pinterest ? this.BuildSingleTimingPredicate(status, `pinterest`) : `null`) + `\n` +
+           `          AND (  ` + (this.isSocialMediaEnabled(user.enabled_social_media_bitmap,`Facebook`)  ? this.BuildSingleTiming(status, `facebook` ) : `null`) + `\n` +
+           `              OR ` + (this.isSocialMediaEnabled(user.enabled_social_media_bitmap,`twitter`)   ? this.BuildSingleTiming(status, `twitter`  ) : `null`) + `\n` +
+           `              OR ` + (this.isSocialMediaEnabled(user.enabled_social_media_bitmap,`google`)    ? this.BuildSingleTiming(status, `google`   ) : `null`) + `\n` +
+           `              OR ` + (this.isSocialMediaEnabled(user.enabled_social_media_bitmap,`linkedin`)  ? this.BuildSingleTiming(status, `linkedin` ) : `null`) + `\n` +
+           `              OR ` + (this.isSocialMediaEnabled(user.enabled_social_media_bitmap,`pinterest`) ? this.BuildSingleTiming(status, `pinterest`) : `null`) + `\n` +
            (status === `today` ?
            `              OR (   last_facebook_share IS NULL\n` +
            `                 AND last_twitter_share IS NULL\n` +
@@ -192,7 +191,11 @@ export class UserSweepService extends BaseService<user_sweep> {
         return ret;
     }
 
-    BuildSingleTimingPredicate(status: string, socialMedia?: string): string{
+    isSocialMediaEnabled(enableBitmap: number, SM: string):boolean{
+        return !!(enableBitmap & Math.pow(2, SocialMedia[SM]));
+    }
+
+    BuildSingleTiming(status: string, socialMedia?: string): string{
         let ret = ``;
         let checkColumn = ``;
         let freqColumn = ``;

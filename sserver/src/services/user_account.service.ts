@@ -105,11 +105,7 @@ export class UserAccountService extends BaseService<user_account> {
         const db = DbGetter.getDB();
         const q =
             `UPDATE sweepimp.user_account\n` +
-            `   SET has_facebook  = $<has_facebook>\n` +
-            `      ,has_twitter   = $<has_twitter>\n` +
-            `      ,has_google    = $<has_google>\n` +
-            `      ,has_linkedin  = $<has_linkedin>\n` +
-            `      ,has_pinterest = $<has_pinterest>\n` +
+            `   SET enabled_social_media_bitmap = $<enabled_social_media_bitmap^>\n` +
             ` WHERE user_account_id = $<user_account_id>\n` +
             `RETURNING *`;
         const UserAccount = await db.one(q, SMs);

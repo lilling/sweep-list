@@ -56,11 +56,11 @@ window.twttr = (function(d, s, id) {
                                 visit sweep - <mat-icon fontSet="fa" fontIcon="fa-globe"></mat-icon>
                             </span>
                             <span *ngIf="sweep.is_referral">
-                                <ng-container *ngIf="user?.has_facebook">facebook </ng-container>
-                                <ng-container *ngIf="user?.has_pinterest">pinterest </ng-container>
-                                <ng-container *ngIf="user?.has_twitter">twitter </ng-container>
-                                <ng-container *ngIf="user?.has_linkedin">linkedin </ng-container>
-                                <ng-container *ngIf="user?.has_google">google </ng-container>
+                                <ng-container *ngIf="getUserSocialMediaEnabled('Facebook')" >facebook  </ng-container>
+                                <ng-container *ngIf="getUserSocialMediaEnabled('twitter')"  >twitter   </ng-container>
+                                <ng-container *ngIf="getUserSocialMediaEnabled('google')"   >google    </ng-container>
+                                <ng-container *ngIf="getUserSocialMediaEnabled('linkedin')" >linkedin  </ng-container>
+                                <ng-container *ngIf="getUserSocialMediaEnabled('pinterest')">pinterest </ng-container>
                             </span>
                         </div>
                     </mat-list-item>
