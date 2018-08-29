@@ -48,21 +48,9 @@ window.twttr = (function(d, s, id) {
                         <div mat-line class="list-item-second">
                             <ng-container *ngIf="sweep.is_frequency">{{ nextVisit(sweep) }}</ng-container>
                         </div>
-                        <mat-icon class="edit-sweep" (click)="editSweep(sweep, $event)">edit</mat-icon>
-                        <!-- placeholders -->
-                        <div mat-line class="list-item-third">
-                            <span *ngIf="sweep.is_frequency" (click)="openUrl(sweep.sweep_url, sweep.user_sweep_id)"
-                                  class="clickable">
-                                visit sweep - <mat-icon fontSet="fa" fontIcon="fa-globe"></mat-icon>
-                            </span>
-                            <span *ngIf="sweep.is_referral">
-                                <ng-container *ngIf="user?.has_facebook">facebook </ng-container>
-                                <ng-container *ngIf="user?.has_pinterest">pinterest </ng-container>
-                                <ng-container *ngIf="user?.has_twitter">twitter </ng-container>
-                                <ng-container *ngIf="user?.has_linkedin">linkedin </ng-container>
-                                <ng-container *ngIf="user?.has_google">google </ng-container>
-                            </span>
-                        </div>
+                        <app-sweep-actions mat-line class="list-item-third" [sweep]="sweep" [user]="user"
+                                           (sweepEntered)="sweepsActions.enterSweep(sweep.user_sweep_id)"></app-sweep-actions>
+                        <mat-icon class="edit-sweep" (click)="router.navigate(['edit', sweep.user_sweep_id])">edit</mat-icon>
                     </mat-list-item>
                 </mat-list>
                 <div class="whole-screen" *ngIf="!(isSweepsLoading$ | async) && sweeps.length == 0">

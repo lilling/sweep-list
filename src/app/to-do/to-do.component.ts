@@ -31,14 +31,6 @@ export class ToDoComponent implements OnInit, AfterViewInit, OnDestroy {
     user: user_account;
     userAccountId: AAGUID;
 
-    getFacebookURL(sweep: user_sweep, id: string){
-        const frag = document.createRange().createContextualFragment('<div class="fb-share-button" data-href=' + sweep.sweep_url + ' data-layout="button_count" data-size="large" data-mobile-iframe="true">' +
-        '<a target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=' + encodeURI(sweep.sweep_url) + '%2F&amp;src=sdkpreparse" class="fb-xfbml-parse-ignore">' +
-        'Share</a></div>');
-        const placementNode = document.getElementById(id);
-        placementNode.appendChild(frag);
-        return;
-    }
     constructor(private ngRedux: NgRedux<AppState>,
                 public dialog: MatDialog,
                 public sweepsService: SweepsService,
@@ -75,22 +67,6 @@ export class ToDoComponent implements OnInit, AfterViewInit, OnDestroy {
     selectedIndexChanged(index: number) {
         this.sweepsActions.goToSweeps(index + 1);
         this.router.navigate([`../${index + 1}`], {relativeTo : this.activatedRoute});
-    }
-
-    openUrl(urlToOpen: string, sweepId: number) {
-        this.sweepsActions.enterSweep(sweepId);
-        let url = '';
-        if (!/^http[s]?:\/\//.test(urlToOpen)) {
-            url += 'http://';
-        }
-
-        url += urlToOpen;
-        window.open(url, '_blank');
-    }
-
-    editSweep(sweep: user_sweep, event) {
-        event.stopPropagation();
-        this.router.navigate(['edit', sweep.user_sweep_id]);
     }
 
     nextVisit(sweep: user_sweep) {
@@ -154,6 +130,5 @@ export class ToDoComponent implements OnInit, AfterViewInit, OnDestroy {
                 };
             }
         });
-
     }
 }
