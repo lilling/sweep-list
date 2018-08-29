@@ -40,55 +40,29 @@ window.twttr = (function(d, s, id) {
                     <i class="fa fa-spinner fa-spin centered"></i>
                 </ng-container>
                 <mat-list>
-                    <mat-list-item *ngFor="let sweep of sweeps"
-                                   class="clickable" [ngClass]="{'deleted': sweep.deleted_yn}"
-                                   (click)="openUrl(sweep.sweep_url, sweep.user_sweep_id)">
+                    <mat-list-item *ngFor="let sweep of sweeps" [ngClass]="{'deleted': sweep.deleted_yn}">
                         <mat-icon matListIcon fontSet="fa" fontIcon="fa-gift"></mat-icon>
                         <div mat-line class="list-item-first">
                             <span class="sweep-name"> {{sweep.sweep_name}}</span>
                         </div>
                         <div mat-line class="list-item-second">
-                            <ng-container *ngIf="sweep.is_frequency">
-                                {{ nextVisit(sweep) }}
-                            </ng-container>
+                            <ng-container *ngIf="sweep.is_frequency">{{ nextVisit(sweep) }}</ng-container>
                         </div>
-<!--div>
-    <ng-container *ngIf="sweep.is_referral">
-        <Your share button code>
-        <div class="fb-share-button" data-href={{sweep.sweep_url}} data-layout="button_count" data-size="large" data-mobile-iframe="true">
-            <a target="_blank" href="https://www.facebook.com/sharer/sharer.php?u={{sweep.sweep_url}}%2F&amp;src=sdkpreparse" class="fb-xfbml-parse-ignore">
-            Share
-            </a>
-        </div>
-<a class="twitter-share-button" 
-    href="https://twitter.com/share"
-    data-url="https://www.TWEETTHIS.com"
-    data-size="large"
-    data-via="SweepImp"
-    data-show-count="false">Tweet
-</a>
-    </ng-container>
-</div-->
-<!--script type="IN/Share" data-url="bla"></script-->
                         <mat-icon class="edit-sweep" (click)="editSweep(sweep, $event)">edit</mat-icon>
-<!-- placeholders -->
-<div mat-line class="list-item-second">
-    <table>
-        <tr>
-            <ng-container *ngIf="sweep.is_frequency">
-                <td id="{{sweep.user_sweep_id}}+NT">Enter</td>
-            </ng-container>
-            <ng-container *ngIf="sweep.is_referral">
-                <ng-container *ngFor="let socialColumn of socialColumns">
-                <!--ng-container cdkColumnDef="FB"-->
-                    <!--mat-cell>Facebook</mat-cell-->
-                    <!--td id="{{sweep.user_sweep_id}}+{{socialColumn.columnDef}}">{{socialColumn.cell(sweep, sweep.user_sweep_id.toString()+'+'+socialColumn.columnDef)}}</td-->
-                    <td id="{{sweep.user_sweep_id}}+{{socialColumn.columnDef}}">{{socialColumn.cell()}}</td>
-                </ng-container>
-            </ng-container>
-        </tr>
-    </table>
-</div>
+                        <!-- placeholders -->
+                        <div mat-line class="list-item-third">
+                            <span *ngIf="sweep.is_frequency" (click)="openUrl(sweep.sweep_url, sweep.user_sweep_id)"
+                                  class="clickable">
+                                visit sweep - <mat-icon fontSet="fa" fontIcon="fa-globe"></mat-icon>
+                            </span>
+                            <span *ngIf="sweep.is_referral">
+                                <ng-container *ngIf="user?.has_facebook">facebook </ng-container>
+                                <ng-container *ngIf="user?.has_pinterest">pinterest </ng-container>
+                                <ng-container *ngIf="user?.has_twitter">twitter </ng-container>
+                                <ng-container *ngIf="user?.has_linkedin">linkedin </ng-container>
+                                <ng-container *ngIf="user?.has_google">google </ng-container>
+                            </span>
+                        </div>
                     </mat-list-item>
                 </mat-list>
                 <div class="whole-screen" *ngIf="!(isSweepsLoading$ | async) && sweeps.length == 0">
@@ -103,13 +77,13 @@ window.twttr = (function(d, s, id) {
                     <div class="no-sweeps" *ngIf="!(isSweepsLoading$ | async) && sweeps.length == 0 && mode == 2">
                         No shares or entries due for tomorrow. Do you have any due for today?
                         <p>
-                        Sign up to more sweeps and then let me manage them for you using the '+' button below!
+                            Sign up to more sweeps and then let me manage them for you using the '+' button below!
                         </p>
                     </div>
                     <div class="no-sweeps" *ngIf="!(isSweepsLoading$ | async) && sweeps.length == 0 && mode == 3">
                         No upcoming shares or entries. Do you have any due for today?
                         <p>
-                        Sign up to more sweeps and then let me manage them for you using the '+' button below!
+                            Sign up to more sweeps and then let me manage them for you using the '+' button below!
                         </p>
                     </div>
                 </div>

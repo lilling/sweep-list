@@ -4,7 +4,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 import * as _ from 'lodash';
 //
 import { SweepsService } from '../services/sweeps.service';
-import { user_sweep } from '../../../shared/classes';
+import { user_sweep, user_account } from '../../../shared/classes';
 import { LocalStorageKeys } from '../models/local-storage-keys.enum';
 import { SweepsActions } from '../state/sweeps/sweeps.actions';
 import { SweepsMode } from '../state/sweeps/sweeps.state';
@@ -28,30 +28,17 @@ export class ToDoComponent implements OnInit, AfterViewInit, OnDestroy {
     sweeps: user_sweep[] = [];
     subscriptions: { [index: string]: Subscription };
     mode: SweepsMode;
+    user: user_account;
     userAccountId: AAGUID;
-    
-    socialColumns = [
-        //{columnDef: 'FB', cell: (sweep: user_sweep, id: string) => this.getFacebookURL(sweep, id) },
-        {columnDef: 'FB', cell: (element: Element) => `Facebook` },
-        {columnDef: 'TW', cell: (element: Element) => `Twitter`  },
-        {columnDef: 'GO', cell: (element: Element) => `Google`   },
-        {columnDef: 'LI', cell: (element: Element) => `Linkedin` },
-        {columnDef: 'PT', cell: (element: Element) => `Pinterest`}
-    ];
-    displayedSocialColumns = this.socialColumns.map(c => c.columnDef);
 
     getFacebookURL(sweep: user_sweep, id: string){
-        let frag = document.createRange().createContextualFragment('<div class="fb-share-button" data-href='+sweep.sweep_url+' data-layout="button_count" data-size="large" data-mobile-iframe="true">'+
-        '<a target="_blank" href="https://www.facebook.com/sharer/sharer.php?u='+encodeURI(sweep.sweep_url)+'%2F&amp;src=sdkpreparse" class="fb-xfbml-parse-ignore">' +
+        const frag = document.createRange().createContextualFragment('<div class="fb-share-button" data-href=' + sweep.sweep_url + ' data-layout="button_count" data-size="large" data-mobile-iframe="true">' +
+        '<a target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=' + encodeURI(sweep.sweep_url) + '%2F&amp;src=sdkpreparse" class="fb-xfbml-parse-ignore">' +
         'Share</a></div>');
-//console.log(id);
-        let placementNode = document.getElementById(id);
-//console.log(placementNode);
-        //        let placementNode = document.querySelector(id);
+        const placementNode = document.getElementById(id);
         placementNode.appendChild(frag);
         return;
     }
-
     constructor(private ngRedux: NgRedux<AppState>,
                 public dialog: MatDialog,
                 public sweepsService: SweepsService,
@@ -74,15 +61,11 @@ export class ToDoComponent implements OnInit, AfterViewInit, OnDestroy {
             }),
             sweeps: this.ngRedux.select(state => state.sweepsState.sweeps).subscribe(sweeps => {
                 this.sweeps = sweeps.array;
+            }),
+            user: this.ngRedux.select(state => state.loginState.user).subscribe(user => {
+                this.user = user;
             })
         };
-/*console.log('this.ngRedux.getState().loginState.user.has_facebook: ', this.ngRedux.getState().loginState.user.has_facebook);
-        if (this.ngRedux.getState().loginState.user.has_facebook) {this.socialColumns.push({columnDef: 'FB', cell: (element: Element) => `Facebook` })};
-        if (this.ngRedux.getState().loginState.user.has_twitter)  {this.socialColumns.push({columnDef: 'TW', cell: (element: Element) => `Twitter`  })};
-        if (this.ngRedux.getState().loginState.user.has_google)   {this.socialColumns.push({columnDef: 'GO', cell: (element: Element) => `Google`   })};
-        if (this.ngRedux.getState().loginState.user.has_linkedin) {this.socialColumns.push({columnDef: 'LI', cell: (element: Element) => `Linkedin` })};
-        if (this.ngRedux.getState().loginState.user.has_pinterest){this.socialColumns.push({columnDef: 'PT', cell: (element: Element) => `Pinterest`})};
-        this.displayedSocialColumns = this.socialColumns.map(c => c.columnDef);*/
     }
 
     ngAfterViewInit() {
