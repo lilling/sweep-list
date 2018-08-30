@@ -32,9 +32,9 @@ export class SweepListComponent implements OnInit {
     userAccountId: AAGUID;
 
     constructor(public dialog: MatDialog,
-                private router: Router,
+                public router: Router,
                 public sweepsService: SweepsService,
-                private sweepsActions: SweepsActions,
+                public sweepsActions: SweepsActions,
                 private ngRedux: NgRedux<AppState>) {
     }
 
@@ -66,11 +66,6 @@ export class SweepListComponent implements OnInit {
         this.dialog.open(AddSweepComponent);
     }
 
-    editSweep(sweep: user_sweep, event) {
-        event.stopPropagation();
-        this.router.navigate(['edit', sweep.user_sweep_id]);
-    }
-
     nextVisit(sweep: user_sweep) {
         const nextVisit = sweep.frequency_days * 864e5 - (Date.now() - sweep.last_entry_date.getTime());
 
@@ -96,17 +91,6 @@ export class SweepListComponent implements OnInit {
         }
 
         return `${returnValue} left to next visit.`;
-    }
-
-    openUrl(urlToOpen: string, sweepId: number) {
-        this.sweepsActions.enterSweep(sweepId);
-        let url = '';
-        if (!/^http[s]?:\/\//.test(urlToOpen)) {
-            url += 'http://';
-        }
-
-        url += urlToOpen;
-        window.open(url, '_blank');
     }
 
     private getTimeToEnd(endDate: number): string {

@@ -1,7 +1,11 @@
 import { Component, OnInit, OnDestroy, AfterViewInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
+import { MatDialog } from '@angular/material';
 //
 import * as _ from 'lodash';
+import { NgRedux, select } from '@angular-redux/store';
+import { Subscription } from 'rxjs/Subscription';
+import { Observable } from 'rxjs/Observable';
 //
 import { SweepsService } from '../services/sweeps.service';
 import { user_sweep, user_account } from '../../../shared/classes';
@@ -9,12 +13,7 @@ import { LocalStorageKeys } from '../models/local-storage-keys.enum';
 import { SweepsActions } from '../state/sweeps/sweeps.actions';
 import { SweepsMode } from '../state/sweeps/sweeps.state';
 import { AppState } from '../state/store';
-import { NgRedux, select } from '@angular-redux/store';
-import { Subscription } from 'rxjs/Subscription';
-import { Observable } from 'rxjs/Observable';
 import { AddSweepComponent } from '../add-sweep/add-sweep.component';
-import { MatDialog } from '@angular/material';
-import { $ } from 'protractor';
 
 @Component({
     selector: 'app-to-do',
