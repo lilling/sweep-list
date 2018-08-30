@@ -1,12 +1,10 @@
 <div class="login">
-    <h1>
-        <a title="Sweep Imp" tabindex="-1">Sweep Imp</a>
-    </h1>
+    <h1><a title="Sweep Imp" tabindex="-1">Sweep Imp</a></h1>
     <div class="login-body">
         <ng-container *ngIf="!isRegister">
             <div class="social-login-container">
-                    <button class="facebook login-button" mat-button (click)="socialLogin(SocialMedia.Facebook)">Continue with <b>Facebook</b></button>
-                    <button class="google login-button" mat-button (click)="socialLogin(SocialMedia.google)">Continue with <b>Google</b></button>
+                <button class="facebook login-button" mat-button (click)="socialLogin(SocialMedia.Facebook)">Continue with <b>Facebook</b></button>
+                <button class="google login-button" mat-button (click)="socialLogin(SocialMedia.google)">Continue with <b>Google</b></button>
             </div>
             <div class="separator"><span class="separator-text">Or</span></div>
         </ng-container>
