@@ -172,11 +172,11 @@ export class UserSweepService extends BaseService<user_sweep> {
            `          )\n` +
            `       OR\n` +
            `          (   is_referral = true\n` +
-           `          AND (  ` + (this.isSocialMediaEnabled(user.enabled_social_media_bitmap,`Facebook`)  ? this.BuildSingleTiming(status, `facebook` ) : `null`) + `\n` +
-           `              OR ` + (this.isSocialMediaEnabled(user.enabled_social_media_bitmap,`twitter`)   ? this.BuildSingleTiming(status, `twitter`  ) : `null`) + `\n` +
-           `              OR ` + (this.isSocialMediaEnabled(user.enabled_social_media_bitmap,`google`)    ? this.BuildSingleTiming(status, `google`   ) : `null`) + `\n` +
-           `              OR ` + (this.isSocialMediaEnabled(user.enabled_social_media_bitmap,`linkedin`)  ? this.BuildSingleTiming(status, `linkedin` ) : `null`) + `\n` +
-           `              OR ` + (this.isSocialMediaEnabled(user.enabled_social_media_bitmap,`pinterest`) ? this.BuildSingleTiming(status, `pinterest`) : `null`) + `\n` +
+           `          AND (  ` + (this.isSocialMediaEnabled(user.enabled_social_media_bitmap, SocialMedia.Facebook)  ? this.BuildSingleTiming(status, `facebook` ) : `null`) + `\n` +
+           `              OR ` + (this.isSocialMediaEnabled(user.enabled_social_media_bitmap, SocialMedia.Twitter)   ? this.BuildSingleTiming(status, `twitter`  ) : `null`) + `\n` +
+           `              OR ` + (this.isSocialMediaEnabled(user.enabled_social_media_bitmap, SocialMedia.Google)    ? this.BuildSingleTiming(status, `google`   ) : `null`) + `\n` +
+           `              OR ` + (this.isSocialMediaEnabled(user.enabled_social_media_bitmap, SocialMedia.Linkedin)  ? this.BuildSingleTiming(status, `linkedin` ) : `null`) + `\n` +
+           `              OR ` + (this.isSocialMediaEnabled(user.enabled_social_media_bitmap, SocialMedia.Pinterest) ? this.BuildSingleTiming(status, `pinterest`) : `null`) + `\n` +
            (status === `today` ?
            `              OR (   last_facebook_share IS NULL\n` +
            `                 AND last_twitter_share IS NULL\n` +
@@ -191,8 +191,8 @@ export class UserSweepService extends BaseService<user_sweep> {
         return ret;
     }
 
-    isSocialMediaEnabled(enableBitmap: number, SM: string):boolean{
-        return !!(enableBitmap & Math.pow(2, SocialMedia[SM]));
+    isSocialMediaEnabled(enableBitmap: number, SM: SocialMedia):boolean{
+        return !!(enableBitmap & SM);
     }
 
     BuildSingleTiming(status: string, socialMedia?: string): string{

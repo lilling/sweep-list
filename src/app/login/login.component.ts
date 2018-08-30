@@ -71,7 +71,7 @@ export class LoginComponent implements OnInit {
             case SocialMedia.Facebook:
                 signinPromise = this.authService.signIn(FacebookLoginProvider.PROVIDER_ID);
                 break;
-            case SocialMedia.google:
+            case SocialMedia.Google:
                 signinPromise = this.authService.signIn(GoogleLoginProvider.PROVIDER_ID);
                 break;
         }

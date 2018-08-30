@@ -29,6 +29,6 @@ export class SweepActionsComponent {
     }
 
     getUserSocialMediaEnabled(SM: SocialMedia): boolean {
-        return !!(this.user.enabled_social_media_bitmap & Math.pow(2, SM));
+        return !!(this.user.enabled_social_media_bitmap & SM);
     }
 }
