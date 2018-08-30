@@ -14,6 +14,7 @@ export class URL {
 
 export class Search {
     user_account_id: AAGUID;
+    enabled_social_media_bitmap: number;
     lastUserSweep?: Partial<user_sweep>;
     nameSearch?: string;
     dateSearch?: {

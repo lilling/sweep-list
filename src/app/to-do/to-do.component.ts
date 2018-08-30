@@ -43,18 +43,21 @@ export class ToDoComponent implements OnInit, AfterViewInit, OnDestroy {
         this.sweepsActions.goToSweeps(+this.activatedRoute.snapshot.params['mode']);
 
         this.subscriptions = {
-            sweepsMode: this.ngRedux.select(state => state.sweepsState.mode).subscribe(mode => {
+            sweepsMode: Observable.combineLatest(this.ngRedux.select(state => state.sweepsState.mode),
+                this.ngRedux.select(state => state.loginState.user)).subscribe(([mode, user]) => {
+                if (mode === undefined || !user) {
+                    return;
+                }
+                this.user = user;
                 this.mode = mode;
 
                 if (!this.ngRedux.getState().sweepsState.sweeps.length()) {
-                    this.sweepsActions.getSweeps({ user_account_id: this.userAccountId }, mode);
+                    const search = { user_account_id: this.userAccountId, enabled_social_media_bitmap: user.enabled_social_media_bitmap };
+                    this.sweepsActions.getSweeps(search, mode);
                 }
             }),
             sweeps: this.ngRedux.select(state => state.sweepsState.sweeps).subscribe(sweeps => {
                 this.sweeps = sweeps.array;
-            }),
-            user: this.ngRedux.select(state => state.loginState.user).subscribe(user => {
-                this.user = user;
             })
         };
     }
@@ -65,7 +68,7 @@ export class ToDoComponent implements OnInit, AfterViewInit, OnDestroy {
 
     selectedIndexChanged(index: number) {
         this.sweepsActions.goToSweeps(index + 1);
-        this.router.navigate([`../${index + 1}`], {relativeTo : this.activatedRoute});
+        this.router.navigate([`../${index + 1}`], { relativeTo: this.activatedRoute });
     }
 
     nextVisit(sweep: user_sweep) {
@@ -120,10 +123,12 @@ export class ToDoComponent implements OnInit, AfterViewInit, OnDestroy {
                             lastScroll = currentScroll;
                             return;
                         }
-                        this.sweepsActions.getSweeps({
+                        const search = {
                             user_account_id: this.userAccountId,
-                            lastUserSweep: this.sweeps[this.sweeps.length - 1]
-                        }, this.mode);
+                            lastUserSweep: this.sweeps[this.sweeps.length - 1],
+                            enabled_social_media_bitmap: this.user.enabled_social_media_bitmap
+                        };
+                        this.sweepsActions.getSweeps(search, this.mode);
                     }
                     lastScroll = currentScroll;
                 };

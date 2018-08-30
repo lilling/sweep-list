@@ -23,7 +23,7 @@
                         {{sweep.data.total_shares ? sweep.data.total_shares : 0}} shares
                     </ng-container>
                 </div>
-                <app-sweep-actions mat-line class="list-item-third" [sweep]="sweep.data" [user]="user$ | async"
+                <app-sweep-actions mat-line class="list-item-third" [sweep]="sweep.data" [user]="user"
                                    (sweepEntered)="sweepsActions.enterSweep(sweep.data.user_sweep_id)"></app-sweep-actions>
                 <mat-icon class="edit-sweep" (click)="router.navigate(['edit', sweep.data.user_sweep_id])">edit</mat-icon>
             </mat-list-item>

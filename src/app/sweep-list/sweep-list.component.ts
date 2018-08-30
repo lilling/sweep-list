@@ -22,7 +22,7 @@ import { LocalStorageKeys } from '../models/local-storage-keys.enum';
 export class SweepListComponent implements OnInit {
     @select((state: AppState) => state.sweepsState.isSweepsLoading)
     isSweepsLoading$: Observable<boolean>;
-    @select((state: AppState) => state.loginState.user) user$: Observable<user_account>;
+    user: user_account;
     sweeps: {
         data: user_sweep,
         text: string
@@ -43,9 +43,17 @@ export class SweepListComponent implements OnInit {
         this.sweepsActions.goToSweeps(SweepsMode.active);
 
         this.subscriptions = {
-            sweepsMode: this.ngRedux.select(state => state.sweepsState.mode).subscribe(mode => {
+            sweepsMode: Observable.combineLatest(this.ngRedux.select(state => state.sweepsState.mode),
+                this.ngRedux.select(state => state.loginState.user)).subscribe(([mode, user]) => {
+                if (mode === undefined || !user) {
+                    return;
+                }
+                this.user = user;
                 if (mode === SweepsMode.active && !this.ngRedux.getState().sweepsState.sweeps.length()) {
-                    this.sweepsActions.getSweeps({ user_account_id: this.userAccountId }, mode);
+                    this.sweepsActions.getSweeps({
+                        user_account_id: this.userAccountId,
+                        enabled_social_media_bitmap: user.enabled_social_media_bitmap
+                    }, mode);
                 }
             }),
             sweeps: this.ngRedux.select(state => state.sweepsState.sweeps).subscribe(sweeps => {
@@ -131,6 +139,7 @@ export class SweepListComponent implements OnInit {
                     }
                     this.sweepsActions.getSweeps({
                         user_account_id: this.userAccountId,
+                        enabled_social_media_bitmap: this.user.enabled_social_media_bitmap,
                         lastUserSweep: this.sweeps[this.sweeps.length - 1].data
                     }, SweepsMode.active);
                 }
