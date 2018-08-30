@@ -6,6 +6,7 @@ import * as _ from 'lodash';
 import { NgRedux, select } from '@angular-redux/store';
 import { Subscription } from 'rxjs/Subscription';
 import { Observable } from 'rxjs/Observable';
+import { combineLatest } from 'rxjs/observable/combineLatest';
 //
 import { SweepsService } from '../services/sweeps.service';
 import { user_sweep, user_account } from '../../../shared/classes';
@@ -43,7 +44,7 @@ export class ToDoComponent implements OnInit, AfterViewInit, OnDestroy {
         this.sweepsActions.goToSweeps(+this.activatedRoute.snapshot.params['mode']);
 
         this.subscriptions = {
-            sweepsMode: Observable.combineLatest(this.ngRedux.select(state => state.sweepsState.mode),
+            sweepsMode: combineLatest(this.ngRedux.select(state => state.sweepsState.mode),
                 this.ngRedux.select(state => state.loginState.user)).subscribe(([mode, user]) => {
                 if (mode === undefined || !user) {
                     return;

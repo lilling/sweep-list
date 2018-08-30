@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 //
 import { Observable } from 'rxjs/Observable';
 import { NgRedux, select } from '@angular-redux/store';
+import { combineLatest } from 'rxjs/observable/combineLatest';
 import { Subscription } from 'rxjs/Subscription';
 //
 import { AddSweepComponent } from '../add-sweep/add-sweep.component';
@@ -43,7 +44,7 @@ export class SweepListComponent implements OnInit {
         this.sweepsActions.goToSweeps(SweepsMode.active);
 
         this.subscriptions = {
-            sweepsMode: Observable.combineLatest(this.ngRedux.select(state => state.sweepsState.mode),
+            sweepsMode: combineLatest(this.ngRedux.select(state => state.sweepsState.mode),
                 this.ngRedux.select(state => state.loginState.user)).subscribe(([mode, user]) => {
                 if (mode === undefined || !user) {
                     return;
