@@ -159,11 +159,10 @@ export class UserSweepService extends BaseService<user_sweep> {
         return where;
     }
 
-    async BuildAllTimingPredicates(user_sweep_search: Search, status: string): Promise<string>{
-        const user = await this.UserAccountService.CookieLogin(user_sweep_search.user_account_id);
+    async BuildAllTimingPredicates(search: Search, status: string): Promise<string>{
         let hadPrevSocialMedia = false;
         let ret = ``;
-        if (!user.enabled_social_media_bitmap){
+        if (!search.enabled_social_media_bitmap){
             ret = `is_frequency = true\n` + 
                 `   AND ` + this.BuildSingleTiming(status);
         } else {
@@ -172,11 +171,11 @@ export class UserSweepService extends BaseService<user_sweep> {
            `          )\n` +
            `       OR\n` +
            `          (   is_referral = true\n` +
-           `          AND (  ` + (this.isSocialMediaEnabled(user.enabled_social_media_bitmap, SocialMedia.Facebook)  ? this.BuildSingleTiming(status, `facebook` ) : `null`) + `\n` +
-           `              OR ` + (this.isSocialMediaEnabled(user.enabled_social_media_bitmap, SocialMedia.Twitter)   ? this.BuildSingleTiming(status, `twitter`  ) : `null`) + `\n` +
-           `              OR ` + (this.isSocialMediaEnabled(user.enabled_social_media_bitmap, SocialMedia.Google)    ? this.BuildSingleTiming(status, `google`   ) : `null`) + `\n` +
-           `              OR ` + (this.isSocialMediaEnabled(user.enabled_social_media_bitmap, SocialMedia.Linkedin)  ? this.BuildSingleTiming(status, `linkedin` ) : `null`) + `\n` +
-           `              OR ` + (this.isSocialMediaEnabled(user.enabled_social_media_bitmap, SocialMedia.Pinterest) ? this.BuildSingleTiming(status, `pinterest`) : `null`) + `\n` +
+           `          AND (  ` + (this.isSMenabled(search.enabled_social_media_bitmap, SocialMedia.Facebook)  ? this.BuildSingleTiming(status, `facebook` ) : `null`) + `\n` +
+           `              OR ` + (this.isSMenabled(search.enabled_social_media_bitmap, SocialMedia.Twitter)   ? this.BuildSingleTiming(status, `twitter`  ) : `null`) + `\n` +
+           `              OR ` + (this.isSMenabled(search.enabled_social_media_bitmap, SocialMedia.Google)    ? this.BuildSingleTiming(status, `google`   ) : `null`) + `\n` +
+           `              OR ` + (this.isSMenabled(search.enabled_social_media_bitmap, SocialMedia.Linkedin)  ? this.BuildSingleTiming(status, `linkedin` ) : `null`) + `\n` +
+           `              OR ` + (this.isSMenabled(search.enabled_social_media_bitmap, SocialMedia.Pinterest) ? this.BuildSingleTiming(status, `pinterest`) : `null`) + `\n` +
            (status === `today` ?
            `              OR (   last_facebook_share IS NULL\n` +
            `                 AND last_twitter_share IS NULL\n` +
@@ -191,7 +190,7 @@ export class UserSweepService extends BaseService<user_sweep> {
         return ret;
     }
 
-    isSocialMediaEnabled(enableBitmap: number, SM: SocialMedia):boolean{
+    isSMenabled(enableBitmap: number, SM: SocialMedia):boolean{
         return !!(enableBitmap & SM);
     }
 
