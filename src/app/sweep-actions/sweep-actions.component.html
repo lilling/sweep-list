@@ -1,8 +1,8 @@
 <span *ngIf="sweep.is_frequency" (click)="openUrl(sweep.sweep_url)"></span>
 <span *ngIf="sweep.is_referral">
-    <ng-container *ngIf="getUserSocialMediaEnabled(SocialMedia.Facebook)">SocialMedia[SocialMedia.Facebook] </ng-container>
-    <ng-container *ngIf="getUserSocialMediaEnabled(SocialMedia.Twitter)">SocialMedia[SocialMedia.Twitter] </ng-container>
-    <ng-container *ngIf="getUserSocialMediaEnabled(SocialMedia.Google)">SocialMedia[SocialMedia.Google] </ng-container>
-    <ng-container *ngIf="getUserSocialMediaEnabled(SocialMedia.Linkedin)">SocialMedia[SocialMedia.Linkedin] </ng-container>
-    <ng-container *ngIf="getUserSocialMediaEnabled(SocialMedia.Pinterest)">SocialMedia[SocialMedia.Pinterest] </ng-container>
+    <ng-container *ngIf="getUserSocialMediaEnabled(SocialMedia.Facebook)">{{SocialMedia[SocialMedia.Facebook]}} </ng-container>
+    <ng-container *ngIf="getUserSocialMediaEnabled(SocialMedia.Twitter)">{{SocialMedia[SocialMedia.Twitter]}} </ng-container>
+    <ng-container *ngIf="getUserSocialMediaEnabled(SocialMedia.Google)">{{SocialMedia[SocialMedia.Google]}} </ng-container>
+    <ng-container *ngIf="getUserSocialMediaEnabled(SocialMedia.Linkedin)">{{SocialMedia[SocialMedia.Linkedin]}} </ng-container>
+    <ng-container *ngIf="getUserSocialMediaEnabled(SocialMedia.Pinterest)">{{SocialMedia[SocialMedia.Pinterest]}} </ng-container>
 </span>
