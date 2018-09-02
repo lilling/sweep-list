@@ -9,7 +9,7 @@
 
   .body {
     flex: 1 1 auto;
-    max-height: calc(100vh - 40px);
+    max-height: calc(100vh - 42px);
     overflow-y: auto;
 
     mat-list-item {
@@ -33,6 +33,11 @@
         }
       }
       .list-item-second {
+        display: flex;
+        justify-content: flex-end;
+        color: gray;
+      }
+      .list-item-third {
         display: flex;
         justify-content: flex-end;
         color: gray;
@@ -67,17 +72,14 @@
       display: flex;
       flex-direction: column;
       align-content: space-around;
-
-      button {
-        background: $main-color;
-        color: $main-color-foreground;
-      }
+      transform: translate(-50%, -50%);
     }
 
     .mat-fab {
       position: fixed;
       bottom: 5px;
       right: 5vh;
+      z-index: 1;
       background: $main-color;
     }
   }

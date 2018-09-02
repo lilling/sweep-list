@@ -29,7 +29,7 @@
             </mat-list-item>
         </mat-list>
         <div class="no-sweeps" *ngIf="!(isSweepsLoading$ | async) && sweeps.length == 0">
-            <span>How may I serve you?</span>
+            <span>May I serve you please? Add a sweep so I can!</span>
             <br>
             <button mat-raised-button class="main-button" (click)="addSweep()"> ADD SWEEP </button>
         </div>

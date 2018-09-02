@@ -16,5 +16,5 @@ export const INITIAL_SWEEPS_STATE: SweepsState = {
 };
 
 export enum SweepsMode {
-    active, today, tomorrow, later
+    active, today, tomorrow, later, ended
 }
