@@ -2,19 +2,15 @@
     <mat-sidenav #sidenav mode="over" [opened]="sideNav" (closedStart)="toggleSideNav()">
         <mat-nav-list>
             <a [routerLink]="['/todo', 1]" mat-list-item>
-                <mat-icon matListIcon fontSet="fa" fontIcon="fa-list-ul"></mat-icon>
+                <mat-icon svgIcon="calendar-with-clock"></mat-icon>
                 Remember!
             </a>
             <a [routerLink]="['/list']" mat-list-item>
                 <mat-icon matListIcon fontSet="fa" fontIcon="fa-gift"></mat-icon>
                 Active Sweeps
             </a>
-            <a [routerLink]="['/ended']" mat-list-item>
-                <mat-icon svgIcon="calendar-with-clock"></mat-icon>
-                Ended Sweeps
-            </a>
             <a [routerLink]="['/wins']" mat-list-item>
-                <mat-icon svgIcon="win"></mat-icon>
+                <mat-icon>star</mat-icon>
                 Wins Summery
             </a>
             <a [routerLink]="['/login']" [queryParams]="{dt: 1}" mat-list-item>

@@ -18,10 +18,6 @@
                               (change)="newSweep.is_referral = $event.checked">
                 Share On My Social Media
             </mat-slide-toggle>
-            <!--app-referral-sweep-data (isValidChange)="step3Valid = $event" [disabled]="!newSweep.is_referral"
-                                     [(personalReferMessage)]="newSweep.personal_refer_message"
-                                     [(referFacebook)]="newSweep.refer_facebook" [(referGoogle)]="newSweep.refer_google"
-                                     [(referralFrequency)]="newSweep.referral_frequency"></app-referral-sweep-data -->
             <app-referral-sweep-data (isValidChange)="step3Valid = $event" [disabled]="!newSweep.is_referral"
                                      [(referralFrequency)]="newSweep.referral_frequency"></app-referral-sweep-data>
         </ng-container>

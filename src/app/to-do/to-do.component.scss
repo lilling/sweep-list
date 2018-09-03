@@ -22,6 +22,10 @@
       .edit-sweep {
         padding-left: 20px;
       }
+      .win-sweep {
+        padding-left: 20px;
+        color: $main-color;
+      }
       .list-item-first {
         display: flex;
         justify-content: space-between;
@@ -40,6 +44,11 @@
       .list-item-third {
         display: flex;
         justify-content: flex-start;
+        color: gray;
+      }
+      .list-item-third-ended {
+        display: flex;
+        justify-content: flex-end;
         color: gray;
       }
     }

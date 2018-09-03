@@ -23,7 +23,6 @@ export class ContainerComponent {
                 sanitizer: DomSanitizer,
                 private commonActions: CommonActions) {
         iconRegistry.addSvgIcon('calendar-with-clock', sanitizer.bypassSecurityTrustResourceUrl('assets/icons/calendar-with-clock.svg'));
-        iconRegistry.addSvgIcon('win', sanitizer.bypassSecurityTrustResourceUrl('assets/icons/win.svg'));
 
         this.sideNavState.subscribe(sideNav => {
             this.sideNav = sideNav;

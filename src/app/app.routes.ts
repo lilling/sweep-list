@@ -5,7 +5,6 @@ import { AuthGuard } from './services/auth-guard.service';
 import { EditSweepComponent } from './edit-sweep/edit-sweep.component';
 import { ContainerComponent } from './container/container.component';
 import { ToDoComponent } from './to-do/to-do.component';
-import { EndedListComponent } from './ended-list/ended-list.component';
 
 export const appRoutes: Routes = [
     { path: 'login', component: LoginComponent },
@@ -17,7 +16,6 @@ export const appRoutes: Routes = [
             { path: 'list', component: SweepListComponent, canActivate: [AuthGuard] },
             { path: 'todo/:mode',  component: ToDoComponent, canActivate: [AuthGuard]},
             { path: 'edit/:id', component: EditSweepComponent, canActivate: [AuthGuard] },
-            { path: 'ended', component: EndedListComponent, canActivate: [AuthGuard] },
         ]
     }
 ];

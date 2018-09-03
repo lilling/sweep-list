@@ -25,7 +25,10 @@ export class ToDoComponent implements OnInit, AfterViewInit, OnDestroy {
 
     @select((state: AppState) => state.sweepsState.isSweepsLoading)
     isSweepsLoading$: Observable<boolean>;
-    sweeps: user_sweep[] = [];
+    sweeps: {
+        data: user_sweep,
+        text: string
+    }[];
     subscriptions: { [index: string]: Subscription };
     mode: SweepsMode;
     user: user_account;
@@ -57,8 +60,16 @@ export class ToDoComponent implements OnInit, AfterViewInit, OnDestroy {
                     this.sweepsActions.getSweeps(search, mode);
                 }
             }),
-            sweeps: this.ngRedux.select(state => state.sweepsState.sweeps).subscribe(sweeps => {
-                this.sweeps = sweeps.array;
+            sweeps: combineLatest(this.ngRedux.select(state => state.sweepsState.mode),
+                this.ngRedux.select(state => state.sweepsState.sweeps)).subscribe(([mode, sweeps]) => {
+                this.sweeps = sweeps.array.reduce((result, current) => {
+                    const element = {
+                        data: current,
+                        text: mode === 4 ? `${this.getTimeSinceEnd(new Date(current.end_date).getTime())}` : ``
+                    };
+                    result.push(element);
+                    return result;
+                }, []);
             })
         };
     }
@@ -72,31 +83,53 @@ export class ToDoComponent implements OnInit, AfterViewInit, OnDestroy {
         this.router.navigate([`../${index + 1}`], { relativeTo: this.activatedRoute });
     }
 
-    nextVisit(sweep: user_sweep) {
-        const nextVisit = sweep.frequency_days * 864e5 - (Date.now() - sweep.last_entry_date.getTime());
+    nextEntry(sweep: {data: user_sweep, text: string}) {
+        const nextEntry = sweep.data.frequency_days * 864e5 - (Date.now() - sweep.data.last_entry_date.getTime());
 
-        if (nextVisit < 0) {
-            return 'You should enter right now';
+        if (nextEntry < 0) {
+            const entriesMissed = -1 * nextEntry / (sweep.data.frequency_days * 864e5);
+            return `${entriesMissed.toFixed(0)} entries missed, you should enter right now`;
+// TODO: if there are missed entries, popup: "What a shame, you missed some entries. Please check in more frequently to let me serve you better."
         }
 
         let returnValue = '';
 
-        const days = nextVisit / 864e5;
+        const days = nextEntry / 864e5;
 
         if (days > 1) {
             returnValue = `${days.toFixed(0)} days`;
         } else {
-            const hours = nextVisit / 36e5;
+            const hours = nextEntry / 36e5;
             if (hours > 1) {
                 returnValue = `${hours.toFixed(0)} hours`;
             } else {
-                const minutes = nextVisit / 6e4;
+                const minutes = nextEntry / 6e4;
 
                 returnValue = `${minutes.toFixed(0)} minutes`;
             }
         }
 
-        return `${returnValue} left to next visit.`;
+        return `${returnValue} left to next entry.`;
+    }
+
+    private getTimeSinceEnd(endDate: number): string {
+        const diff = Date.now() - endDate;
+        let returnValue = '';
+        const days = diff / 864e5;
+
+        if (days > 1) {
+            returnValue = `${days.toFixed(0)} days ago`;
+        } else {
+            const hours = diff / 36e5;
+            if (hours > 1) {
+                returnValue = `${hours.toFixed(0)} hours ago`;
+            } else {
+                const minutes = diff / 6e4;
+                returnValue = minutes > 1 ? `${minutes.toFixed(0)} minutes ago` : `just now`;
+            }
+        }
+
+        return `Sweep ended ${returnValue}`;
     }
 
     addSweep() {
@@ -129,7 +162,11 @@ export class ToDoComponent implements OnInit, AfterViewInit, OnDestroy {
                             lastUserSweep: this.sweeps[this.sweeps.length - 1],
                             enabled_social_media_bitmap: this.user.enabled_social_media_bitmap
                         };
-                        this.sweepsActions.getSweeps(search, this.mode);
+                        this.sweepsActions.getSweeps({
+                            user_account_id: this.userAccountId,
+                            enabled_social_media_bitmap: this.user.enabled_social_media_bitmap,
+                            lastUserSweep: this.sweeps[this.sweeps.length - 1].data
+                        }, this.mode);
                     }
                     lastScroll = currentScroll;
                 };
