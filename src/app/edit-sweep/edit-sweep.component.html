@@ -22,7 +22,11 @@
         <form class="form" #editSweepForm="ngForm">
             <app-basic-sweep-data (isValidChange)="step1Valid = $event" [(sweepName)]="sweep.sweep_name" [(sweepUrl)]="sweep.sweep_url"
                                   [(sweepEndDate)]="sweep.end_date"></app-basic-sweep-data>
-
+            <ng-container *ngIf="isEnded()">
+                <span class="small-title">Sweep has ended</span>
+                <br>
+                <app-win-sweep-data [(prizeValue)]="sweep.prize_value" [(wonYN)]="sweep.won_yn"></app-win-sweep-data>
+            </ng-container>
             <mat-accordion [multi]="true">
                 <mat-expansion-panel #frequencyPanel [expanded]="sweep.is_frequency" [disabled]="!sweep.is_frequency">
                     <mat-expansion-panel-header>
@@ -41,10 +45,6 @@
                                           (change)="changeIsReferral($event, referralPanel)">
                         </mat-slide-toggle>
                     </mat-expansion-panel-header>
-                    <!--app-referral-sweep-data (isValidChange)="step3Valid = $event" [disabled]="!sweep.is_referral"
-                                             [(personalReferMessage)]="sweep.personal_refer_message"
-                                             [(referFacebook)]="sweep.refer_facebook" [(referGoogle)]="sweep.refer_google"
-                                             [(referralFrequency)]="sweep.referral_frequency"></app-referral-sweep-data-->
                     <app-referral-sweep-data (isValidChange)="step3Valid = $event" [disabled]="!sweep.is_referral"
                                              [(referralFrequency)]="sweep.referral_frequency"></app-referral-sweep-data>
                 </mat-expansion-panel>

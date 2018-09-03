@@ -87,4 +87,8 @@ export class EditSweepComponent implements OnInit {
         this.sweepsActions.deleteSweep(this.sweep.user_sweep_id);
         this.location.back();
     }
+
+    isEnded(){
+        return this.sweep.end_date.getTime() < Date.now();
+    }
 }

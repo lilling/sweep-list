@@ -34,6 +34,12 @@
       }
     }
 
+    .small-title{
+      font-size: 0.75em;
+      font-weight: bold;
+      color: $main-color;
+    }
+
     .blocker {
       position: fixed;
       top: 0;

@@ -27,6 +27,7 @@ import { BasicSweepDataComponent } from './sweep-data/basic-sweep-data/basic-swe
 import { FrequencySweepDataComponent } from './sweep-data/frequency-sweep-data/frequency-sweep-data.component';
 import { ReferralSweepDataComponent } from './sweep-data/referral-sweep-data/referral-sweep-data.component';
 import { ThankSweepDataComponent } from './sweep-data/thank-sweep-data/thank-sweep-data.component';
+import { WinSweepDataComponent } from './sweep-data/win-sweep-data/win-sweep-data.component';
 import { ToDoComponent } from './to-do/to-do.component';
 import { HeaderComponent } from './header/header.component';
 import { ContainerComponent } from './container/container.component';
@@ -64,6 +65,7 @@ const SOCIAL_CONFIG = new AuthServiceConfig([
         FrequencySweepDataComponent,
         ReferralSweepDataComponent,
         ThankSweepDataComponent,
+        WinSweepDataComponent,
         AppComponent,
         LoginComponent,
         PasswordComponent,

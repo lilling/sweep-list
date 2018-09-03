@@ -39,7 +39,7 @@ export class BasicSweepDataComponent {
     @Output() sweepUrlChange = new EventEmitter();
 
     private changeIsValid() {
-        this.isValidChange.emit(!!this.name && !!this.sweepUrl && this.endDate && this.endDate > this.now);
+        this.isValidChange.emit(!!this.name && !!this.sweepUrl && !!this.endDate);
     }
 }
 
