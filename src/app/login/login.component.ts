@@ -30,6 +30,7 @@ export class LoginComponent implements OnInit {
     password: string;
     email: string;
     name: string;
+    isNewUser: boolean;
     user: user_account;
     selectedSMs = EnumValues.getValues<SocialMedia>(SocialMedia).reduce((result, current) => {
         result.set(current, true);
@@ -48,18 +49,17 @@ export class LoginComponent implements OnInit {
         this.ngRedux.select(state => state.loginState.user).subscribe(user => {
             if (user) {
                 this.user = user;
-                if (this.ngRedux.getState().loginState.isNew) {
+                const temp = this.ngRedux.getState().loginState.isNew;
+                if (temp) {
                     this.phaseTwo = true;
+                    this.isNewUser = this.ngRedux.getState().loginState.isNew;
                 } else {
-                    this.finishLogin(user.user_account_id);
+                    localStorage.setItem(LocalStorageKeys.loggedUser, user.user_account_id);
+                    this.router.navigate(this.isNewUser && !temp ? ['/list'] : ['/todo', 1]);
+                    this.isNewUser = temp;
                 }
             }
         });
-    }
-
-    finishLogin(user_id: AAGUID) {
-        localStorage.setItem(LocalStorageKeys.loggedUser, user_id);
-        this.router.navigate(['/todo', 1]);
     }
 
     isEmail(email: string) {
