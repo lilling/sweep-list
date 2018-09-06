@@ -25,6 +25,11 @@
   cursor: pointer;
 }
 
+.stacked-div {
+  display: flex;
+  flex-direction: column;
+}
+
 ::ng-deep .mat-slide-toggle.mat-primary.mat-checked:not(.mat-disabled) {
   .mat-slide-toggle-thumb {
     background-color: $main-color;

@@ -35,14 +35,16 @@ export class UserAccountService extends BaseService<user_account> {
             `   AND email = $<email>\n` +
             (account_param.isSocial ? '' :
             `   AND hashed_password = crypt($<password>, hashed_password)`);
-        const loginUser = await db.oneOrNone<user_account>(q, account_param);
-        if (loginUser === null && account_param.isSocial) { // new social user
-            const user = await this.CreateUserInner(db, account_param);
-            return { user, isNew: true };
-        } else if (loginUser === null){ // email not exist or wrong password
-            throw new ForbiddenException('Email does not exist or wrong password');
+        let user = await db.oneOrNone<user_account>(q, account_param);
+        if (user === null) { // new social user
+            if (account_param.isSocial) {
+                user = await this.CreateUserInner(db, account_param);
+                return { user, isNew: true };
+            } else { // email not exist or wrong password
+                throw new ForbiddenException('Email does not exist or wrong password');
+            }
         }
-        return { user: loginUser };
+        return { user };
     }
 
     async checkEmailAvailability(email: string): Promise<boolean>{

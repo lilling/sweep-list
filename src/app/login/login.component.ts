@@ -5,6 +5,7 @@ import { AuthService, FacebookLoginProvider, GoogleLoginProvider, SocialUser } f
 import { MatDialog } from '@angular/material';
 import { NgRedux, select } from '@angular-redux/store';
 import { Observable } from 'rxjs/Observable';
+import * as _ from 'lodash';
 //
 import { LocalStorageKeys } from '../models/local-storage-keys.enum';
 import { LoginActions } from '../state/login/login.actions';
@@ -13,6 +14,8 @@ import { DeleteAccountComponent } from '../delete-account/delete-account.compone
 import { SocialMedia } from '../../../shared/models/social-media.enum';
 import { IClientError } from '../../../shared/classes/client-error.interface';
 import { ErrorActions } from '../state/common/errors/error.actions';
+import { EnumValues } from 'enum-values';
+import { user_account } from '../../../shared/classes';
 
 @Component({
     selector: 'app-login',
@@ -21,10 +24,17 @@ import { ErrorActions } from '../state/common/errors/error.actions';
 })
 export class LoginComponent implements OnInit {
     SocialMedia = SocialMedia;
+    EnumValues = EnumValues;
+    phaseTwo: boolean;
     isRegister = false;
     password: string;
     email: string;
     name: string;
+    user: user_account;
+    selectedSMs = EnumValues.getValues<SocialMedia>(SocialMedia).reduce((result, current) => {
+        result.set(current, true);
+        return result;
+    }, new Map<number, boolean>());
 
     @select((state: AppState) => state.commonState.errorState.errorMap[LoginActions.LOGIN]) error$: Observable<IClientError>;
 
@@ -37,10 +47,19 @@ export class LoginComponent implements OnInit {
                 private loginActions: LoginActions) {
         this.ngRedux.select(state => state.loginState.user).subscribe(user => {
             if (user) {
-                localStorage.setItem(LocalStorageKeys.loggedUser, user.user_account_id);
-                this.router.navigate(['/todo', 1]);
+                this.user = user;
+                if (this.ngRedux.getState().loginState.isNew) {
+                    this.phaseTwo = true;
+                } else {
+                    this.finishLogin(user.user_account_id);
+                }
             }
         });
+    }
+
+    finishLogin(user_id: AAGUID) {
+        localStorage.setItem(LocalStorageKeys.loggedUser, user_id);
+        this.router.navigate(['/todo', 1]);
     }
 
     isEmail(email: string) {
@@ -63,6 +82,14 @@ export class LoginComponent implements OnInit {
     regularLogin(email: string, password: string, name: string) {
         this.errorActions.clearError(LoginActions.LOGIN);
         this.login({ regular: { email, password, name } });
+    }
+
+    updateUserSms() {
+        if (this.selectedSMs.size) {
+            this.loginActions.updateUser({ ...this.user, enabled_social_media_bitmap: _.sum(Array.from(this.selectedSMs.keys())) });
+        } else {
+            this.goToList();
+        }
     }
 
     socialLogin(socialMedia: SocialMedia) {

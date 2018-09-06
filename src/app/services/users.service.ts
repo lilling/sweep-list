@@ -35,6 +35,10 @@ export class UsersService extends BaseService {
         return this.post('deleteUserAccount', { user_account_id: id });
     }
 
+    updateUser(user: user_account): Observable<user_account> {
+        return this.post<user_account>('update_user', user);
+    }
+
     getDeleteAccountData(id: AAGUID): Observable<{ tasks: string, active: string, ended: string, won: string }> {
         return this.get(`deleteUserAccountConfirm/${id}`);
     }

@@ -13,7 +13,7 @@ import { LoginActions } from './login.actions';
 import { UsersService } from '../../services/users.service';
 import { generateError } from '../models/error';
 import { LocalStorageKeys } from '../../models/local-storage-keys.enum';
-import { ExtandedSocialUser } from '../../../../shared/classes';
+import { ExtandedSocialUser, user_account } from '../../../../shared/classes';
 
 @Injectable()
 export class LoginEpics extends BaseEpic {
@@ -54,6 +54,21 @@ export class LoginEpics extends BaseEpic {
                     }),
                     catchError(err => {
                         return of(generateError(err, LoginActions.LOGOFF));
+                    })
+                );
+            });
+    }
+
+    @Epic
+    updateUser(action$: ActionsObservable<TypedAction<user_account>>) {
+        return action$.ofType(LoginActions.UPDATE_USER)
+            .switchMap(action => {
+                return this.usersService.updateUser(action.payload).pipe(
+                    map(val => {
+                        return { type: LoginActions.UPDATE_USER_COMPLETED, payload: val};
+                    }),
+                    catchError(err => {
+                        return of(generateError(err, LoginActions.UPDATE_USER));
                     })
                 );
             });

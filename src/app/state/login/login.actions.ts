@@ -5,6 +5,7 @@ import { SocialUser } from 'angularx-social-login';
 //
 import { AppState } from '../store';
 import { ExtandedSocialUser } from '../../../../shared/classes/SocialUserAndAccount';
+import { user_account } from '../../../../shared/classes';
 
 @Injectable()
 export class LoginActions {
@@ -15,7 +16,8 @@ export class LoginActions {
     static LOGOFF_COMPLETED = 'LOGOFF_COMPLETED';
     static DELETE_ACCOUNT = 'DELETE_ACCOUNT';
     static DELETE_ACCOUNT_COMPLETED = 'DELETE_ACCOUNT_COMPLETED';
-
+    static UPDATE_USER = 'UPDATE_USER';
+    static UPDATE_USER_COMPLETED = 'UPDATE_USER_COMPLETED';
 
     constructor(private ngRedux: NgRedux<AppState>) {
     }
@@ -32,5 +34,9 @@ export class LoginActions {
 
     deleteAccount(userId: AAGUID) {
         this.ngRedux.dispatch({ type: LoginActions.DELETE_ACCOUNT, payload: userId });
+    }
+
+    updateUser(user: user_account) {
+        this.ngRedux.dispatch({ type: LoginActions.UPDATE_USER, payload: user });
     }
 }
