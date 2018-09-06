@@ -25,7 +25,7 @@
             <ng-container *ngIf="isEnded()">
                 <span class="small-title">Sweep has ended</span>
                 <br>
-                <app-win-sweep-data [(prizeValue)]="sweep.prize_value" [(wonYN)]="sweep.won_yn"></app-win-sweep-data>
+                <app-win-sweep-data (isValidChange)="stepWonValid = $event" [(prizeValue)]="sweep.prize_value" [(wonYN)]="sweep.won_yn"></app-win-sweep-data>
             </ng-container>
             <mat-accordion [multi]="true">
                 <mat-expansion-panel #frequencyPanel [expanded]="sweep.is_frequency" [disabled]="!sweep.is_frequency">

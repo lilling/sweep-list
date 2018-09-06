@@ -22,6 +22,7 @@ export class EditSweepComponent implements OnInit {
     SocialMedia = SocialMedia;
     thankReferrer: boolean;
     step1Valid: boolean;
+    stepWonValid: boolean;
     step2Valid: boolean;
     step3Valid: boolean;
     step4Valid: boolean;
@@ -71,7 +72,7 @@ export class EditSweepComponent implements OnInit {
     }
 
     canSaveSweep() {
-        if (!this.step1Valid || (this.sweep.is_frequency && !this.step2Valid) ||
+        if (!this.step1Valid || !this.stepWonValid || (this.sweep.is_frequency && !this.step2Valid) ||
             (this.sweep.is_referral && !this.step3Valid) || (this.thankReferrer && !this.step4Valid)) {
             return false;
         }

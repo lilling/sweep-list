@@ -4,6 +4,7 @@
     </mat-checkbox>
     <br>
     <mat-form-field>
-        <input matInput placeholder="Prize value" name="sprize" id="sprize" [(ngModel)]="prizeValue" #sprize="ngModel">
+        <input matInput placeholder="Prize value" name="sprize" id="sprize" [(ngModel)]="prizeValue" #sprize="ngModel" pattern="^[1-9]\d*?$">
+        <mat-error>Prize value should be a whole positive number</mat-error>
     </mat-form-field>
 </div>

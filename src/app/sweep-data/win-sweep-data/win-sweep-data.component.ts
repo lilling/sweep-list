@@ -1,4 +1,5 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
+import {FormControl, Validators} from '@angular/forms';
 
 @Component({
     selector: 'app-win-sweep-data',
@@ -8,12 +9,13 @@ import { Component, Input, Output, EventEmitter } from '@angular/core';
 export class WinSweepDataComponent {
 
     private days: number;
-    private prize: number;
+    private prize: string;
     private won: number;
     @Output() isValidChange = new EventEmitter<boolean>();
+    
 
     @Input() get prizeValue() { return this.prize; }
-    set prizeValue(val: number) {
+    set prizeValue(val: string) {
         this.prize = val;
         this.changeIsValid();
         this.prizeValueChange.emit(this.prize);
@@ -37,7 +39,11 @@ export class WinSweepDataComponent {
     @Output() prizeValueChange = new EventEmitter();
     @Output() wonYNChange = new EventEmitter();
 
+    isPrizeInvalid(val) {
+        return isNaN(Number(val)) || val < 0;
+    }
+
     private changeIsValid() {
-        this.isValidChange.emit(true);
+        this.isValidChange.emit(!this.isPrizeInvalid(this.prize));
     }
 }
