@@ -23,6 +23,10 @@
 
 .clickable {
   cursor: pointer;
+
+  &:hover {
+    background: #dddddd75;
+  }
 }
 
 .stacked-div {

@@ -13,9 +13,6 @@
     overflow-y: auto;
 
     mat-list-item {
-      &:hover {
-        background: #dddddd75;
-      }
       &.deleted {
         text-decoration: line-through;
       }
