@@ -1,17 +1,18 @@
-import { Component, Inject } from '@angular/core';
+import { Component, Inject, Input, Output, EventEmitter } from '@angular/core';
 //
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 //
 import { LocalStorageKeys } from '../models/local-storage-keys.enum';
 import { user_sweep } from '../../../shared/classes';
 import { SweepsActions } from '../state/sweeps/sweeps.actions';
+import {FormControl, Validators} from '@angular/forms';
 
 @Component({
-    selector: 'app-add-sweep',
-    templateUrl: 'add-sweep.component.html',
-    styleUrls: ['add-sweep.component.scss']
+    selector: 'app-win-popup',
+    templateUrl: 'winPopup.component.html',
+    styleUrls: ['winPopup.component.scss']
 })
-export class AddSweepComponent {
+export class WinPopupComponent {
     newSweep: user_sweep;
     step: number;
     thankReferrer: boolean;
@@ -20,12 +21,39 @@ export class AddSweepComponent {
     step2Valid: boolean;
     step3Valid: boolean;
     step4Valid: boolean;
+    //winAction: string;
+    //userSweepId: number;
+    prize: string;
+    isValidChange: boolean;
 
-    constructor(public dialogRef: MatDialogRef<AddSweepComponent>,
+    @Output() prizeValueChange = new EventEmitter();
+
+    constructor(public dialogRef: MatDialogRef<WinPopupComponent>,
                 private sweepsActions: SweepsActions,
                 @Inject(MAT_DIALOG_DATA) public data: any) {
         this.userAccountId = localStorage.getItem(LocalStorageKeys.loggedUser);
         this.clear();
+    }
+
+    ngOnInit() {
+        this.isValidChange = true;
+        this.prize = null;
+    }
+
+    updateSweep() {
+        this.sweepsActions.winOrUnwinSweep(this.data.winAction, this.data.userSweepId, +this.prize)
+        this.dialogRef.close();
+    }
+    
+    @Input() get prizeValue() { return this.prize; }
+    set prizeValue(val: string) {
+        this.prize = val;
+        this.isValidChange = !this.isPrizeInvalid(this.prize);
+        this.prizeValueChange.emit(this.prize);
+    }
+
+    isPrizeInvalid(val) {
+        return isNaN(Number(val)) || val < 0;
     }
 
     next() {
@@ -72,11 +100,6 @@ export class AddSweepComponent {
             created: null,
             updated: null,
         };
-    }
-
-    addSweep() {
-        this.sweepsActions.addSweep(this.newSweep);
-        this.dialogRef.close();
     }
 
     isNextDisabled() {
