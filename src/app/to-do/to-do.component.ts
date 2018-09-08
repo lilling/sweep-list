@@ -130,7 +130,7 @@ export class ToDoComponent implements OnInit, AfterViewInit, OnDestroy {
             }
         }
 
-        return `Sweep ended ${returnValue}`;
+        return `Ended ${returnValue}`;
     }
 
     addSweep() {
