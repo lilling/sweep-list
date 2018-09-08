@@ -1,0 +1,12 @@
+@import '../../sass/variables';
+
+.mat-dialog-actions {
+  .mat-raised-button:not([disabled]) {
+    background-color: $main-color;
+    color: $main-color-foreground;
+  }
+}
+
+.mat-dialog-content {
+  overflow: hidden;
+}

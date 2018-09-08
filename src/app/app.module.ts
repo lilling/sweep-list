@@ -33,7 +33,8 @@ import { HeaderComponent } from './header/header.component';
 import { ContainerComponent } from './container/container.component';
 import { DeleteAccountComponent } from './delete-account/delete-account.component';
 import { SweepActionsComponent } from './sweep-actions/sweep-actions.component';
-import { WinPopupComponent } from './winPopup/winPopup.component'
+import { WinPopupComponent } from './win-popup/win-popup.component'
+import { TextPopupComponent } from './text-popup/text-popup.component'
 //import { SocialMediaLoginErrorComponent } from './social-media-login-error/social-media-login-error.component';
 
 const fbLoginOptions: LoginOpt = {
@@ -77,6 +78,7 @@ const SOCIAL_CONFIG = new AuthServiceConfig([
         DeleteAccountComponent,
         SweepActionsComponent,
         WinPopupComponent,
+        TextPopupComponent,
         //SocialMediaLoginErrorComponent,
     ],
     imports: [
@@ -94,7 +96,7 @@ const SOCIAL_CONFIG = new AuthServiceConfig([
     providers: [UsersService, SweepsService, AuthGuard],
     bootstrap: [AppComponent],
     exports: [RouterModule],
-    entryComponents: [AddSweepComponent, EditSweepComponent, DeleteAccountComponent, WinPopupComponent/*, SocialMediaLoginErrorComponent*/]
+    entryComponents: [AddSweepComponent, EditSweepComponent, DeleteAccountComponent, WinPopupComponent, TextPopupComponent/*, SocialMediaLoginErrorComponent*/]
 })
 export class AppModule {
 }
