@@ -13,6 +13,7 @@ import { generateError } from '../models/error';
 import { SweepsService } from '../../services/sweeps.service';
 import { user_sweep, Search } from '../../../../shared/classes';
 import { SweepsMode } from './sweeps.state';
+import { SocialMedia } from '../../../../shared/models/social-media.enum';
 
 @Injectable()
 export class SweepsEpics extends BaseEpic {
@@ -61,7 +62,21 @@ export class SweepsEpics extends BaseEpic {
                     catchError(err => {
                         return of(generateError(err, SweepsActions.ENTER_SWEEP));
                     }));
-            })
+            });
+    }
+
+    @Epic
+    shareSweep(action$: ActionsObservable<TypedAction<{sweep_id: number, social_media: SocialMedia}>>) {
+        return action$.ofType(SweepsActions.SHARE_SWEEP)
+            .switchMap(action => {
+                return this.sweepsService.shareSweep(action.payload).pipe(
+                    map(res => {
+                        return { type: SweepsActions.SHARE_SWEEP_COMPLETED, payload: action.payload };
+                    }),
+                    catchError(err => {
+                        return of(generateError(err, SweepsActions.SHARE_SWEEP));
+                    }));
+            });
     }
 
     @Epic

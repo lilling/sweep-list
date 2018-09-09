@@ -4,9 +4,9 @@ import { RouterModule } from '@angular/router';
 import { NgModule } from '@angular/core';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 //
+import { ShareButtonModule } from '@ngx-share/button';
 import { AngularDateTimePickerModule } from 'angular2-datetimepicker';
 import { NgReduxModule } from '@angular-redux/store';
-import { environment } from '../environments/environment'; // Angular CLI environemnt
 //
 import { AppComponent } from './app.component';
 import { LoginComponent } from './login/login.component';
@@ -33,7 +33,6 @@ import { HeaderComponent } from './header/header.component';
 import { ContainerComponent } from './container/container.component';
 import { DeleteAccountComponent } from './delete-account/delete-account.component';
 import { SweepActionsComponent } from './sweep-actions/sweep-actions.component';
-//import { SocialMediaLoginErrorComponent } from './social-media-login-error/social-media-login-error.component';
 
 const fbLoginOptions: LoginOpt = {
     scope: 'public_profile , email',
@@ -84,6 +83,7 @@ const SOCIAL_CONFIG = new AuthServiceConfig([
         BrowserModule,
         HttpClientModule,
         FormsModule,
+        ShareButtonModule.forRoot(),
         MaterialModule,
         SocialLoginModule.initialize(SOCIAL_CONFIG),
         AngularDateTimePickerModule,
@@ -92,7 +92,7 @@ const SOCIAL_CONFIG = new AuthServiceConfig([
     providers: [UsersService, SweepsService, AuthGuard],
     bootstrap: [AppComponent],
     exports: [RouterModule],
-    entryComponents: [AddSweepComponent, EditSweepComponent, DeleteAccountComponent/*, SocialMediaLoginErrorComponent*/]
+    entryComponents: [AddSweepComponent, EditSweepComponent, DeleteAccountComponent]
 })
 export class AppModule {
 }

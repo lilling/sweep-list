@@ -23,11 +23,16 @@
         padding-left: 20px;
         color: $main-color;
       }
-      .list-item-first {
-        display: flex;
-        justify-content: space-between;
+      .grid-container {
+        display: grid;
+        grid-template-columns: 33% 33% 33%;
+        padding: 10px;
+        text-align: center;
+
         .sweep-name {
           font-weight: bold;
+          display: inline-flex;
+          align-items: center;
         }
         .sweep-data {
           color: gray;

@@ -1,8 +1,9 @@
 import { TypedAction } from '../models/typed-action';
-import { INITIAL_SWEEPS_STATE, SweepsState, SweepsMode } from './sweeps.state';
+import { INITIAL_SWEEPS_STATE, SweepsState } from './sweeps.state';
 import { SweepsActions } from './sweeps.actions';
 import { user_sweep } from '../../../../shared/classes';
 import { HashedArray } from '../../models/hashed-array.class';
+import { SocialMedia } from '../../../../shared/models/social-media.enum';
 
 export function sweepsReducer(state: SweepsState = INITIAL_SWEEPS_STATE, action: TypedAction<any>) {
     switch (action.type) {
@@ -36,11 +37,40 @@ export function sweepsReducer(state: SweepsState = INITIAL_SWEEPS_STATE, action:
             };
         }
         case SweepsActions.ADD_SWEEP_COMPLETED: {
-//            action.payload.frequency_days
             return {
                 ...state,
                 sweeps: state.sweeps.addItem(action.payload, sort),
                 isSweepsLoading: false
+            };
+        }
+        case SweepsActions.SHARE_SWEEP_COMPLETED: {
+            const sweep = state.sweeps.getItem(action.payload.sweep_id);
+            switch (action.payload.social_media) {
+                case SocialMedia.Twitter: {
+                    sweep.last_twitter_share = new Date();
+                    break;
+                }
+                case SocialMedia.Linkedin: {
+                    sweep.last_linkedin_share = new Date();
+                    break;
+                }
+                case SocialMedia.Pinterest: {
+                    sweep.last_pinterest_share = new Date();
+                    break;
+                }
+                case SocialMedia.Google: {
+                    sweep.last_google_share = new Date();
+                    break;
+                }
+                case SocialMedia.Facebook: {
+                    sweep.last_facebook_share = new Date();
+                    break;
+                }
+            }
+
+            return {
+                ...state,
+                sweeps: state.sweeps.updateItem(sweep)
             };
         }
         case SweepsActions.ENTER_SWEEP_COMPLETED: {

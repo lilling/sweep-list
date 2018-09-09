@@ -20,10 +20,10 @@
         padding-left: 20px;
       }
       .list-item-first {
-        display: flex;
-        justify-content: space-between;
         .sweep-name {
           font-weight: bold;
+          display: inline-flex;
+          align-items: center;
         }
         .sweep-data {
           color: gray;

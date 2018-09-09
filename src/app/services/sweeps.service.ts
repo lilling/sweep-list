@@ -7,6 +7,7 @@ import { EnumValues } from 'enum-values';
 import { user_sweep, Search } from '../../../shared/classes';
 import { BaseService } from './base.service';
 import { SweepsMode } from '../state/sweeps/sweeps.state';
+import { SocialMedia } from '../../../shared/models/social-media.enum';
 
 @Injectable()
 export class SweepsService extends BaseService {
@@ -18,9 +19,7 @@ export class SweepsService extends BaseService {
     getSweeps(data: Search, mode: SweepsMode): Observable<user_sweep[]> {
         const url = `${EnumValues.getNameFromValue(SweepsMode, mode)}_user_sweeps`;
         return this.post<user_sweep[]>(url, data).map(res => {
-            res.forEach(sweep => {
-                this.fixSweepTypes(sweep);
-            });
+            res.forEach(sweep => this.fixSweepTypes(sweep));
             return res;
         });
     }
@@ -36,20 +35,12 @@ export class SweepsService extends BaseService {
         return this.get(`user_sweep_url_enter/${sweepId}`);
     }
 
-    deleteSweep(id: number) {
-        return this.get(`del_sweep/${id}`);
+    shareSweep(params: { sweep_id: number, social_media: SocialMedia }) {
+        return this.get(`user_sweep_url_share/${params.sweep_id}/${params.social_media}`);
     }
 
-    private fixSweepTypes(sweep: user_sweep) {
-        sweep.last_entry_date = sweep.last_entry_date ? new Date(sweep.last_entry_date) : null;
-        sweep.created = sweep.created ? new Date(sweep.created) : null;
-        sweep.updated = sweep.updated ? new Date(sweep.updated) : null;
-        sweep.end_date = sweep.end_date ? new Date(sweep.end_date) : null;
-        sweep.total_entries = sweep.total_entries ? +sweep.total_entries : null;
-        sweep.total_shares = sweep.total_shares ? +sweep.total_shares : null;
-        sweep.referral_frequency = sweep.referral_frequency ? +sweep.referral_frequency : null;
-        sweep.frequency_days = sweep.frequency_days ? +sweep.frequency_days : null;
-        sweep.user_account_id = sweep.user_account_id ? sweep.user_account_id : null;
+    deleteSweep(id: number) {
+        return this.get(`del_sweep/${id}`);
     }
 
     getTimePassedSinceLastVisit(sweep: user_sweep) {
@@ -74,5 +65,22 @@ export class SweepsService extends BaseService {
             }
         }
         return returnValue;
+    }
+
+    private fixSweepTypes(sweep: user_sweep) {
+        sweep.last_entry_date = sweep.last_entry_date ? new Date(sweep.last_entry_date) : null;
+        sweep.created = sweep.created ? new Date(sweep.created) : null;
+        sweep.updated = sweep.updated ? new Date(sweep.updated) : null;
+        sweep.end_date = sweep.end_date ? new Date(sweep.end_date) : null;
+        sweep.total_entries = sweep.total_entries ? +sweep.total_entries : null;
+        sweep.total_shares = sweep.total_shares ? +sweep.total_shares : null;
+        sweep.referral_frequency = sweep.referral_frequency ? +sweep.referral_frequency : null;
+        sweep.last_facebook_share = sweep.last_facebook_share ? new Date(sweep.last_facebook_share) : null;
+        sweep.last_google_share = sweep.last_google_share ? new Date(sweep.last_google_share) : null;
+        sweep.last_linkedin_share = sweep.last_linkedin_share ? new Date(sweep.last_linkedin_share) : null;
+        sweep.last_pinterest_share = sweep.last_pinterest_share ? new Date(sweep.last_pinterest_share) : null;
+        sweep.last_twitter_share = sweep.last_twitter_share ? new Date(sweep.last_twitter_share) : null;
+        sweep.frequency_days = sweep.frequency_days ? +sweep.frequency_days : null;
+        sweep.user_account_id = sweep.user_account_id ? sweep.user_account_id : null;
     }
 }

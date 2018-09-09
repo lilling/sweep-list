@@ -5,6 +5,7 @@ import { NgRedux } from '@angular-redux/store';
 import { AppState } from '../store';
 import { user_sweep, Search } from '../../../../shared/classes';
 import { SweepsMode } from './sweeps.state';
+import { SocialMedia } from '../../../../shared/models/social-media.enum';
 
 @Injectable()
 export class SweepsActions {
@@ -16,6 +17,8 @@ export class SweepsActions {
     static ADD_SWEEP_COMPLETED = '[SweepsActions] ADD_SWEEP_COMPLETED';
     static ENTER_SWEEP = '[SweepsActions] ENTER_SWEEP';
     static ENTER_SWEEP_COMPLETED = '[SweepsActions] ENTER_SWEEP_COMPLETED';
+    static SHARE_SWEEP = '[SweepsActions] SHARE_SWEEP';
+    static SHARE_SWEEP_COMPLETED = '[SweepsActions] SHARE_SWEEP_COMPLETED';
     static DELETE_SWEEP = '[SweepsActions] DELETE_SWEEP';
     static DELETE_SWEEP_COMPLETED = '[SweepsActions] DELETE_SWEEP_COMPLETED';
     static UPDATE_SWEEP = '[SweepsActions] UPDATE_SWEEP';
@@ -34,6 +37,10 @@ export class SweepsActions {
 
     enterSweep(sweep_id: number) {
         this.ngRedux.dispatch({ type: SweepsActions.ENTER_SWEEP, payload: sweep_id });
+    }
+
+    shareSweep(payload: {sweep_id: number, social_media: SocialMedia}) {
+        this.ngRedux.dispatch({ type: SweepsActions.SHARE_SWEEP, payload });
     }
 
     addSweep(sweep: user_sweep) {
