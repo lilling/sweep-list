@@ -31,6 +31,13 @@ export class SweepsService extends BaseService {
         });
     }
 
+    winOrUnwinSweep(win_action: string, sweepId: number, prizeValue?: number){
+        return this.get<user_sweep>(`${win_action}_sweep/${sweepId}` + ((win_action == 'win') ? `/${prizeValue}` : ``)).map(res => {
+            this.fixSweepTypes(res);
+            return res;
+        });
+    }
+
     enterSweep(sweepId: number): Observable<URL> {
         return this.get(`user_sweep_url_enter/${sweepId}`);
     }

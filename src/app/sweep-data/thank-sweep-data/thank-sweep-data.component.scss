@@ -4,15 +4,3 @@
   display: flex;
   flex-direction: column;
 }
-
-.mat-radio-button.mat-accent /deep/ .mat-radio-inner-circle {
-  background-color: $main-color;
-}
-
-.mat-radio-button.mat-accent.mat-radio-checked /deep/ .mat-radio-outer-circle {
-  border-color: $main-color;
-}
-
-.mat-radio-button.mat-accent /deep/ .mat-radio-ripple .mat-ripple-element {
-  background-color:$main-color-opacity;
-}

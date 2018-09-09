@@ -1,0 +1,33 @@
+@import '../../sass/variables';
+
+.mat-dialog-title {
+  color: $main-color;
+  text-align: center;
+}
+
+.mat-dialog-actions {
+  .mat-raised-button:not([disabled]) {
+    background-color: $main-color;
+    color: $main-color-foreground;
+  }
+}
+
+.mat-form-field{
+  margin-bottom: 20px;
+  width:100%;
+
+  .mat-hint{
+    text-decoration: underline;
+  }
+}
+
+.mat-dialog-content {
+  overflow: hidden;
+  width:100%;
+}
+
+.form{
+  display: flex;
+  flex-direction: row;
+  width:100%;
+}

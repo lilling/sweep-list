@@ -104,7 +104,7 @@ export class UserSweepService extends BaseService<user_sweep> {
         return result;
     }
 
-    async ToggleSweepState(column: string, user_sweep_id: number, state: boolean): Promise<user_sweep> {
+    async ToggleSweepState(column: string, user_sweep_id: number, state: boolean, prize_value?:number): Promise<user_sweep> {
         const db = DbGetter.getDB();
         // build new sweep
         const new_user_sweep = await this.getItem(user_sweep_id, `user_sweep_id`);
@@ -115,6 +115,7 @@ export class UserSweepService extends BaseService<user_sweep> {
             }
             case `won_yn`: {
                 new_user_sweep.won_yn = state;
+                new_user_sweep.prize_value = state ? prize_value : null;
                 break;
             }
         }

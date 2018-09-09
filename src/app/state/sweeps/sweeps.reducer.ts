@@ -97,6 +97,12 @@ export function sweepsReducer(state: SweepsState = INITIAL_SWEEPS_STATE, action:
                 sweeps: state.sweeps.updateItem(action.payload)
             };
         }
+        case SweepsActions.WIN_OR_UNWIN_SWEEP_COMPLETED: {
+            return {
+                ...state,
+                sweeps: state.sweeps.updateItem(action.payload)
+            };
+        }
         default:
             return state;
     }

@@ -3,7 +3,6 @@ import { Component, Inject } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 //
 import { LocalStorageKeys } from '../models/local-storage-keys.enum';
-import { SocialMedia } from '../../../shared/models/social-media.enum';
 import { user_sweep } from '../../../shared/classes';
 import { SweepsActions } from '../state/sweeps/sweeps.actions';
 
@@ -16,8 +15,6 @@ export class AddSweepComponent {
     newSweep: user_sweep;
     step: number;
     thankReferrer: boolean;
-    SocialMedia = SocialMedia;
-    socialMedias = [SocialMedia.Google, SocialMedia.Facebook];
     userAccountId: AAGUID;
     step1Valid: boolean;
     step2Valid: boolean;

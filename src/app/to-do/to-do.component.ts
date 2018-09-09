@@ -15,6 +15,7 @@ import { SweepsActions } from '../state/sweeps/sweeps.actions';
 import { SweepsMode } from '../state/sweeps/sweeps.state';
 import { AppState } from '../state/store';
 import { AddSweepComponent } from '../add-sweep/add-sweep.component';
+import { WinPopupComponent } from '../win-popup/win-popup.component';
 
 @Component({
     selector: 'app-to-do',
@@ -129,11 +130,19 @@ export class ToDoComponent implements OnInit, AfterViewInit, OnDestroy {
             }
         }
 
-        return `Sweep ended ${returnValue}`;
+        return `Ended ${returnValue}`;
     }
 
     addSweep() {
         this.dialog.open(AddSweepComponent);
+    }
+
+    winSweep(user_sweep_id: number) {
+        this.dialog.open(WinPopupComponent, {width: '270px', data:{winAction: 'win', userSweepId: user_sweep_id}});
+    }
+
+    unwinSweep(user_sweep_id: number) {
+        this.dialog.open(WinPopupComponent, {data:{winAction: 'unwin', userSweepId: user_sweep_id}});
     }
 
     ngOnDestroy() {

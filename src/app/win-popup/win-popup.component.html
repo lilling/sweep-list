@@ -1,0 +1,24 @@
+<div mat-dialog-title *ngIf="data.winAction=='win'">Awsome! You Won!</div>
+<div mat-dialog-title *ngIf="data.winAction=='unwin'">What a Shame...</div>
+<mat-dialog-content>
+    <form class="form" #addSweepForm="ngForm">
+        <mat-form-field *ngIf="data.winAction=='win'">
+            <input matInput placeholder="Prize value" name="sprize" id="sprize" [(ngModel)]="prizeValue" #sprize="ngModel" pattern="^[1-9]\d*?$">
+            <mat-error>Prize value should be a whole positive number</mat-error>
+            <mat-hint (click)="showExplanation()">What do my Sweep Imp use it for?</mat-hint>
+        </mat-form-field>
+        <div *ngIf="data.winAction=='unwin'">
+            Are you sure you didn't win?
+        </div>
+    </form>
+</mat-dialog-content>
+<mat-dialog-actions>
+    <div *ngIf="data.winAction=='win'">
+        <button mat-button mat-dialog-close>CANCEL</button>
+        <button mat-raised-button color="primary" [disabled]="!isValidChange" (click)="updateSweep()">OH YEAH!</button>
+    </div>
+    <div *ngIf="data.winAction=='unwin'">
+        <button mat-button mat-dialog-close>OOPS, I DID WIN!</button>
+        <button mat-raised-button color="primary" (click)="updateSweep()">YES</button>
+    </div>
+</mat-dialog-actions>

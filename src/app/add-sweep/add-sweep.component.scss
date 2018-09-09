@@ -1,7 +1,9 @@
 @import '../../sass/variables';
 
 .mat-dialog-title {
-  font-weight: bold;
+  background-color: $main-color;
+  color: white;
+  text-align: center;
 }
 
 .mat-dialog-actions {

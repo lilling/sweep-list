@@ -13,7 +13,6 @@ export class WinSweepDataComponent {
     private won: number;
     @Output() isValidChange = new EventEmitter<boolean>();
     
-
     @Input() get prizeValue() { return this.prize; }
     set prizeValue(val: string) {
         this.prize = val;

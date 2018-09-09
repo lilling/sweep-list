@@ -76,10 +76,10 @@ window.twttr = (function(d, s, id) {
                                 </ng-container>
                             </div>
                             <ng-container *ngIf="sweep.data.won_yn">
-                                <mat-icon class="win-sweep" (click)="winSweep()">star</mat-icon>
+                                <mat-icon class="win-sweep" (click)="unwinSweep(sweep.data.user_sweep_id)">star</mat-icon>
                             </ng-container>
                             <ng-container *ngIf="!sweep.data.won_yn">
-                                <mat-icon class="edit-sweep" (click)="unwinSweep()">star_border</mat-icon>
+                                <mat-icon class="edit-sweep" (click)="winSweep(sweep.data.user_sweep_id)">star_border</mat-icon>
                             </ng-container>
                             <mat-icon class="edit-sweep" (click)="router.navigate(['edit', sweep.data.user_sweep_id])">edit</mat-icon>
                         </mat-list-item>

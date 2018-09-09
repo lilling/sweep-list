@@ -23,6 +23,8 @@ export class SweepsActions {
     static DELETE_SWEEP_COMPLETED = '[SweepsActions] DELETE_SWEEP_COMPLETED';
     static UPDATE_SWEEP = '[SweepsActions] UPDATE_SWEEP';
     static UPDATE_SWEEP_COMPLETED = '[SweepsActions] UPDATE_SWEEP_COMPLETED';
+    static WIN_OR_UNWIN_SWEEP = '[SweepsActions] WIN_OR_UNWIN_SWEEP';
+    static WIN_OR_UNWIN_SWEEP_COMPLETED = '[SweepsActions] WIN_OR_UNWIN_SWEEP_COMPLETED';
 
     constructor(private ngRedux: NgRedux<AppState>) {
     }
@@ -53,5 +55,9 @@ export class SweepsActions {
 
     updateSweep(sweep: user_sweep) {
         this.ngRedux.dispatch({ type: SweepsActions.UPDATE_SWEEP, payload: sweep });
+    }
+
+    winOrUnwinSweep(win_action: string, sweep_id: number, prize_value?: number) {
+        this.ngRedux.dispatch({ type: SweepsActions.WIN_OR_UNWIN_SWEEP, payload: {win_action, sweep_id, prize_value} });
     }
 }
