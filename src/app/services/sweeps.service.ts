@@ -42,8 +42,8 @@ export class SweepsService extends BaseService {
         return this.get(`user_sweep_url_enter/${sweepId}`);
     }
 
-    shareSweep(params: { sweep_id: number, social_media: SocialMedia }) {
-        return this.get(`user_sweep_url_share/${params.sweep_id}/${params.social_media}`);
+    shareSweep(sweep_id: number, social_media: SocialMedia, URL: string) {
+        return this.post(`user_sweep_url_share`, {sweep_id, social_media, URL})
     }
 
     deleteSweep(id: number) {

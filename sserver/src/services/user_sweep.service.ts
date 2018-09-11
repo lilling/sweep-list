@@ -83,7 +83,7 @@ export class UserSweepService extends BaseService<user_sweep> {
         return db.manyOrNone(q, { user_account_id });
     }
 
-    async GetSweepURL(user_sweep_id: number, click_type: URLClickTypes, social_media?: SocialMedia): Promise<URL> {
+    async GetSweepURL(user_sweep_id: number, click_type: URLClickTypes, social_media?: SocialMedia, URL?: string): Promise<URL> {
         const db = DbGetter.getDB();
         const q =
             `SELECT user_sweep_id\n` +
@@ -97,7 +97,7 @@ export class UserSweepService extends BaseService<user_sweep> {
                 break;
             }
             case URLClickTypes.share: {
-                this.ManageShare(user_sweep_id, social_media);
+                this.ManageShare(user_sweep_id, social_media, URL);
                 break;
             }
         }
@@ -280,16 +280,17 @@ export class UserSweepService extends BaseService<user_sweep> {
         return where;
     }
 
-    async ManageShare(user_sweep_id: number, social_media_id: SocialMedia) {
+    async ManageShare(user_sweep_id: number, social_media_id: SocialMedia, URL: string) {
         const db = DbGetter.getDB();
         let insert =
             `INSERT INTO sweepimp.sweep_share\n` +
             `    (user_sweep_id\n` +
             `    ,social_media_id\n` +
             `    ,share_date\n` +
+            `    ,share_url\n` +
             `    ,created\n` +
             `    ,updated)\n`+
-            `SELECT $<user_sweep_id>, $<social_media_id>, current_timestamp, current_timestamp, current_timestamp`;
+            `SELECT $<user_sweep_id>, $<social_media_id>, current_timestamp, $<URL>, current_timestamp, current_timestamp`;
         const update =
             `UPDATE sweepimp.user_sweep\n` +
             `   SET total_shares = coalesce(total_shares, 0) + 1\n` +
@@ -297,7 +298,7 @@ export class UserSweepService extends BaseService<user_sweep> {
             `      ,updated = current_timestamp\n` +
             ` WHERE user_sweep_id = $<user_sweep_id>`;
             await db.tx(`share`, async DB => {
-                await DB.oneOrNone(insert, { user_sweep_id: user_sweep_id, social_media_id: social_media_id });
+                await DB.oneOrNone(insert, { user_sweep_id: user_sweep_id, social_media_id: social_media_id, URL: URL });
                 await DB.oneOrNone(update, { user_sweep_id: user_sweep_id });
             });
     }

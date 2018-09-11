@@ -3,13 +3,13 @@
 </button>
 <ng-container *ngIf="sweep.is_referral">
     <share-button *ngIf="getUserSocialMediaEnabled(SocialMedia.Facebook)" button="facebook" [url]="fixURL(sweep.sweep_url)"
-                  [size]="-8" (opened)="sweepShared.emit(SocialMedia.Facebook)"></share-button>
+                  [size]="-8" (opened)="sweepShared.emit({media: SocialMedia.Facebook, URL: fixURL(sweep.sweep_url)})"></share-button>
     <share-button *ngIf="getUserSocialMediaEnabled(SocialMedia.Twitter)" button="twitter" [url]="fixURL(sweep.sweep_url)"
-                  [size]="-8" (opened)="sweepShared.emit(SocialMedia.Twitter)"></share-button>
+                  [size]="-8" (opened)="sweepShared.emit({media: SocialMedia.Twitter, URL: fixURL(sweep.sweep_url)})"></share-button>
     <share-button *ngIf="getUserSocialMediaEnabled(SocialMedia.Google)" button="google" [url]="fixURL(sweep.sweep_url)"
-                  [size]="-8" (opened)="sweepShared.emit(SocialMedia.Google)"></share-button>
+                  [size]="-8" (opened)="sweepShared.emit({media: SocialMedia.Google, URL: fixURL(sweep.sweep_url)})"></share-button>
     <share-button *ngIf="getUserSocialMediaEnabled(SocialMedia.Linkedin)" button="linkedin" [url]="fixURL(sweep.sweep_url)"
-                  [size]="-8" (opened)="sweepShared.emit(SocialMedia.Linkedin)"></share-button>
+                  [size]="-8" (opened)="sweepShared.emit({media: SocialMedia.Linkedin, URL: fixURL(sweep.sweep_url)})"></share-button>
     <share-button *ngIf="getUserSocialMediaEnabled(SocialMedia.Pinterest)" button="pinterest" [url]="fixURL(sweep.sweep_url)"
-                  [size]="-8" (opened)="sweepShared.emit(SocialMedia.Pinterest)"></share-button>
+                  [size]="-8" (opened)="sweepShared.emit({media: SocialMedia.Pinterest, URL: fixURL(sweep.sweep_url)})"></share-button>
 </ng-container>

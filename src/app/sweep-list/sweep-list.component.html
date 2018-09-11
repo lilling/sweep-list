@@ -24,7 +24,7 @@
                     </ng-container>
                 </div>
                 <app-sweep-actions mat-line class="list-item-third" [sweep]="sweep.data" [smBitmap]="user.enabled_social_media_bitmap"
-                                   (sweepShared)="sweepsActions.shareSweep({sweep_id: sweep.data.user_sweep_id, social_media: $event})"
+                                   (sweepShared)="sweepsActions.shareSweep({sweep_id: sweep.data.user_sweep_id, social_media: $event.media, URL: $event.URL})"
                                    (sweepEntered)="sweepsActions.enterSweep(sweep.data.user_sweep_id)"></app-sweep-actions>
                 <mat-icon class="edit-sweep" (click)="router.navigate(['edit', sweep.data.user_sweep_id])">edit</mat-icon>
             </mat-list-item>

@@ -66,10 +66,10 @@ export class SweepsEpics extends BaseEpic {
     }
 
     @Epic
-    shareSweep(action$: ActionsObservable<TypedAction<{sweep_id: number, social_media: SocialMedia}>>) {
+    shareSweep(action$: ActionsObservable<TypedAction<{sweep_id: number, social_media: SocialMedia, URL: string}>>) {
         return action$.ofType(SweepsActions.SHARE_SWEEP)
             .switchMap(action => {
-                return this.sweepsService.shareSweep(action.payload).pipe(
+                return this.sweepsService.shareSweep(action.payload.sweep_id, action.payload.social_media, action.payload.URL).pipe(
                     map(res => {
                         return { type: SweepsActions.SHARE_SWEEP_COMPLETED, payload: action.payload };
                     }),

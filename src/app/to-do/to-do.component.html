@@ -46,7 +46,7 @@ window.twttr = (function(d, s, id) {
                             <div mat-line class="grid-container">
                                 <div class="sweep-name" style="text-align: center"> {{sweep.data.sweep_name}}</div>
                                 <app-sweep-actions [sweep]="sweep.data" [smBitmap]="user.enabled_social_media_bitmap" style="text-align: center"
-                                                   (sweepShared)="sweepsActions.shareSweep({sweep_id: sweep.data.user_sweep_id, social_media: $event})"
+                                                   (sweepShared)="sweepsActions.shareSweep({sweep_id: sweep.data.user_sweep_id, social_media: $event.media, URL: $event.URL})"
                                                    (sweepEntered)="sweepsActions.enterSweep(sweep.data.user_sweep_id)"></app-sweep-actions>
                                 <div style="text-align: center">
                                     <ng-container *ngIf="sweep.data.is_frequency">{{ nextEntry(sweep) }}</ng-container>
