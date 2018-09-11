@@ -58,6 +58,10 @@ export class SweepActionsComponent {
                 break;
             }
         }
-        return !!(this.smBitmap & SM) && !smLastVisit || smLastVisit.toDateString() !== this.currentDate.toDateString();
+        if (!smLastVisit){
+            return !!(this.smBitmap & SM);
+        } else {
+            return smLastVisit.toDateString() !== this.currentDate.toDateString();
+        }
     }
 }
