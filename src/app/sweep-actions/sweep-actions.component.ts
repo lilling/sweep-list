@@ -24,13 +24,16 @@ export class SweepActionsComponent {
 
     openUrl(urlToOpen: string) {
         this.sweepEntered.emit();
+        window.open(this.fixURL(urlToOpen), '_blank');
+    }
+
+    fixURL(urlToOpen: string):string{
         let url = '';
         if (!/^http[s]?:\/\//.test(urlToOpen)) {
             url += 'http://';
         }
-
         url += urlToOpen;
-        window.open(url, '_blank');
+        return url;
     }
 
     getUserSocialMediaEnabled(SM: SocialMedia): boolean {
