@@ -72,7 +72,7 @@ export class EditSweepComponent implements OnInit {
     }
 
     canSaveSweep() {
-        if (!this.step1Valid || !this.stepWonValid || (this.sweep.is_frequency && !this.step2Valid) ||
+        if (!this.step1Valid || (this.stepWonValid !== undefined && !this.stepWonValid) || (this.sweep.is_frequency && !this.step2Valid) ||
             (this.sweep.is_referral && !this.step3Valid) || (this.thankReferrer && !this.step4Valid)) {
             return false;
         }
@@ -89,7 +89,7 @@ export class EditSweepComponent implements OnInit {
         this.location.back();
     }
 
-    isEnded(){
+    isEnded() {
         return this.sweep.end_date.getTime() < Date.now();
     }
 }
