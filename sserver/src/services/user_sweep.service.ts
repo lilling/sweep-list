@@ -177,13 +177,6 @@ export class UserSweepService extends BaseService<user_sweep> {
            `              OR ` + (this.isSMenabled(search.enabled_social_media_bitmap, SocialMedia.Google)    ? this.BuildSingleTiming(status, `google`   ) : `null`) + `\n` +
            `              OR ` + (this.isSMenabled(search.enabled_social_media_bitmap, SocialMedia.Linkedin)  ? this.BuildSingleTiming(status, `linkedin` ) : `null`) + `\n` +
            `              OR ` + (this.isSMenabled(search.enabled_social_media_bitmap, SocialMedia.Pinterest) ? this.BuildSingleTiming(status, `pinterest`) : `null`) + `\n` +
-           (status === `today` ?
-           `              OR (   last_facebook_share IS NULL\n` +
-           `                 AND last_twitter_share IS NULL\n` +
-           `                 AND last_google_share IS NULL\n` +
-           `                 AND last_linkedin_share IS NULL\n` +
-           `                 AND last_pinterest_share IS NULL)\n`
-           : ``) +
            `              )\n` +
            `          )\n` +
            `       )`;
@@ -208,7 +201,8 @@ export class UserSweepService extends BaseService<user_sweep> {
         }
         switch (status) {
             case `today`: {
-                ret = `date_trunc('DAY', ` + checkColumn + `) + (interval '1 DAY' * ` + freqColumn + `) <= date_trunc('DAY', current_timestamp)`;
+                ret = `date_trunc('DAY', ` + checkColumn + `) + (interval '1 DAY' * ` + freqColumn + `) <= date_trunc('DAY', current_timestamp)\n` +
+`              OR ` + checkColumn + ` IS NULL`;
                 break;
             }
             case `tomorrow`: {
