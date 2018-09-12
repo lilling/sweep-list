@@ -103,6 +103,12 @@ export function sweepsReducer(state: SweepsState = INITIAL_SWEEPS_STATE, action:
                 sweeps: state.sweeps.updateItem(action.payload)
             };
         }
+        case SweepsActions.REMOVE_SWEEP_FROM_LIST: {
+            return {
+                ...state,
+                sweeps: state.sweeps.deleteItem(action.payload)
+            };
+        }
         default:
             return state;
     }

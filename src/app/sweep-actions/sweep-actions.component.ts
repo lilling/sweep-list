@@ -16,6 +16,7 @@ export class SweepActionsComponent {
     @Input() sweep: user_sweep;
     @Output() sweepEntered = new EventEmitter();
     @Output() sweepShared = new EventEmitter<SocialMedia>();
+    @Output() sweepEnded = new EventEmitter<number>();
     SocialMedia = SocialMedia;
     EnumValues = EnumValues;
     currentDate: Date;
@@ -31,6 +32,7 @@ export class SweepActionsComponent {
 
     openUrl(urlToOpen: string) {
         this.sweepEntered.emit();
+        this.fireSweepEndedIfNeeded();
         let url = '';
         if (!/^http[s]?:\/\//.test(urlToOpen)) {
             url += 'http://';
@@ -42,6 +44,13 @@ export class SweepActionsComponent {
 
     shareSweep(SM: SocialMedia) {
         this.sweepShared.emit(SM);
+        this.fireSweepEndedIfNeeded(SM);
+    }
+
+    fireSweepEndedIfNeeded(selectedSM?: SocialMedia) {
+        if (!this.isVisitUrlEnabled() && !EnumValues.getValues<SocialMedia>(SocialMedia).filter(sm => sm !== selectedSM).some(sm => this.getUserSocialMediaEnabled(sm))) {
+            this.sweepEnded.emit(this.sweep.user_sweep_id);
+        }
     }
 
     getUserSocialMediaEnabled(SM: SocialMedia): boolean {
