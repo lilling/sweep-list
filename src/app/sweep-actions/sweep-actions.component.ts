@@ -1,5 +1,6 @@
 import { Component, Input, EventEmitter, Output } from '@angular/core';
 //
+import { EnumValues } from 'enum-values';
 import { ShareButtons } from '@ngx-share/core';
 //
 import { user_sweep } from '../../../shared/classes';
@@ -16,10 +17,16 @@ export class SweepActionsComponent {
     @Output() sweepEntered = new EventEmitter();
     @Output() sweepShared = new EventEmitter<SocialMedia>();
     SocialMedia = SocialMedia;
+    EnumValues = EnumValues;
     currentDate: Date;
 
     constructor(public share: ShareButtons) {
         this.currentDate = new Date();
+    }
+
+    isVisitUrlEnabled() {
+        return this.sweep.is_frequency &&
+            (!this.sweep.last_entry_date || this.sweep.last_entry_date.toDateString() !== this.currentDate.toDateString());
     }
 
     openUrl(urlToOpen: string) {
@@ -31,6 +38,10 @@ export class SweepActionsComponent {
 
         url += urlToOpen;
         window.open(url, '_blank');
+    }
+
+    shareSweep(SM: SocialMedia) {
+        this.sweepShared.emit(SM);
     }
 
     getUserSocialMediaEnabled(SM: SocialMedia): boolean {
