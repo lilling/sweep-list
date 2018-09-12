@@ -45,6 +45,11 @@ export function sweepsReducer(state: SweepsState = INITIAL_SWEEPS_STATE, action:
         }
         case SweepsActions.SHARE_SWEEP_COMPLETED: {
             const sweep = state.sweeps.getItem(action.payload.sweep_id);
+
+            if (!sweep) {
+                return state;
+            }
+
             switch (action.payload.social_media) {
                 case SocialMedia.Twitter: {
                     sweep.last_twitter_share = new Date();

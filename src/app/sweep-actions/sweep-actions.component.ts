@@ -15,7 +15,7 @@ export class SweepActionsComponent {
     @Input() smBitmap: number;
     @Input() sweep: user_sweep;
     @Output() sweepEntered = new EventEmitter();
-    @Output() sweepShared = new EventEmitter<SocialMedia>();
+    @Output() sweepShared = new EventEmitter<{media: SocialMedia, URL: string}>();
     @Output() sweepEnded = new EventEmitter<number>();
     SocialMedia = SocialMedia;
     EnumValues = EnumValues;
@@ -33,29 +33,32 @@ export class SweepActionsComponent {
     openUrl(urlToOpen: string) {
         this.sweepEntered.emit();
         this.fireSweepEndedIfNeeded();
+        window.open(this.fixURL(urlToOpen), '_blank');
+    }
+
+    fixURL(urlToOpen: string):string{
         let url = '';
         if (!/^http[s]?:\/\//.test(urlToOpen)) {
             url += 'http://';
         }
-
         url += urlToOpen;
-        window.open(url, '_blank');
+        return url;
     }
 
     shareSweep(SM: SocialMedia) {
-        this.sweepShared.emit(SM);
+        this.sweepShared.emit({media: SM, URL: this.fixURL(this.sweep.sweep_url)});
         this.fireSweepEndedIfNeeded(SM);
     }
 
     fireSweepEndedIfNeeded(selectedSM?: SocialMedia) {
-        if (!this.isVisitUrlEnabled() && !EnumValues.getValues<SocialMedia>(SocialMedia).filter(sm => sm !== selectedSM).some(sm => this.getUserSocialMediaEnabled(sm))) {
+        if (!this.isVisitUrlEnabled() &&
+            !EnumValues.getValues<SocialMedia>(SocialMedia).filter(sm => sm !== selectedSM).some(sm => this.getUserSocialMediaEnabled(sm))) {
             this.sweepEnded.emit(this.sweep.user_sweep_id);
         }
     }
 
     getUserSocialMediaEnabled(SM: SocialMedia): boolean {
         let smLastVisit: Date;
-        // this.currentTime
         switch (SM) {
             case SocialMedia.Linkedin: {
                 smLastVisit = this.sweep.last_linkedin_share;
@@ -78,6 +81,10 @@ export class SweepActionsComponent {
                 break;
             }
         }
-        return !!(this.smBitmap & SM) && !smLastVisit || smLastVisit.toDateString() !== this.currentDate.toDateString();
+        if (!smLastVisit){
+            return !!(this.smBitmap & SM);
+        } else {
+            return smLastVisit.toDateString() !== this.currentDate.toDateString();
+        }
     }
 }

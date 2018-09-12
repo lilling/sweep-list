@@ -42,7 +42,7 @@ export class SweepsActions {
         this.ngRedux.dispatch({ type: SweepsActions.ENTER_SWEEP, payload: sweep_id });
     }
 
-    shareSweep(payload: {sweep_id: number, social_media: SocialMedia}) {
+    shareSweep(payload: {sweep_id: number, social_media: SocialMedia, URL: string}) {
         this.ngRedux.dispatch({ type: SweepsActions.SHARE_SWEEP, payload });
     }
 

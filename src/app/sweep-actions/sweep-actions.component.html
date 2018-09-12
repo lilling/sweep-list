@@ -3,8 +3,8 @@
 </button>
 <ng-container *ngIf="sweep.is_referral">
     <ng-container *ngFor="let sm of EnumValues.getNames(SocialMedia)">
-        <share-button *ngIf="getUserSocialMediaEnabled(SocialMedia[sm])" [button]="sm.toLowerCase()" [url]="sweep.sweep_url" [size]="-8"
-                      (opened)="shareSweep(SocialMedia[sm])">
+        <share-button *ngIf="getUserSocialMediaEnabled(SocialMedia[sm])" [button]="sm.toLowerCase()" [url]="fixURL(sweep.sweep_url)"
+                      [size]="-8" (opened)="shareSweep(SocialMedia[sm])">
         </share-button>
     </ng-container>
 </ng-container>
