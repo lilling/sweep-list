@@ -26,6 +26,7 @@
       .grid-container {
         display: grid;
         grid-template-columns: 33% 33% 33%;
+        grid-template-rows: 50px;
         padding: 10px;
         text-align: center;
 
@@ -36,6 +37,10 @@
         }
         .sweep-data {
           color: gray;
+        }
+
+        app-sweep-actions {
+          overflow: auto;
         }
       }
       .list-item-second {
@@ -86,7 +91,7 @@
 
     .whole-screen{
       position:fixed;
-      padding:calc(43px + 48px), 0;
+      padding:calc(43px + 48px);
       margin:0;
       top:calc(43px + 48px);
       left:0;
