@@ -41,6 +41,16 @@
   flex-direction: column;
 }
 
+mat-list-item {
+  &.auto-height {
+    height: auto !important;
+  }
+
+  &:nth-child(odd) {
+    background: lightgray;
+  }
+}
+
 ::ng-deep .mat-slide-toggle.mat-primary.mat-checked:not(.mat-disabled) {
   .mat-slide-toggle-thumb {
     background-color: $main-color;

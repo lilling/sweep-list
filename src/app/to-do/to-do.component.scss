@@ -26,7 +26,6 @@
       .grid-container {
         display: grid;
         grid-template-columns: 33% 33% 33%;
-        grid-template-rows: 50px;
         padding: 10px;
         text-align: center;
 
@@ -40,7 +39,12 @@
         }
 
         app-sweep-actions {
-          overflow: auto;
+          white-space: initial;
+        }
+
+        .frequency-data {
+          align-self: center;
+          white-space: initial;
         }
       }
       .list-item-second {
