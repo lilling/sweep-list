@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 import { Router, ActivatedRoute } from '@angular/router';
-import {Location} from '@angular/common';
+import { Location } from '@angular/common';
 //
 import { MatIconRegistry, MatSlideToggleChange, MatExpansionPanel } from '@angular/material';
 import { NgRedux } from '@angular-redux/store';
@@ -77,10 +77,10 @@ export class EditSweepComponent extends Subscriber implements OnInit {
 
     canSaveSweep() {
         return !(!this.step1Valid ||
-                 (this.stepWonValid !== undefined && !this.stepWonValid) ||
-                 (this.sweep.is_frequency && !this.step2Valid) ||
-                 (this.sweep.is_referral && !this.step3Valid) ||
-                 (this.thankReferrer && !this.step4Valid));
+            (this.stepWonValid !== undefined && !this.stepWonValid) ||
+            (this.sweep.is_frequency && !this.step2Valid) ||
+            (this.sweep.is_referral && !this.step3Valid) ||
+            (this.thankReferrer && !this.step4Valid));
     }
 
     saveSweep() {
