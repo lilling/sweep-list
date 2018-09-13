@@ -5,7 +5,6 @@ import { Router } from '@angular/router';
 import { Observable } from 'rxjs/Observable';
 import { NgRedux, select } from '@angular-redux/store';
 import { combineLatest } from 'rxjs/observable/combineLatest';
-import { Subscription } from 'rxjs/Subscription';
 //
 import { AddSweepComponent } from '../add-sweep/add-sweep.component';
 import { user_sweep, user_account } from '../../../shared/classes';
@@ -14,13 +13,14 @@ import { SweepsActions } from '../state/sweeps/sweeps.actions';
 import { SweepsMode } from '../state/sweeps/sweeps.state';
 import { SweepsService } from '../services/sweeps.service';
 import { LocalStorageKeys } from '../models/local-storage-keys.enum';
+import { Subscriber } from '../classes/subscriber';
 
 @Component({
     selector: 'app-sweep-list',
     templateUrl: 'sweep-list.component.html',
     styleUrls: ['sweep-list.component.scss']
 })
-export class SweepListComponent implements OnInit {
+export class SweepListComponent extends Subscriber implements OnInit {
     @select((state: AppState) => state.sweepsState.isSweepsLoading)
     isSweepsLoading$: Observable<boolean>;
     user: user_account;
@@ -28,7 +28,6 @@ export class SweepListComponent implements OnInit {
         data: user_sweep,
         text: string
     }[];
-    subscriptions: { [index: string]: Subscription };
     Date = Date;
     userAccountId: AAGUID;
 
@@ -37,6 +36,7 @@ export class SweepListComponent implements OnInit {
                 public sweepsService: SweepsService,
                 public sweepsActions: SweepsActions,
                 private ngRedux: NgRedux<AppState>) {
+        super();
     }
 
     ngOnInit() {

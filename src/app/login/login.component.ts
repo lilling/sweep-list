@@ -16,13 +16,14 @@ import { IClientError } from '../../../shared/classes/client-error.interface';
 import { ErrorActions } from '../state/common/errors/error.actions';
 import { EnumValues } from 'enum-values';
 import { user_account } from '../../../shared/classes';
+import { Subscriber } from '../classes/subscriber';
 
 @Component({
     selector: 'app-login',
     templateUrl: 'login.component.html',
     styleUrls: ['login.component.scss']
 })
-export class LoginComponent implements OnInit {
+export class LoginComponent extends Subscriber implements OnInit {
     SocialMedia = SocialMedia;
     EnumValues = EnumValues;
     phaseTwo: boolean;
@@ -46,20 +47,23 @@ export class LoginComponent implements OnInit {
                 private ngRedux: NgRedux<AppState>,
                 private router: Router,
                 private loginActions: LoginActions) {
-        this.ngRedux.select(state => state.loginState.user).subscribe(user => {
-            if (user) {
-                this.user = user;
-                const temp = this.ngRedux.getState().loginState.isNew;
-                if (temp) {
-                    this.phaseTwo = true;
-                    this.isNewUser = this.ngRedux.getState().loginState.isNew;
-                } else {
-                    localStorage.setItem(LocalStorageKeys.loggedUser, user.user_account_id);
-                    this.router.navigate(this.isNewUser && !temp ? ['/list'] : ['/todo', 1]);
-                    this.isNewUser = temp;
-                }
-            }
-        });
+        super();
+        this.subscriptions = {
+          user: this.ngRedux.select(state => state.loginState.user).subscribe(user => {
+              if (user) {
+                  this.user = user;
+                  const temp = this.ngRedux.getState().loginState.isNew;
+                  if (temp) {
+                      this.phaseTwo = true;
+                      this.isNewUser = this.ngRedux.getState().loginState.isNew;
+                  } else {
+                      localStorage.setItem(LocalStorageKeys.loggedUser, user.user_account_id);
+                      this.router.navigate(this.isNewUser && !temp ? ['/list'] : ['/todo', 1]);
+                      this.isNewUser = temp;
+                  }
+              }
+          })
+        };
     }
 
     isEmail(email: string) {

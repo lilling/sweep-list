@@ -1,10 +1,8 @@
-import { Component, OnInit, OnDestroy, AfterViewInit } from '@angular/core';
+import { Component, OnInit, AfterViewInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { MatDialog } from '@angular/material';
 //
-import * as _ from 'lodash';
 import { NgRedux, select } from '@angular-redux/store';
-import { Subscription } from 'rxjs/Subscription';
 import { Observable } from 'rxjs/Observable';
 import { combineLatest } from 'rxjs/observable/combineLatest';
 //
@@ -16,13 +14,14 @@ import { SweepsMode } from '../state/sweeps/sweeps.state';
 import { AppState } from '../state/store';
 import { AddSweepComponent } from '../add-sweep/add-sweep.component';
 import { WinPopupComponent } from '../win-popup/win-popup.component';
+import { Subscriber } from '../classes/subscriber';
 
 @Component({
     selector: 'app-to-do',
     templateUrl: 'to-do.component.html',
     styleUrls: ['to-do.component.scss']
 })
-export class ToDoComponent implements OnInit, AfterViewInit, OnDestroy {
+export class ToDoComponent extends Subscriber implements OnInit, AfterViewInit {
 
     @select((state: AppState) => state.sweepsState.isSweepsLoading)
     isSweepsLoading$: Observable<boolean>;
@@ -30,7 +29,6 @@ export class ToDoComponent implements OnInit, AfterViewInit, OnDestroy {
         data: user_sweep,
         text: string
     }[];
-    subscriptions: { [index: string]: Subscription };
     mode: SweepsMode;
     user: user_account;
     userAccountId: AAGUID;
@@ -41,6 +39,7 @@ export class ToDoComponent implements OnInit, AfterViewInit, OnDestroy {
                 private activatedRoute: ActivatedRoute,
                 private sweepsActions: SweepsActions,
                 private router: Router) {
+        super();
     }
 
     ngOnInit() {
@@ -143,10 +142,6 @@ export class ToDoComponent implements OnInit, AfterViewInit, OnDestroy {
 
     unwinSweep(user_sweep_id: number) {
         this.dialog.open(WinPopupComponent, {data:{winAction: 'unwin', userSweepId: user_sweep_id}});
-    }
-
-    ngOnDestroy() {
-        _.forOwn(this.subscriptions, subscription => subscription.unsubscribe());
     }
 
     private addScrollEventHandler(): void {

@@ -10,13 +10,14 @@ import { AppState } from '../state/store';
 import { user_sweep } from '../../../shared/classes';
 import { SocialMedia } from '../../../shared/models/social-media.enum';
 import { SweepsActions } from '../state/sweeps/sweeps.actions';
+import { Subscriber } from '../classes/subscriber';
 
 @Component({
     selector: 'app-edit-sweep',
     templateUrl: 'edit-sweep.component.html',
     styleUrls: ['edit-sweep.component.scss']
 })
-export class EditSweepComponent implements OnInit {
+export class EditSweepComponent extends Subscriber implements OnInit {
 
     sweep: user_sweep;
     SocialMedia = SocialMedia;
@@ -34,17 +35,20 @@ export class EditSweepComponent implements OnInit {
                 private route: ActivatedRoute,
                 iconRegistry: MatIconRegistry,
                 sanitizer: DomSanitizer) {
+        super();
         iconRegistry.addSvgIcon('contact-us', sanitizer.bypassSecurityTrustResourceUrl('assets/icons/contact-us.svg'));
     }
 
     ngOnInit() {
         const sweepId = +this.route.snapshot.params['id'];
-        this.ngRedux.select(state => state.sweepsState.sweeps).subscribe(sweeps => {
-            this.sweep = sweeps.getItem(sweepId);
-            if (this.sweep) {
-                this.thankReferrer = !!this.sweep.thanks_to;
-            }
-        });
+        this.subscriptions = {
+            sweeps: this.ngRedux.select(state => state.sweepsState.sweeps).subscribe(sweeps => {
+                this.sweep = sweeps.getItem(sweepId);
+                if (this.sweep) {
+                    this.thankReferrer = !!this.sweep.thanks_to;
+                }
+            })
+        };
     }
 
     changeIsFrequency(event: MatSlideToggleChange, panel: MatExpansionPanel) {
