@@ -6,6 +6,7 @@
             referrer name is required.
         </mat-error>
     </mat-form-field>
+    On:
     <mat-radio-group class="social-media-radio-group" [(ngModel)]="thanksSocialMediaId" name="referrerSocialMedia" id="referrerSocialMedia"
                      required #referrerSocialMedia="ngModel" [disabled]="disabled">
             <mat-radio-button class="social-media-radio-button" *ngFor="let socialMedia of socialMedias" [value]="socialMedia">
