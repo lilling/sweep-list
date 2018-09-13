@@ -1,0 +1,19 @@
+<div class="container">
+  <app-header [title]="'settings'"></app-header>
+  <ng-container *ngIf="!selectedSMs">
+    <div class="blocker"></div>
+    <i class="fa fa-spinner fa-spin centered"></i>
+  </ng-container>
+  <ng-container *ngIf="selectedSMs">
+    <div class="stacked-div">
+      <mat-slide-toggle *ngFor="let sm of EnumValues.getValues(SocialMedia)" [checked]="selectedSMs.get(+sm)" [color]="'primary'"
+                        (change)="selectedSMs.has(+sm) ? selectedSMs.delete(+sm) : selectedSMs.set(+sm, $event.checked)">
+        <span [style.color]="selectedSMs.get(+sm) ? 'black' : 'gray'">{{ SocialMedia[sm] }}</span>
+      </mat-slide-toggle>
+      <div class="buttons">
+        <button class="main-button" mat-button (click)="updateUserSms()">Save</button>
+        <button class="secondary-button" mat-button (click)="router.navigate(['/todo', 1])">Cancel</button>
+      </div>
+    </div>
+  </ng-container>
+</div>

@@ -23,6 +23,11 @@
   }
 }
 
+.secondary-button {
+  background: $main-color-foreground;
+  color: $main-color !important;
+}
+
 .clickable {
   cursor: pointer;
 

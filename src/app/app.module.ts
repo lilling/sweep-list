@@ -33,8 +33,9 @@ import { HeaderComponent } from './header/header.component';
 import { ContainerComponent } from './container/container.component';
 import { DeleteAccountComponent } from './delete-account/delete-account.component';
 import { SweepActionsComponent } from './sweep-actions/sweep-actions.component';
-import { WinPopupComponent } from './win-popup/win-popup.component'
-import { TextPopupComponent } from './text-popup/text-popup.component'
+import { WinPopupComponent } from './win-popup/win-popup.component';
+import { TextPopupComponent } from './text-popup/text-popup.component';
+import { SettingsComponent } from './components/settings/settings.component';
 
 const fbLoginOptions: LoginOpt = {
     scope: 'public_profile , email',
@@ -78,6 +79,7 @@ const SOCIAL_CONFIG = new AuthServiceConfig([
         SweepActionsComponent,
         WinPopupComponent,
         TextPopupComponent,
+        SettingsComponent,
         //SocialMediaLoginErrorComponent,
     ],
     imports: [

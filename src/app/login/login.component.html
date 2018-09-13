@@ -29,13 +29,11 @@
                     <span [style.color]="selectedSMs.get(+sm) ? 'black' : 'gray'">{{ SocialMedia[sm] }}</span>
                 </mat-slide-toggle>
             </div>
-
         </ng-container>
         <div class="regular-login-button" [style.justify-content]="(error$ | async) ? 'space-between' : 'flex-end'">
             <span class="error-message" *ngIf="error$ | async"> {{(error$ | async).error.error.message}} </span>
             <button class="main-button" mat-button (click)="!phaseTwo ? regularLogin(email, password, name) : updateUserSms()"
                     [disabled]="!phaseTwo && (!isEmail(email) || !password || (isRegister ? !name : false))">
-                <!--|| phaseTwo && !selectedSMs.size-->
                 {{phaseTwo ? 'Continue' : !isRegister ? 'Login' : 'Register'}}
             </button>
         </div>
