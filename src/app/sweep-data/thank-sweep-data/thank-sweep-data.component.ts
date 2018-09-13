@@ -1,24 +1,25 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
+//
+import { EnumValues } from 'enum-values';
+//
 import { SocialMedia } from '../../../../shared/models/social-media.enum';
-import { UsersService } from '../../services/users.service';
-import { LocalStorageKeys } from '../../models/local-storage-keys.enum';
-import { SocialMediaStatus } from '../../../../shared/models/social-media-status.enum';
 
 @Component({
     selector: 'app-thank-sweep-data',
     templateUrl: 'thank-sweep-data.component.html',
     styleUrls: ['thank-sweep-data.component.scss']
 })
-export class ThankSweepDataComponent {
+export class ThankSweepDataComponent implements OnInit {
 
+    @Input() smBitmap: number;
     @Input() disabled: boolean;
     @Output() thanksSocialMediaIdChange = new EventEmitter();
     @Output() thankToChange = new EventEmitter();
     @Output() isValidChange = new EventEmitter<boolean>();
+    smList: SocialMedia[];
     SocialMedia = SocialMedia;
-    socialMedias = [SocialMedia.Google, SocialMedia.Facebook];
     private thanks_To: string;
-    private selectedSocialMedia: number;
+    private selectedSocialMedia: SocialMedia;
 
     @Input() get thanksTo() {
         return this.thanks_To;
@@ -40,12 +41,16 @@ export class ThankSweepDataComponent {
         this.thanksSocialMediaIdChange.emit(this.selectedSocialMedia);
     }
 
-    constructor(private usersService: UsersService) {
-        const userAccountId = localStorage.getItem(LocalStorageKeys.loggedUser);
-    }
-
     private changeIsValid() {
         this.isValidChange.emit(!!this.thanksTo && ![null, undefined].includes(this.thanksSocialMediaId));
     }
 
+    ngOnInit(): void {
+        this.smList = EnumValues.getValues<SocialMedia>(SocialMedia).filter(sm => this.getUserSocialMediaEnabled(sm));
+        this.thanksSocialMediaId = Math.max(...this.smList);
+    }
+
+    getUserSocialMediaEnabled(SM: SocialMedia): boolean {
+        return !!(this.smBitmap & SM);
+    }
 }

@@ -7,6 +7,9 @@
 
 .social-media-radio-group {
   display: flex;
-  justify-content: space-between;
-  margin-bottom: 20px;
+  flex-direction: column;
+
+  .social-media-radio-button {
+    margin-bottom: 20px;
+  }
 }

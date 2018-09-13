@@ -1,10 +1,13 @@
 import { Component, Inject } from '@angular/core';
 //
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
+import { Observable } from 'rxjs/Observable';
+import { select } from '@angular-redux/store';
 //
 import { LocalStorageKeys } from '../models/local-storage-keys.enum';
-import { user_sweep } from '../../../shared/classes';
+import { user_sweep, user_account } from '../../../shared/classes';
 import { SweepsActions } from '../state/sweeps/sweeps.actions';
+import { AppState } from '../state/store';
 
 @Component({
     selector: 'app-add-sweep',
@@ -12,6 +15,8 @@ import { SweepsActions } from '../state/sweeps/sweeps.actions';
     styleUrls: ['add-sweep.component.scss']
 })
 export class AddSweepComponent {
+
+    @select((state: AppState) => state.loginState.user) user$: Observable<user_account>;
     newSweep: user_sweep;
     step: number;
     thankReferrer: boolean;

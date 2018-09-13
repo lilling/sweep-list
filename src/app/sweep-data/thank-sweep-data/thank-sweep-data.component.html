@@ -9,7 +9,7 @@
     On:
     <mat-radio-group class="social-media-radio-group" [(ngModel)]="thanksSocialMediaId" name="referrerSocialMedia" id="referrerSocialMedia"
                      required #referrerSocialMedia="ngModel" [disabled]="disabled">
-            <mat-radio-button class="social-media-radio-button" *ngFor="let socialMedia of socialMedias" [value]="socialMedia">
+            <mat-radio-button class="social-media-radio-button" *ngFor="let socialMedia of smList" [value]="socialMedia">
                 {{SocialMedia[socialMedia]}}
             </mat-radio-button>
     </mat-radio-group>

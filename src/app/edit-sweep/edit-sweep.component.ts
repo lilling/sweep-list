@@ -4,10 +4,11 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { Location } from '@angular/common';
 //
 import { MatIconRegistry, MatSlideToggleChange, MatExpansionPanel } from '@angular/material';
-import { NgRedux } from '@angular-redux/store';
+import { Observable } from 'rxjs/Observable';
+import { NgRedux, select } from '@angular-redux/store';
 //
 import { AppState } from '../state/store';
-import { user_sweep } from '../../../shared/classes';
+import { user_sweep, user_account } from '../../../shared/classes';
 import { SocialMedia } from '../../../shared/models/social-media.enum';
 import { SweepsActions } from '../state/sweeps/sweeps.actions';
 import { Subscriber } from '../classes/subscriber';
@@ -19,6 +20,7 @@ import { Subscriber } from '../classes/subscriber';
 })
 export class EditSweepComponent extends Subscriber implements OnInit {
 
+    @select((state: AppState) => state.loginState.user) user$: Observable<user_account>;
     sweep: user_sweep;
     SocialMedia = SocialMedia;
     thankReferrer: boolean;
