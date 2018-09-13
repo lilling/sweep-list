@@ -31,7 +31,7 @@ export class ThankSweepDataComponent {
     }
 
     @Input() get thanksSocialMediaId() {
-        return this.selectedSocialMedia + 1;
+        return this.selectedSocialMedia;
     }
 
     set thanksSocialMediaId(val: number) {
