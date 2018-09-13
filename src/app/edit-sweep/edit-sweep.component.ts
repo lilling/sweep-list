@@ -72,11 +72,11 @@ export class EditSweepComponent implements OnInit {
     }
 
     canSaveSweep() {
-        if (!this.step1Valid || (this.stepWonValid !== undefined && !this.stepWonValid) || (this.sweep.is_frequency && !this.step2Valid) ||
-            (this.sweep.is_referral && !this.step3Valid) || (this.thankReferrer && !this.step4Valid)) {
-            return false;
-        }
-        return true;
+        return !(!this.step1Valid ||
+                 (this.stepWonValid !== undefined && !this.stepWonValid) ||
+                 (this.sweep.is_frequency && !this.step2Valid) ||
+                 (this.sweep.is_referral && !this.step3Valid) ||
+                 (this.thankReferrer && !this.step4Valid));
     }
 
     saveSweep() {
