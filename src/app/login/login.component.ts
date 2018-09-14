@@ -75,11 +75,6 @@ export class LoginComponent extends Subscriber implements OnInit {
         this.errorActions.clearError(LoginActions.LOGIN);
     }
 
-    logoff() {
-        this.loginActions.logOff();
-        localStorage.clear();
-    }
-
     regularLogin(email: string, password: string, name: string) {
         this.errorActions.clearError(LoginActions.LOGIN);
         this.login({ regular: { email, password, name } });
