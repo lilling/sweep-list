@@ -5,7 +5,7 @@
         <mat-form-field *ngIf="data.winAction=='win'">
             <input matInput placeholder="Prize value" name="sprize" id="sprize" [(ngModel)]="prizeValue" #sprize="ngModel" pattern="^[1-9]\d*?$">
             <mat-error>Prize value should be a whole positive number</mat-error>
-            <mat-hint (click)="showExplanation()">What do my Sweep Imp use it for?</mat-hint>
+            <mat-hint class="clickable" (click)="showExplanation()">What do my Sweep Imp use it for?</mat-hint>
         </mat-form-field>
         <div *ngIf="data.winAction=='unwin'">
             Are you sure you didn't win?

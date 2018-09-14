@@ -14,7 +14,7 @@
                             <div mat-line class="grid-container">
                                 <div class="sweep-name" style="text-align: center"> {{sweep.data.sweep_name}}</div>
                                 <app-sweep-actions *ngIf="mode === 1" [sweep]="sweep.data" [smBitmap]="user.enabled_social_media_bitmap"
-                                                   (sweepEnded)="sweepsActions.removeSweepFromList($event)"
+                                                   (sweepTasksCompleted)="sweepsActions.removeSweepFromList($event)"
                                                    (sweepEntered)="sweepsActions.enterSweep(sweep.data.user_sweep_id)"
                                                    (sweepShared)="sweepsActions.shareSweep({sweep_id: sweep.data.user_sweep_id, social_media: $event.media, URL: $event.URL})">
                                 </app-sweep-actions>

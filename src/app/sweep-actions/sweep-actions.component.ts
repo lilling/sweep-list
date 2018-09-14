@@ -16,7 +16,7 @@ export class SweepActionsComponent {
     @Input() sweep: user_sweep;
     @Output() sweepEntered = new EventEmitter();
     @Output() sweepShared = new EventEmitter<{media: SocialMedia, URL: string}>();
-    @Output() sweepEnded = new EventEmitter<number>();
+    @Output() sweepTasksCompleted = new EventEmitter<number>();
     SocialMedia = SocialMedia;
     EnumValues = EnumValues;
     currentDate: Date;
@@ -32,7 +32,7 @@ export class SweepActionsComponent {
 
     openUrl(urlToOpen: string) {
         this.sweepEntered.emit();
-        this.fireSweepEndedIfNeeded();
+        this.firesweepTasksCompletedIfNeeded();
         window.open(this.fixURL(urlToOpen), '_blank');
     }
 
@@ -47,13 +47,13 @@ export class SweepActionsComponent {
 
     shareSweep(SM: SocialMedia) {
         this.sweepShared.emit({media: SM, URL: this.fixURL(this.sweep.sweep_url)});
-        this.fireSweepEndedIfNeeded(SM);
+        this.firesweepTasksCompletedIfNeeded(SM);
     }
 
-    fireSweepEndedIfNeeded(selectedSM?: SocialMedia) {
+    firesweepTasksCompletedIfNeeded(selectedSM?: SocialMedia) {
         if (!this.isVisitUrlEnabled() &&
             !EnumValues.getValues<SocialMedia>(SocialMedia).filter(sm => sm !== selectedSM).some(sm => this.getUserSocialMediaEnabled(sm))) {
-            this.sweepEnded.emit(this.sweep.user_sweep_id);
+            this.sweepTasksCompleted.emit(this.sweep.user_sweep_id);
         }
     }
 
@@ -84,7 +84,7 @@ export class SweepActionsComponent {
         if (!smLastVisit){
             return !!(this.smBitmap & SM);
         } else {
-            return smLastVisit.toDateString() !== this.currentDate.toDateString();
+            return (smLastVisit.toDateString() !== this.currentDate.toDateString() && !!(this.smBitmap & SM));
         }
     }
 }
