@@ -2,27 +2,31 @@
     <mat-sidenav #sidenav mode="over" [opened]="sideNav" (closedStart)="toggleSideNav()">
         <mat-nav-list>
             <a [routerLink]="['/todo', 1]" mat-list-item>
-                <mat-icon svgIcon="calendar-with-clock"></mat-icon>
-                Remember!
+                <mat-icon svgIcon="calendar"></mat-icon>
+                Sweep Actions
             </a>
             <a [routerLink]="['/list']" mat-list-item>
-                <mat-icon matListIcon fontSet="fa" fontIcon="fa-gift"></mat-icon>
+                <mat-icon svgIcon="gift"></mat-icon>
                 Active Sweeps
             </a>
+            <hr>
             <a [routerLink]="['/wins']" mat-list-item>
-                <mat-icon>star</mat-icon>
+                <mat-icon svgIcon="win"></mat-icon>
                 Wins Summary
             </a>
+            <hr>
             <a [routerLink]="['/settings']" mat-list-item>
-                <mat-icon matListIcon>settings</mat-icon>
+                <mat-icon svgIcon="settings"></mat-icon>
                 Settings
             </a>
             <a href="mailto:support@sweepimp.com" mat-list-item>
-                <mat-icon matListIcon>feedback</mat-icon>
+                <mat-icon svgIcon="feedback"></mat-icon>
                 Help & Feedback
             </a>
+            <a mat-list-item>
+            </a>
             <a (click)="logoff()" mat-list-item>
-                <mat-icon matListIcon>power_setting_new</mat-icon>
+                <mat-icon svgIcon="power"></mat-icon>
                 Logoff
             </a>
         </mat-nav-list>

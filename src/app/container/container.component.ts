@@ -1,8 +1,6 @@
 import { Component } from '@angular/core';
-import { DomSanitizer } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 //
-import { MatIconRegistry } from '@angular/material';
 import { select } from '@angular-redux/store';
 import { Observable } from 'rxjs/Observable';
 //
@@ -21,12 +19,9 @@ export class ContainerComponent {
     sideNavState: Observable<boolean>;
     sideNav: boolean;
 
-    constructor(iconRegistry: MatIconRegistry,
-                sanitizer: DomSanitizer,
-                private commonActions: CommonActions,
+    constructor(private commonActions: CommonActions,
                 private loginActions: LoginActions,
                 private router: Router) {
-        iconRegistry.addSvgIcon('calendar-with-clock', sanitizer.bypassSecurityTrustResourceUrl('assets/icons/calendar-with-clock.svg'));
 
         this.sideNavState.subscribe(sideNav => {
             this.sideNav = sideNav;
