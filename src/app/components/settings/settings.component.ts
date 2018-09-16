@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { MatDialog } from '@angular/material';
 //
 import { EnumValues } from 'enum-values';
 import { NgRedux } from '@angular-redux/store';
@@ -10,6 +11,7 @@ import { LoginActions } from '../../state/login/login.actions';
 import { Subscriber } from '../../classes/subscriber';
 import { AppState } from '../../state/store';
 import { user_account } from '../../../../shared/classes';
+import { DeleteAccountComponent } from '../../delete-account/delete-account.component';
 
 @Component({
     selector: 'app-settings',
@@ -24,7 +26,8 @@ export class SettingsComponent extends Subscriber implements OnInit {
 
     constructor(private router: Router,
                 private ngRedux: NgRedux<AppState>,
-                private loginActions: LoginActions) {
+                private loginActions: LoginActions,
+                public dialog: MatDialog) {
         super();
     }
 
@@ -49,5 +52,9 @@ export class SettingsComponent extends Subscriber implements OnInit {
     updateUserSms() {
         this.loginActions.updateUser({ ...this.user, enabled_social_media_bitmap: _.sum(Array.from(this.selectedSMs.keys())) });
         this.router.navigate(['/todo', 1]);
+    }
+
+    deleteAccount() {
+        this.dialog.open(DeleteAccountComponent);
     }
 }

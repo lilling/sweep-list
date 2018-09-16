@@ -1,12 +1,12 @@
 import { Component } from '@angular/core';
-import { DomSanitizer } from '@angular/platform-browser';
+import { Router } from '@angular/router';
 //
-import { MatIconRegistry } from '@angular/material';
 import { select } from '@angular-redux/store';
 import { Observable } from 'rxjs/Observable';
 //
 import { AppState } from '../state/store';
 import { CommonActions } from '../state/common/common.actions';
+import { LoginActions } from '../state/login/login.actions';
 
 @Component({
     selector: 'app-container',
@@ -19,10 +19,9 @@ export class ContainerComponent {
     sideNavState: Observable<boolean>;
     sideNav: boolean;
 
-    constructor(iconRegistry: MatIconRegistry,
-                sanitizer: DomSanitizer,
-                private commonActions: CommonActions) {
-        iconRegistry.addSvgIcon('calendar-with-clock', sanitizer.bypassSecurityTrustResourceUrl('assets/icons/calendar-with-clock.svg'));
+    constructor(private commonActions: CommonActions,
+                private loginActions: LoginActions,
+                private router: Router) {
 
         this.sideNavState.subscribe(sideNav => {
             this.sideNav = sideNav;
@@ -33,5 +32,11 @@ export class ContainerComponent {
         if (this.sideNav) {
             this.commonActions.toggleSideNav();
         }
+    }
+
+    logoff() {
+        this.loginActions.logOff();
+        localStorage.clear();
+        location.reload();
     }
 }

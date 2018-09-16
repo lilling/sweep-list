@@ -6,14 +6,16 @@
   </ng-container>
   <ng-container *ngIf="selectedSMs">
     <div class="stacked-div">
+      <h4>Which social medias do you use for sweeping?</h4>
       <mat-slide-toggle *ngFor="let sm of EnumValues.getValues(SocialMedia)" [checked]="selectedSMs.get(+sm)" [color]="'primary'"
                         (change)="selectedSMs.has(+sm) ? selectedSMs.delete(+sm) : selectedSMs.set(+sm, $event.checked)">
         <span [style.color]="selectedSMs.get(+sm) ? 'black' : 'gray'">{{ SocialMedia[sm] }}</span>
       </mat-slide-toggle>
       <div class="buttons">
-        <button class="main-button" mat-button (click)="updateUserSms()">Save</button>
-        <button class="secondary-button" mat-button (click)="router.navigate(['/todo', 1])">Cancel</button>
+        <button class="secondary-button" mat-button (click)="router.navigate(['/todo', 1])">CANCEL</button>
+        <button class="main-button" mat-button (click)="updateUserSms()">SAVE</button>
       </div>
+      <table><tr><td nowrap><div *ngIf="user" class="delete-account clickable" (click)="deleteAccount()">Delete my account</div></td><td style="width: 100%"></td></tr></table>
     </div>
   </ng-container>
 </div>

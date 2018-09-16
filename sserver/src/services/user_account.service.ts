@@ -29,7 +29,7 @@ export class UserAccountService extends BaseService<user_account> {
     async Login(account_param: ExtandedSocialUser): Promise<{ user: user_account, isNew?: boolean }> {
         const db = DbGetter.getDB();
         const q =
-            `SELECT user_account_id, first_name, last_name, email, photo_url\n` +
+            `SELECT user_account_id, first_name, last_name, email, photo_url, enabled_social_media_bitmap\n` +
             `  FROM sweepimp.user_account\n` +
             ` WHERE is_deleted = false\n` +
             `   AND email = $<email>\n` +

@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 //
 import { AuthService, FacebookLoginProvider, GoogleLoginProvider, SocialUser } from 'angularx-social-login';
-import { MatDialog } from '@angular/material';
 import { NgRedux, select } from '@angular-redux/store';
 import { Observable } from 'rxjs/Observable';
 import * as _ from 'lodash';
@@ -10,7 +9,6 @@ import * as _ from 'lodash';
 import { LocalStorageKeys } from '../models/local-storage-keys.enum';
 import { LoginActions } from '../state/login/login.actions';
 import { AppState } from '../state/store';
-import { DeleteAccountComponent } from '../delete-account/delete-account.component';
 import { SocialMedia } from '../../../shared/models/social-media.enum';
 import { IClientError } from '../../../shared/classes/client-error.interface';
 import { ErrorActions } from '../state/common/errors/error.actions';
@@ -41,7 +39,6 @@ export class LoginComponent extends Subscriber implements OnInit {
     @select((state: AppState) => state.commonState.errorState.errorMap[LoginActions.LOGIN]) error$: Observable<IClientError>;
 
     constructor(private authService: AuthService,
-                public dialog: MatDialog,
                 private activatedRoute: ActivatedRoute,
                 private errorActions: ErrorActions,
                 private ngRedux: NgRedux<AppState>,
@@ -76,11 +73,6 @@ export class LoginComponent extends Subscriber implements OnInit {
         this.email = '';
         this.name = '';
         this.errorActions.clearError(LoginActions.LOGIN);
-    }
-
-    logoff() {
-        this.loginActions.logOff();
-        localStorage.clear();
     }
 
     regularLogin(email: string, password: string, name: string) {
@@ -122,10 +114,6 @@ export class LoginComponent extends Subscriber implements OnInit {
                 this.goToList();
             }
         }
-    }
-
-    deleteAccount() {
-        this.dialog.open(DeleteAccountComponent);
     }
 
     private login(model: { regular?: { email: string, password: string, name: string }, user?: SocialUser }) {
