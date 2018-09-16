@@ -12,12 +12,14 @@
                         <mat-list-item class="auto-height" *ngFor="let sweep of sweeps" [ngClass]="{'deleted': sweep.data.deleted_yn}">
                             <mat-icon matListIcon fontSet="fa" fontIcon="fa-gift"></mat-icon>
                             <div mat-line class="grid-container">
-                                <div class="sweep-name" style="text-align: center"> {{sweep.data.sweep_name}}</div>
-                                <app-sweep-actions *ngIf="mode === 1" [sweep]="sweep.data" [smBitmap]="user.enabled_social_media_bitmap"
-                                                   (sweepEnded)="sweepsActions.removeSweepFromList($event)"
-                                                   (sweepEntered)="sweepsActions.enterSweep(sweep.data.user_sweep_id)"
-                                                   (sweepShared)="sweepsActions.shareSweep({sweep_id: sweep.data.user_sweep_id, social_media: $event.media, URL: $event.URL})">
-                                </app-sweep-actions>
+                                <div class="sweep-name">
+                                    <span>{{sweep.data.sweep_name}}</span>
+                                    <app-sweep-actions *ngIf="mode === 1" [sweep]="sweep.data" [smBitmap]="user.enabled_social_media_bitmap"
+                                                       (sweepEnded)="sweepsActions.removeSweepFromList($event)"
+                                                       (sweepEntered)="sweepsActions.enterSweep(sweep.data.user_sweep_id)"
+                                                       (sweepShared)="sweepsActions.shareSweep({sweep_id: sweep.data.user_sweep_id, social_media: $event.media, URL: $event.URL})">
+                                    </app-sweep-actions>
+                                </div>
                                 <div class="frequency-data" *ngIf="sweep.data.is_frequency">
                                     {{ nextEntry(sweep) }}
                                 </div>
