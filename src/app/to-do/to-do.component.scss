@@ -24,22 +24,26 @@
         fill: $main-color;
       }
       .grid-container {
-        display: grid;
-        grid-template-columns: 33% 33% 33%;
+        display: flex;
+        justify-content: space-between;
         padding: 10px;
         text-align: center;
 
         .sweep-name {
+          display: flex;
+          flex-direction: column;
           font-weight: bold;
-          display: inline-flex;
-          align-items: center;
+
+          span {
+            align-self: flex-start;
+          }
+
+          app-sweep-actions {
+            white-space: initial;
+          }
         }
         .sweep-data {
           color: gray;
-        }
-
-        app-sweep-actions {
-          white-space: initial;
         }
 
         .frequency-data {
