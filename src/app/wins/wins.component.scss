@@ -1,0 +1,84 @@
+@import '../../sass/styles';
+
+.container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 100%;
+  overflow-y: hidden;
+
+  .body {
+    flex: 1 1 auto;
+    max-height: calc(100vh - 40px);
+    overflow-y: auto;
+
+    mat-list-item {
+      &.deleted {
+        text-decoration: line-through;
+      }
+      .edit-sweep {
+        padding-left: 20px;
+      }
+      .list-item-first {
+        .sweep-name {
+          font-weight: bold;
+          display: inline-flex;
+          align-items: center;
+        }
+        .sweep-data {
+          color: gray;
+        }
+      }
+      .list-item-second {
+        display: flex;
+        justify-content: flex-end;
+        color: gray;
+        white-space: initial;
+      }
+      .list-item-third {
+        display: flex;
+        justify-content: flex-start;
+        color: gray;
+      }
+    }
+
+    .blocker {
+      position: fixed;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: black;
+      opacity: 0.4;
+      z-index: 1;
+    }
+
+    .centered {
+      font-size: 65px;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      margin-left: -65px;
+      margin-top: -65px;
+      color: $main-color;
+    }
+
+    .no-sweeps {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      display: flex;
+      flex-direction: column;
+      align-content: space-around;
+      transform: translate(-50%, -50%);
+    }
+
+    .mat-fab {
+      position: fixed;
+      bottom: 5vh;
+      right: 5vh;
+      z-index: 1;
+      background: $main-color;
+    }
+  }
+}

@@ -6,6 +6,7 @@ import { EditSweepComponent } from './edit-sweep/edit-sweep.component';
 import { ContainerComponent } from './container/container.component';
 import { ToDoComponent } from './to-do/to-do.component';
 import { SettingsComponent } from './components/settings/settings.component';
+import { WinsComponent } from './wins/wins.component';
 
 export const appRoutes: Routes = [
     { path: 'login', component: LoginComponent },
@@ -18,6 +19,7 @@ export const appRoutes: Routes = [
             { path: 'list', component: SweepListComponent, canActivate: [AuthGuard] },
             { path: 'todo/:mode',  component: ToDoComponent, canActivate: [AuthGuard]},
             { path: 'edit/:id', component: EditSweepComponent, canActivate: [AuthGuard] },
+            { path: 'wins', component: WinsComponent, canActivate: [AuthGuard] },
         ]
     }
 ];
