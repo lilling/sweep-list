@@ -12,33 +12,28 @@
     max-height: calc(100vh - 40px);
     overflow-y: auto;
 
+    .win{
+      align-items: center;
+      padding-right: 20px;
+    }
+
     mat-list-item {
-      &.deleted {
-        text-decoration: line-through;
-      }
-      .edit-sweep {
-        padding-left: 20px;
-      }
-      .list-item-first {
+      .grid-container {
+        display: flex;
+        justify-content: space-between;
+        padding: 10px;
+        text-align: center;
+
         .sweep-name {
+          display: flex;
+          flex-direction: column;
           font-weight: bold;
-          display: inline-flex;
-          align-items: center;
         }
-        .sweep-data {
-          color: gray;
+
+        .frequency-data {
+          align-self: center;
+          white-space: initial;
         }
-      }
-      .list-item-second {
-        display: flex;
-        justify-content: flex-end;
-        color: gray;
-        white-space: initial;
-      }
-      .list-item-third {
-        display: flex;
-        justify-content: flex-start;
-        color: gray;
       }
     }
 

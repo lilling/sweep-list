@@ -1,35 +1,46 @@
 <div class="container">
     <app-header [title]="'My Wins!'"></app-header>
     <div class="body">
-        <ng-container *ngIf="isSweepsLoading$ | async">
+        <ng-container *ngIf="async">
             <div class="blocker"></div>
             <i class="fa fa-spinner fa-spin centered"></i>
         </ng-container>
-
-        <mat-list>
-            <mat-list-item *ngFor="let sweep of sweeps" [ngClass]="{'deleted': sweep.data.deleted_yn}">
-                <mat-icon matListIcon svgIcon="gift"></mat-icon>
-                <div mat-line class="list-item-first">
-                    <span class="sweep-name"> {{sweep.data.sweep_name}}</span>
-                    <span class="sweep-data"> {{sweep.text}} </span>
-                </div>
-                <div mat-line class="list-item-second">
-                    <ng-container *ngIf="sweep.data.is_frequency">
-                        Last visit was {{ sweepsService.getTimePassedSinceLastVisit(sweep.data) }} ago.
-                        {{ sweep.data.total_entries }} total visits.
-                        {{ nextVisit(sweep.data) }}
-                    </ng-container>
-                    <ng-container *ngIf="sweep.data.is_referral">
-                        {{sweep.data.total_shares ? sweep.data.total_shares : 0}} shares
-                    </ng-container>
-                </div>
-                <mat-icon class="edit-sweep" (click)="router.navigate(['edit', sweep.data.user_sweep_id])">edit</mat-icon>
-            </mat-list-item>
-        </mat-list>
-        <div class="no-sweeps" *ngIf="!(isSweepsLoading$ | async) && sweeps.length == 0">
-            <span>May I serve you please? Add a sweep so I can!</span>
+        <mat-accordion>
+            <ng-container *ngFor="let yearWin of userWins">
+                <mat-expansion-panel *ngIf="!yearWin.win_month">
+                    <mat-expansion-panel-header>
+                        <mat-panel-title>
+                            <!--div class="win">
+                                <mat-icon svgIcon="star-list"></mat-icon>
+                            </div-->
+                            {{yearWin.win_year}}
+                        </mat-panel-title>
+                        <mat-panel-description>{{getWinValueText(yearWin.prize_value_sum)}}</mat-panel-description>
+                    </mat-expansion-panel-header>
+                    <mat-list>
+                        <ng-container *ngFor="let monthWin of userWins">
+                            <ng-container *ngIf="monthWin.win_month && monthWin.win_year === yearWin.win_year">
+                                <mat-list-item class="auto-height">
+                                    <!--mat-icon matListIcon svgIcon="star-list"></mat-icon-->
+                                    <div mat-line class="grid-container">
+                                        <div class="sweep-name">
+                                            <span>{{monthWin.win_month}}</span>
+                                        </div>
+                                        <div class="frequency-data">
+                                            {{getWinValueText(monthWin.prize_value_sum)}}
+                                        </div>
+                                    </div>
+                                </mat-list-item>
+                            </ng-container>
+                        </ng-container>
+                    </mat-list>
+                </mat-expansion-panel>
+            </ng-container>
+        </mat-accordion>
+        <div class="no-sweeps" *ngIf="!(async) && !userWins">
+            <span>No wins yet :-(</span>
             <br>
-            <button mat-raised-button class="main-button" (click)="addSweep()"> ADD SWEEP </button>
+            <span>Don't worrk, they will come!</span>
         </div>
         <button mat-fab (click)="addSweep()">
             <mat-icon>add</mat-icon>
