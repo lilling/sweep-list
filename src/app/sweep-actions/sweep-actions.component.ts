@@ -32,7 +32,9 @@ export class SweepActionsComponent {
 
     openUrl(urlToOpen: string) {
         this.sweepEntered.emit();
-        this.firesweepTasksCompletedIfNeeded();
+        if (!EnumValues.getValues<SocialMedia>(SocialMedia).some(sm => this.getUserSocialMediaEnabled(sm))) {
+            this.sweepTasksCompleted.emit(this.sweep.user_sweep_id);
+        }
         window.open(this.fixURL(urlToOpen), '_blank');
     }
 
