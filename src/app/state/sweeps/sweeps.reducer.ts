@@ -80,15 +80,19 @@ export function sweepsReducer(state: SweepsState = INITIAL_SWEEPS_STATE, action:
         }
         case SweepsActions.ENTER_SWEEP_COMPLETED: {
             const old = state.sweeps.getItem(action.payload);
-            const updated = {
-                ...old,
-                last_entry_date: new Date(),
-                total_entries: old.total_entries ? old.total_entries + 1 : 1
-            };
-            return {
-                ...state,
-                sweeps: state.sweeps.updateItem(updated)
-            };
+            if (old) {
+                const updated = {
+                    ...old,
+                    last_entry_date: new Date(),
+                    total_entries: old.total_entries ? old.total_entries + 1 : 1
+                };
+                return {
+                    ...state,
+                    sweeps: state.sweeps.updateItem(updated)
+                };
+            } else {
+                return state;
+            }
         }
         case SweepsActions.DELETE_SWEEP_COMPLETED: {
             return {

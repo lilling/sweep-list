@@ -33,14 +33,12 @@
           display: flex;
           flex-direction: column;
           font-weight: bold;
+          white-space: initial;
 
           span {
             align-self: flex-start;
           }
 
-          app-sweep-actions {
-            white-space: initial;
-          }
         }
         .sweep-data {
           color: gray;
