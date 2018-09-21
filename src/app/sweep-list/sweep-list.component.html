@@ -8,7 +8,6 @@
 
         <mat-list>
             <mat-list-item *ngFor="let sweep of sweeps" [ngClass]="{'deleted': sweep.data.deleted_yn}">
-                <mat-icon matListIcon svgIcon="gift"></mat-icon>
                 <div mat-line class="list-item-first">
                     <span class="sweep-name"> {{sweep.data.sweep_name}}</span>
                     <span class="sweep-data"> {{sweep.text}} </span>
