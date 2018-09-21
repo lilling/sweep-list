@@ -1,8 +1,6 @@
 import { Component, Input } from '@angular/core';
+//
 import { CommonActions } from '../state/common/common.actions';
-//import { DomSanitizer } from '@angular/platform-browser';
-//import { MatIconRegistry } from '@angular/material';
-
 
 @Component({
     selector: 'app-header',
