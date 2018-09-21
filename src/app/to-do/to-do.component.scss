@@ -19,9 +19,16 @@
       .edit-sweep {
         padding-left: 20px;
       }
-      .win-sweep {
+      .won-sweep {
         padding-left: 20px;
+        height: 30px;
+        width: 30px;
         fill: $main-color;
+      }
+      .unwon-sweep {
+        padding-left: 20px;
+        height: 30px;
+        width: 30px;
       }
       .grid-container {
         display: flex;
