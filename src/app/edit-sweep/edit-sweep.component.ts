@@ -43,6 +43,13 @@ export class EditSweepComponent extends Subscriber implements OnInit {
 
     ngOnInit() {
         const sweepId = +this.route.snapshot.params['id'];
+
+        const sweeps = this.ngRedux.getState().sweepsState.sweeps;
+
+        if (!sweeps.getItem(sweepId)) {
+            this.router.navigate(['/login']);
+        }
+
         this.subscriptions = {
             sweeps: this.ngRedux.select(state => state.sweepsState.sweeps).subscribe(sweeps => {
                 this.sweep = sweeps.getItem(sweepId);
