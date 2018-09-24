@@ -1,9 +1,12 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
+import { OnInit } from '@angular/core/src/metadata/lifecycle_hooks';
 import { DomSanitizer } from '@angular/platform-browser';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Location } from '@angular/common';
 //
-import { MatIconRegistry, MatSlideToggleChange, MatExpansionPanel } from '@angular/material';
+import { MatIconRegistry } from '@angular/material/icon';
+import { MatSlideToggleChange } from '@angular/material/slide-toggle/typings/slide-toggle';
+import { MatExpansionPanel } from '@angular/material/expansion/typings/expansion-panel';
 import { Observable } from 'rxjs/Observable';
 import { NgRedux, select } from '@angular-redux/store';
 //

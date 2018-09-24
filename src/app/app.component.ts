@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { Router, NavigationEnd } from '@angular/router';
 import { DomSanitizer } from '@angular/platform-browser';
-import { MatIconRegistry } from '@angular/material';
+import { MatIconRegistry } from '@angular/material/icon';
 //
 import * as _ from 'lodash';
-import { NgRedux } from '@angular-redux/store';
+import { NgRedux } from '@angular-redux/store/lib/src';
 import { createLogger } from 'redux-logger';
 import { compose } from 'redux';
 import { combineEpics, createEpicMiddleware } from 'redux-observable';

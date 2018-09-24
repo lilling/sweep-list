@@ -1,6 +1,6 @@
 import { Component, Inject, Input, EventEmitter } from '@angular/core';
 //
-import { MatDialogRef, MAT_DIALOG_DATA, MatDialog } from '@angular/material';
+import { MatDialogRef, MAT_DIALOG_DATA, MatDialog } from '@angular/material/dialog';
 //
 import { SweepsActions } from '../state/sweeps/sweeps.actions';
 import { TextPopupComponent } from '../text-popup/text-popup.component';

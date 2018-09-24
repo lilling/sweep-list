@@ -1,5 +1,6 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
-import {FormControl, Validators} from '@angular/forms';
+import {FormControl} from '@angular/forms/src/forms';
+import {Validators} from '@angular/forms/src/validators';
 
 @Component({
     selector: 'app-win-sweep-data',

@@ -3,10 +3,11 @@ import { BrowserModule } from '@angular/platform-browser';
 import { RouterModule } from '@angular/router';
 import { NgModule } from '@angular/core';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { HttpClientModule } from '@angular/common/http';
 //
 import { ShareButtonModule } from '@ngx-share/button';
 import { AngularDateTimePickerModule } from 'angular2-datetimepicker';
-import { NgReduxModule } from '@angular-redux/store';
+import { NgReduxModule } from '@angular-redux/store/lib/src';
 //
 import { AppComponent } from './app.component';
 import { LoginComponent } from './login/login.component';
@@ -17,7 +18,6 @@ import { SweepListComponent } from './sweep-list/sweep-list.component';
 import { appRoutes } from './app.routes';
 import { AddSweepComponent } from './add-sweep/add-sweep.component';
 import { EditSweepComponent } from './edit-sweep/edit-sweep.component';
-import { HttpClientModule } from '@angular/common/http';
 import { UsersService } from './services/users.service';
 import { SweepsService } from './services/sweeps.service';
 import { PositiveValidatorDirective } from './add-sweep/positive.validator';

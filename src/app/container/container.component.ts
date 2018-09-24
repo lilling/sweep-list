@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 //
-import { select } from '@angular-redux/store';
+import { select } from '@angular-redux/store/lib/src';
 import { Observable } from 'rxjs/Observable';
 //
 import { AppState } from '../state/store';

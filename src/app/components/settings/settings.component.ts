@@ -1,9 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { MatDialog } from '@angular/material';
+
+import { MatDialog } from '@angular/material/dialog';
 //
 import { EnumValues } from 'enum-values';
-import { NgRedux } from '@angular-redux/store';
+import { NgRedux } from '@angular-redux/store/lib/src';
 import * as _ from 'lodash';
 //
 import { SocialMedia } from '../../../../shared/models/social-media.enum';

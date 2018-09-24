@@ -1,10 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 //
+import { MatDialogRef } from '@angular/material/dialog';
+import { NgRedux } from '@angular-redux/store/lib/src';
+//
 import { UsersService } from '../services/users.service';
 import { LocalStorageKeys } from '../models/local-storage-keys.enum';
-import { MatDialogRef } from '@angular/material';
 import { LoginActions } from '../state/login/login.actions';
-import { NgRedux } from '@angular-redux/store';
 import { AppState } from '../state/store';
 import { Subscriber } from '../classes/subscriber';
 

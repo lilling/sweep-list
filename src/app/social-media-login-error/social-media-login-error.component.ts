@@ -1,8 +1,10 @@
 import { Component, Inject } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+//
+import { FacebookLoginProvider } from 'angularx-social-login';
+//
 import { SocialMedia } from '../../../shared/models/social-media.enum';
 import { SocialMediaStatus } from '../../../shared/models/social-media-status.enum';
-import { FacebookLoginProvider } from 'angularx-social-login';
 import { LoginActions } from '../state/login/login.actions';
 
 @Component({

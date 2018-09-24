@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { MatDialog } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 //
 import { Observable } from 'rxjs/Observable';
-import { NgRedux, select } from '@angular-redux/store';
+import { NgRedux, select } from '@angular-redux/store/lib/src';
 import { combineLatest } from 'rxjs/observable/combineLatest';
 //
 import { AddSweepComponent } from '../add-sweep/add-sweep.component';

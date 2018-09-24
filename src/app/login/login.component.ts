@@ -2,9 +2,10 @@ import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 //
 import { AuthService, FacebookLoginProvider, GoogleLoginProvider, SocialUser } from 'angularx-social-login';
-import { NgRedux, select } from '@angular-redux/store';
+import { NgRedux, select } from '@angular-redux/store/lib/src';
 import { Observable } from 'rxjs/Observable';
 import * as _ from 'lodash';
+import { EnumValues } from 'enum-values';
 //
 import { LocalStorageKeys } from '../models/local-storage-keys.enum';
 import { LoginActions } from '../state/login/login.actions';
@@ -12,7 +13,6 @@ import { AppState } from '../state/store';
 import { SocialMedia } from '../../../shared/models/social-media.enum';
 import { IClientError } from '../../../shared/classes/client-error.interface';
 import { ErrorActions } from '../state/common/errors/error.actions';
-import { EnumValues } from 'enum-values';
 import { user_account } from '../../../shared/classes';
 import { Subscriber } from '../classes/subscriber';
 

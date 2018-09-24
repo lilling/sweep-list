@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 //
-import { NgRedux } from '@angular-redux/store';
+import { NgRedux } from '@angular-redux/store/lib/src';
 //
 import { AppState } from '../store';
 import { user_sweep, Search } from '../../../../shared/classes';

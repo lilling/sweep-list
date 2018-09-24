@@ -1,8 +1,8 @@
 import { Component, Inject } from '@angular/core';
 //
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Observable } from 'rxjs/Observable';
-import { select } from '@angular-redux/store';
+import { select } from '@angular-redux/store/lib/src';
 //
 import { LocalStorageKeys } from '../models/local-storage-keys.enum';
 import { user_sweep, user_account } from '../../../shared/classes';
