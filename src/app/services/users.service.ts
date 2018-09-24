@@ -23,6 +23,10 @@ export class UsersService extends BaseService {
         return this.post<{ user: user_account, isNew?: boolean }>(`create_user`, model);
     }
 
+    forgotMail(email: string) {
+        return this.get(`forgot_password/${email}`);
+    }
+
     getUserSocialAccounts(id: AAGUID): Observable<{socialMedia: SocialMedia, status: SocialMediaStatus}[]> {
         return this.get(`user_social_medias/${id}`);
     }
