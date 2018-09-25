@@ -58,6 +58,10 @@ const SOCIAL_CONFIG = new AuthServiceConfig([
     // }
 ]);
 
+export function provideConfig() {
+    return SOCIAL_CONFIG;
+}
+
 @NgModule({
     declarations: [
         ContainerComponent,
@@ -80,7 +84,6 @@ const SOCIAL_CONFIG = new AuthServiceConfig([
         WinPopupComponent,
         TextPopupComponent,
         SettingsComponent,
-        //SocialMediaLoginErrorComponent,
     ],
     imports: [
         StateModule,
@@ -91,11 +94,14 @@ const SOCIAL_CONFIG = new AuthServiceConfig([
         FormsModule,
         ShareButtonModule.forRoot(),
         MaterialModule,
-        SocialLoginModule.initialize(SOCIAL_CONFIG),
+        SocialLoginModule,
         AngularDateTimePickerModule,
         BrowserAnimationsModule
     ],
-    providers: [UsersService, SweepsService, AuthGuard],
+    providers: [UsersService, SweepsService, AuthGuard, {
+        provide: AuthServiceConfig,
+        useFactory: provideConfig
+    }],
     bootstrap: [AppComponent],
     exports: [RouterModule],
     entryComponents: [AddSweepComponent, EditSweepComponent, DeleteAccountComponent, WinPopupComponent, TextPopupComponent]
