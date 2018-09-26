@@ -1,5 +1,6 @@
 <mat-sidenav-container>
     <mat-sidenav #sidenav mode="over" [opened]="sideNav" (closedStart)="toggleSideNav()">
+        <h1><a title="Sweep Imp" tabindex="-1">Sweep Imp</a></h1>
         <mat-nav-list>
             <a [routerLink]="['/todo', 1]" mat-list-item>
                 <mat-icon svgIcon="calendar"></mat-icon>
@@ -8,11 +9,6 @@
             <a [routerLink]="['/list']" mat-list-item>
                 <mat-icon svgIcon="gift"></mat-icon>
                 Active Sweeps
-            </a>
-            <hr>
-            <a [routerLink]="['/wins']" mat-list-item>
-                <mat-icon svgIcon="win"></mat-icon>
-                Wins Summary
             </a>
             <hr>
             <a [routerLink]="['/settings']" mat-list-item>

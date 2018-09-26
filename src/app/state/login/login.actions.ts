@@ -18,6 +18,8 @@ export class LoginActions {
     static DELETE_ACCOUNT_COMPLETED = 'DELETE_ACCOUNT_COMPLETED';
     static UPDATE_USER = 'UPDATE_USER';
     static UPDATE_USER_COMPLETED = 'UPDATE_USER_COMPLETED';
+    static FORGOT_MAIL = 'FORGOT_MAIL';
+    static FORGOT_MAIL_COMPLETED = 'FORGOT_MAIL_COMPLETED';
 
     constructor(private ngRedux: NgRedux<AppState>) {
     }
@@ -26,6 +28,10 @@ export class LoginActions {
         const user: ExtandedSocialUser =
             <ExtandedSocialUser>(options.user ? { ...options.user, isSocial: true } : { ...options.regular, isSocial: false });
         this.ngRedux.dispatch({ type: LoginActions.LOGIN, payload: { id: options.id, user, fromCache: options.fromCache } });
+    }
+
+    forgotMail(email: string) {
+        this.ngRedux.dispatch({ type: LoginActions.FORGOT_MAIL, payload: email });
     }
 
     logOff() {

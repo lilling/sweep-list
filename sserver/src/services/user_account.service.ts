@@ -1,18 +1,29 @@
+import { ForbiddenException } from '@nestjs/common';
+import { Transporter, createTransport } from 'nodemailer';
+import * as hbs from 'nodemailer-express-handlebars';
+//
 import { DbGetter } from '../dal/DbGetter';
 import { BaseService } from './base.service';
 import { user_account, ExtandedSocialUser } from '../../../shared/classes';
 import { FacebookService } from './facebook.service';
 import { PaymentService } from './payment.service';
-import { ForbiddenException } from '@nestjs/common';
 
 export class UserAccountService extends BaseService<user_account> {
     FacebookService: FacebookService;
     PaymentService: PaymentService;
+    transporter: Transporter;
 
     constructor() {
         super(`user_account`);
         this.FacebookService = new FacebookService();
         this.PaymentService = new PaymentService();
+        this.transporter = createTransport({
+            service: 'gmail',
+            host: 'smtp.gmail.email',
+            port: 587,
+            secure: false,
+            auth: { user: 'yonatanliling@gmail.com', pass: 'xfysqnmqndqfsdim' }
+        });
     }
 
     async CookieLogin(user_account_id: AAGUID): Promise<user_account> {
@@ -47,7 +58,7 @@ export class UserAccountService extends BaseService<user_account> {
         return { user };
     }
 
-    async checkEmailAvailability(email: string): Promise<boolean>{
+    async checkEmailAvailability(email: string): Promise<boolean> {
         const db = DbGetter.getDB();
         const q =
             `SELECT SUM(1) email_exists\n` +
@@ -66,6 +77,33 @@ export class UserAccountService extends BaseService<user_account> {
         }
 
         throw new ForbiddenException('email already in use');
+    }
+
+    async forgotPassword(to: string): Promise<boolean> {
+        const db = DbGetter.getDB();
+        const q =
+            `SELECT first_name, user_account_id\n` +
+            `  FROM sweepimp.user_account\n` +
+            ` WHERE is_deleted = false\n` +
+            `   AND email = $<to>\n`;
+        const response = await db.oneOrNone(q, { to });
+        this.transporter.use('compile', hbs({ viewPath: 'src/views/', extName: '.hbs' }));
+        return await new Promise<boolean>((resolve, reject) => {
+            this.transporter.sendMail({
+                from: 'support@sweepimp.com',
+                subject: 'sweepimp password reset',
+                template: `recover-password`,
+                to,
+                context: { name: response.first_name, year: new Date().getFullYear(), id: response.user_account_id }
+            }, (error) => {
+                if (error) {
+                    reject(error);
+                }
+                resolve(true);
+            });
+        }).catch(err => {
+            throw(err);
+        });
     }
 
     async CreateUserInner(DB, account: ExtandedSocialUser): Promise<user_account> {
@@ -101,6 +139,17 @@ export class UserAccountService extends BaseService<user_account> {
         // create free payment plan for new user
         this.PaymentService.makePayment(UserAccount.user_account_id, 1, 0, false);
         return UserAccount;
+    }
+
+    async changeUserPassword(idAndPassword: {id: AAGUID, password: string}) {
+        const db = DbGetter.getDB();
+        const q =
+            `UPDATE sweepimp.user_account\n
+                SET hashed_password = crypt($<password>, gen_salt('bf', 8))\n
+            WHERE user_account_id = $<id>\n
+            RETURNING *`;
+        const userAccount = await db.one(q, idAndPassword);
+        return userAccount;
     }
 
     async UpdateUser(SMs: user_account): Promise<user_account> {

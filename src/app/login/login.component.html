@@ -1,45 +1,67 @@
 <div class="login">
     <h1><a title="Sweep Imp" tabindex="-1">Sweep Imp</a></h1>
-    <div class="login-body">
-        <ng-container *ngIf="!phaseTwo">
-            <ng-container *ngIf="!isRegister">
-                <div class="social-login-container">
-                    <button class="facebook login-button" mat-button (click)="socialLogin(SocialMedia.Facebook)">Continue with
-                        <b>Facebook</b></button>
-                    <button class="google login-button" mat-button (click)="socialLogin(SocialMedia.Google)">Continue with <b>Google</b>
+    <ng-container *ngIf="!forgotPassword">
+        <div class="login-body">
+            <ng-container *ngIf="!phaseTwo">
+                <ng-container *ngIf="!isRegister">
+                    <div class="social-login-container">
+                        <button class="facebook login-button" mat-button (click)="socialLogin(SocialMedia.Facebook)">Continue with
+                            <b>Facebook</b></button>
+                        <button class="google login-button" mat-button (click)="socialLogin(SocialMedia.Google)">Continue with <b>Google</b>
+                        </button>
+                    </div>
+                    <div class="separator"><span class="separator-text">Or</span></div>
+                </ng-container>
+                <label *ngIf="isRegister" for="name">
+                    <span>Name</span>
+                    <input id="name" type="text" [(ngModel)]="name"/>
+                </label>
+                <label for="email">
+                    <span>E-Mail</span><span class="error-message" *ngIf="email?.length > 0 && !isEmail(email)"> not an E-Mail</span>
+                    <input id="email" type="text" [(ngModel)]="email"/>
+                </label>
+                <app-password [(password)]="password"></app-password>
+            </ng-container>
+            <ng-container *ngIf="phaseTwo">
+                <span>Which social medias do you use for sweeping? (don't worry, you can change this later in the settings menu).</span>
+                <div class="stacked-div">
+                    <mat-slide-toggle *ngFor="let sm of EnumValues.getValues(SocialMedia)" [checked]="selectedSMs.get(+sm)" [color]="'primary'"
+                                      (change)="selectedSMs.has(+sm) ? selectedSMs.delete(+sm) : selectedSMs.set(+sm, $event.checked)">
+                        <span [style.color]="selectedSMs.get(+sm) ? 'black' : 'gray'">{{ SocialMedia[sm] }}</span>
+                    </mat-slide-toggle>
+                </div>
+            </ng-container>
+            <div class="regular-login-button" [style.justify-content]="(error$ | async) ? 'space-between' : 'flex-end'">
+                <span class="error-message" *ngIf="error$ | async"> {{(error$ | async).error.error.message}} </span>
+                <button class="main-button" mat-button (click)="!phaseTwo ? regularLogin(email, password, name) : updateUserSms()"
+                        [disabled]="!phaseTwo && (!isEmail(email) || !password || (isRegister ? !name : false))">
+                    {{phaseTwo ? 'Continue' : !isRegister ? 'Login' : 'Register'}}
+                </button>
+            </div>
+        </div>
+        <p id="nav">
+            <a class="clickable" (click)="toggleRegister()">{{isRegister ? 'Login' : 'Register'}}</a>
+            | <a class="clickable" (click)="forgotPassword = true">Lost your password?</a>
+        </p>
+    </ng-container>
+    <ng-container *ngIf="forgotPassword">
+        <div class="login-body">
+            <ng-container *ngIf="!sendMailForChangePassword">
+                <div>I need to verify your account</div>
+                <label for="forgotPasswordEmail">
+                    <span>E-Mail</span><span class="error-message" *ngIf="email?.length > 0 && !isEmail(email)"> not an E-Mail</span>
+                    <input id="forgotPasswordEmail" type="text" [(ngModel)]="email"/>
+                </label>
+
+                <div class="regular-login-button" [style.justify-content]="(error$ | async) ? 'space-between' : 'flex-end'">
+                    <span class="error-message" *ngIf="error$ | async"> {{(error$ | async).error.error.message}} </span>
+                    <button class="main-button" mat-button (click)="forgotMail(email)"
+                            [disabled]="!isEmail(email)">
+                        Send
                     </button>
                 </div>
-                <div class="separator"><span class="separator-text">Or</span></div>
             </ng-container>
-            <label *ngIf="isRegister" for="name">
-                <span>Name</span>
-                <input id="name" type="text" [(ngModel)]="name"/>
-            </label>
-            <label for="email">
-                <span>E-Mail</span><span class="error-message" *ngIf="email?.length > 0 && !isEmail(email)"> not an E-Mail</span>
-                <input id="email" type="text" [(ngModel)]="email"/>
-            </label>
-            <app-password [(password)]="password"></app-password>
-        </ng-container>
-        <ng-container *ngIf="phaseTwo">
-            <span>Which social medias do you use for sweeping? (don't worry, you can change this later in the settings menu).</span>
-            <div class="stacked-div">
-                <mat-slide-toggle *ngFor="let sm of EnumValues.getValues(SocialMedia)" [checked]="selectedSMs.get(+sm)" [color]="'primary'"
-                                  (change)="selectedSMs.has(+sm) ? selectedSMs.delete(+sm) : selectedSMs.set(+sm, $event.checked)">
-                    <span [style.color]="selectedSMs.get(+sm) ? 'black' : 'gray'">{{ SocialMedia[sm] }}</span>
-                </mat-slide-toggle>
-            </div>
-        </ng-container>
-        <div class="regular-login-button" [style.justify-content]="(error$ | async) ? 'space-between' : 'flex-end'">
-            <span class="error-message" *ngIf="error$ | async"> {{(error$ | async).error.error.message}} </span>
-            <button class="main-button" mat-button (click)="!phaseTwo ? regularLogin(email, password, name) : updateUserSms()"
-                    [disabled]="!phaseTwo && (!isEmail(email) || !password || (isRegister ? !name : false))">
-                {{phaseTwo ? 'Continue' : !isRegister ? 'Login' : 'Register'}}
-            </button>
+            <div *ngIf="sendMailForChangePassword">I sent you an E-Mail. please check your inbox and follow the instructions. </div>
         </div>
-    </div>
-    <p id="nav">
-        <a class="clickable" (click)="toggleRegister()">{{isRegister ? 'Login' : 'Register'}}</a>
-        | <a class="clickable" (click)="isRegister = !isRegister">Lost your password?</a>
-    </p>
+    </ng-container>
 </div>

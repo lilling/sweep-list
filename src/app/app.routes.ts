@@ -6,9 +6,11 @@ import { EditSweepComponent } from './edit-sweep/edit-sweep.component';
 import { ContainerComponent } from './container/container.component';
 import { ToDoComponent } from './to-do/to-do.component';
 import { SettingsComponent } from './components/settings/settings.component';
+import { ForgotPasswordComponent } from './components/forgot-password/forgot-password.component';
 import { WinsComponent } from './wins/wins.component';
 
 export const appRoutes: Routes = [
+    { path: 'forgotPassword/:id', component: ForgotPasswordComponent },
     { path: 'login', component: LoginComponent },
     { path: '', redirectTo: '/login', pathMatch: 'full' },
     {
