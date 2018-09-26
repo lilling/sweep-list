@@ -57,13 +57,13 @@ export class UserSweepService extends BaseService<user_sweep> {
         return db.manyOrNone(q + where + order_by, user_sweep_search);
     }
 
-    async GetWins(user_account_id: AAGUID): Promise<Win[]> {
+    async GetUserWins(user_account_id: AAGUID): Promise<Win[]> {
         const db = DbGetter.getDB();
         const q =
             `SELECT EXTRACT(YEAR FROM end_date) win_year\n` +
             `      ,to_char(end_date, 'TMMonth') win_month\n` +
             `      ,EXTRACT(MONTH FROM end_date) month_numeric\n` +
-            `      ,sum(prize_value) prize_value_sum\n` +
+            `      ,coalesce(sum(prize_value), 0) prize_value_sum\n` +
             `  FROM sweepimp.user_sweep\n` +
             ` WHERE user_account_id = $<user_account_id>\n` +
             `   AND won_yn = true\n` +
@@ -74,7 +74,7 @@ export class UserSweepService extends BaseService<user_sweep> {
             `SELECT EXTRACT(YEAR FROM end_date) win_year\n` +
             `      ,null win_month\n` +
             `      ,null month_numeric\n` +
-            `      ,sum(prize_value) prize_value_sum\n` +
+            `      ,coalesce(sum(prize_value), 0) prize_value_sum\n` +
             `  FROM sweepimp.user_sweep\n` +
             ` WHERE user_account_id = $<user_account_id>\n` +
             `   AND won_yn = true\n` +

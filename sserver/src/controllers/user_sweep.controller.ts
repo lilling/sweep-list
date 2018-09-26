@@ -47,8 +47,8 @@ export class SweepController {
     }
 
     @Get('user_wins/:user_account_id')
-    GetWins(@Param() params): Promise<Win[]> {
-        return this.UserSweepService.GetWins(params.user_account_id);
+    GetUserWins(@Param() params): Promise<Win[]> {
+        return this.UserSweepService.GetUserWins(params.user_account_id);
     }
 
     /*@Get('user_sweep_url_share/:user_sweep_id/:social_media')

@@ -4,7 +4,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs/Observable';
 import { EnumValues } from 'enum-values';
 //
-import { user_sweep, Search } from '../../../shared/classes';
+import { user_sweep, Search, Win } from '../../../shared/classes';
 import { BaseService } from './base.service';
 import { SweepsMode } from '../state/sweeps/sweeps.state';
 import { SocialMedia } from '../../../shared/models/social-media.enum';
@@ -36,6 +36,10 @@ export class SweepsService extends BaseService {
             this.fixSweepTypes(res);
             return res;
         });
+    }
+
+    getUserWins(user_account_id: AAGUID): Observable<Win[]> {
+        return this.get(`user_wins/${user_account_id}`);
     }
 
     enterSweep(sweepId: number): Observable<URL> {
