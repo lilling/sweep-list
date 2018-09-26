@@ -40,6 +40,11 @@ export class UserController {
         return this.UserAccountService.CreateUser(account);
     }
 
+    @Get('forgot_password/:email')
+    forgotPassword(@Param() params): Promise<boolean> {
+        return this.UserAccountService.forgotPassword(params.email);
+    }
+
     @Post('update_user')
     UpdateUser(@Body() SMs: user_account): Promise<user_account>{
         return this.UserAccountService.UpdateUser(SMs);

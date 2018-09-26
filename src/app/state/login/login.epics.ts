@@ -48,12 +48,12 @@ export class LoginEpics extends BaseEpic {
     forgotMail(action$: ActionsObservable<TypedAction<string>>) {
         return action$.ofType(LoginActions.FORGOT_MAIL)
             .switchMap(action => {
-                return this.usersService.
-                    map(val => {
-                        return { type: LoginActions.LOGOFF_COMPLETED };
+                return this.usersService.forgotMail(action.payload).pipe(
+                    map(() => {
+                        return { type: LoginActions.FORGOT_MAIL_COMPLETED };
                     }),
                     catchError(err => {
-                        return of(generateError(err, LoginActions.LOGOFF));
+                        return of(generateError(err, LoginActions.FORGOT_MAIL));
                     })
                 );
             });
@@ -62,9 +62,9 @@ export class LoginEpics extends BaseEpic {
     @Epic
     logOff(action$: ActionsObservable<TypedAction<AAGUID>>) {
         return action$.ofType(LoginActions.LOGOFF)
-            .switchMap(action => {
+            .switchMap(() => {
                 return fromPromise(this.authService.signOut()).pipe(
-                    map(val => {
+                    map(() => {
                         return { type: LoginActions.LOGOFF_COMPLETED };
                     }),
                     catchError(err => {

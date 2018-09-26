@@ -20,6 +20,7 @@
     "fb": "^2.0.0",
     "fbgraph": "^1.4.1",
     "g": "^2.0.1",
+    "nodemailer": "^4.6.8",
     "pg-promise": "^7.5.4",
     "redis": "^2.7.1",
     "reflect-metadata": "^0.1.12",
@@ -30,6 +31,7 @@
   },
   "devDependencies": {
     "@types/node": "^9.3.0",
+    "@types/nodemailer": "^4.6.5",
     "nodemon": "^1.14.1"
   }
 }

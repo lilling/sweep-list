@@ -46,7 +46,7 @@
     </ng-container>
     <ng-container *ngIf="forgotPassword">
         <div class="login-body">
-            <ng-container *ngIf="sendMailForChangePassword">
+            <ng-container *ngIf="!sendMailForChangePassword">
                 <div>I need to verify your account</div>
                 <label for="forgotPasswordEmail">
                     <span>E-Mail</span><span class="error-message" *ngIf="email?.length > 0 && !isEmail(email)"> not an E-Mail</span>
@@ -61,7 +61,7 @@
                     </button>
                 </div>
             </ng-container>
-            <div *ngIf="!sendMailForChangePassword">I sent you an E-Mail. please check your inbox and follow the instructions. </div>
+            <div *ngIf="sendMailForChangePassword">I sent you an E-Mail. please check your inbox and follow the instructions. </div>
         </div>
     </ng-container>
 </div>

@@ -1,18 +1,34 @@
+import { ForbiddenException } from '@nestjs/common';
+import { Transporter, createTransport } from 'nodemailer';
+//
 import { DbGetter } from '../dal/DbGetter';
 import { BaseService } from './base.service';
 import { user_account, ExtandedSocialUser } from '../../../shared/classes';
 import { FacebookService } from './facebook.service';
 import { PaymentService } from './payment.service';
-import { ForbiddenException } from '@nestjs/common';
 
 export class UserAccountService extends BaseService<user_account> {
     FacebookService: FacebookService;
     PaymentService: PaymentService;
+    transporter: Transporter;
+    MAIL_OPTIONS = {
+        from: 'support@sweepimp.com',
+        subject: 'sweepimp password reset',
+        text: 'That was easy!'
+    };
+    MAIL_TEMPLATE = ``;
 
     constructor() {
         super(`user_account`);
         this.FacebookService = new FacebookService();
         this.PaymentService = new PaymentService();
+        this.transporter = createTransport({
+            service: 'gmail',
+            host: 'smtp.gmail.email',
+            port: 587,
+            secure: false,
+            auth: { user: 'yonatanliling@gmail.com', pass: 'xfysqnmqndqfsdim' }
+        });
     }
 
     async CookieLogin(user_account_id: AAGUID): Promise<user_account> {
@@ -47,7 +63,7 @@ export class UserAccountService extends BaseService<user_account> {
         return { user };
     }
 
-    async checkEmailAvailability(email: string): Promise<boolean>{
+    async checkEmailAvailability(email: string): Promise<boolean> {
         const db = DbGetter.getDB();
         const q =
             `SELECT SUM(1) email_exists\n` +
@@ -66,6 +82,19 @@ export class UserAccountService extends BaseService<user_account> {
         }
 
         throw new ForbiddenException('email already in use');
+    }
+
+    async forgotPassword(to: string): Promise<boolean> {
+        return await new Promise<boolean>((resolve, reject) => {
+            this.transporter.sendMail({ ...this.MAIL_OPTIONS, to }, (error) => {
+                if (error) {
+                    reject(error);
+                }
+                resolve(true);
+            });
+        }).catch(err => {
+            throw(err);
+        });
     }
 
     async CreateUserInner(DB, account: ExtandedSocialUser): Promise<user_account> {

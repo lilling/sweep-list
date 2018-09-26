@@ -19,6 +19,7 @@ export class LoginActions {
     static UPDATE_USER = 'UPDATE_USER';
     static UPDATE_USER_COMPLETED = 'UPDATE_USER_COMPLETED';
     static FORGOT_MAIL = 'FORGOT_MAIL';
+    static FORGOT_MAIL_COMPLETED = 'FORGOT_MAIL_COMPLETED';
 
     constructor(private ngRedux: NgRedux<AppState>) {
     }
