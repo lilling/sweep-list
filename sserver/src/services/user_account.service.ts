@@ -1,5 +1,6 @@
 import { ForbiddenException } from '@nestjs/common';
 import { Transporter, createTransport } from 'nodemailer';
+import * as hbs from 'nodemailer-express-handlebars';
 //
 import { DbGetter } from '../dal/DbGetter';
 import { BaseService } from './base.service';
@@ -11,12 +12,6 @@ export class UserAccountService extends BaseService<user_account> {
     FacebookService: FacebookService;
     PaymentService: PaymentService;
     transporter: Transporter;
-    MAIL_OPTIONS = {
-        from: 'support@sweepimp.com',
-        subject: 'sweepimp password reset',
-        text: 'That was easy!'
-    };
-    MAIL_TEMPLATE = ``;
 
     constructor() {
         super(`user_account`);
@@ -85,8 +80,22 @@ export class UserAccountService extends BaseService<user_account> {
     }
 
     async forgotPassword(to: string): Promise<boolean> {
+        const db = DbGetter.getDB();
+        const q =
+            `SELECT first_name, user_account_id\n` +
+            `  FROM sweepimp.user_account\n` +
+            ` WHERE is_deleted = false\n` +
+            `   AND email = $<to>\n`;
+        const response = await db.oneOrNone(q, { to });
+        this.transporter.use('compile', hbs({ viewPath: 'src/views/', extName: '.hbs' }));
         return await new Promise<boolean>((resolve, reject) => {
-            this.transporter.sendMail({ ...this.MAIL_OPTIONS, to }, (error) => {
+            this.transporter.sendMail({
+                from: 'support@sweepimp.com',
+                subject: 'sweepimp password reset',
+                template: `recover-password`,
+                to,
+                context: { name: response.first_name, year: new Date().getFullYear(), id: response.user_account_id }
+            }, (error) => {
                 if (error) {
                     reject(error);
                 }
