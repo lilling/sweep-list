@@ -45,8 +45,13 @@ export class UserController {
         return this.UserAccountService.forgotPassword(params.email);
     }
 
+    @Post('change_password')
+    changeUserPassword(@Body() data: { id: AAGUID, password: string }) {
+        return this.UserAccountService.changeUserPassword(data);
+    }
+
     @Post('update_user')
-    UpdateUser(@Body() SMs: user_account): Promise<user_account>{
+    UpdateUser(@Body() SMs: user_account): Promise<user_account> {
         return this.UserAccountService.UpdateUser(SMs);
     }
 

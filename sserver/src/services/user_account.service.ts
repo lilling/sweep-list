@@ -141,6 +141,17 @@ export class UserAccountService extends BaseService<user_account> {
         return UserAccount;
     }
 
+    async changeUserPassword(idAndPassword: {id: AAGUID, password: string}) {
+        const db = DbGetter.getDB();
+        const q =
+            `UPDATE sweepimp.user_account\n
+                SET hashed_password = crypt($<password>, gen_salt('bf', 8))\n
+            WHERE user_account_id = $<id>\n
+            RETURNING *`;
+        const userAccount = await db.one(q, idAndPassword);
+        return userAccount;
+    }
+
     async UpdateUser(SMs: user_account): Promise<user_account> {
         const db = DbGetter.getDB();
         const q =

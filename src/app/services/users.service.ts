@@ -43,6 +43,10 @@ export class UsersService extends BaseService {
         return this.post<user_account>('update_user', user);
     }
 
+    changePassword(id: AAGUID, password: string) {
+        return this.post<user_account>('change_password', { id, password });
+    }
+
     getDeleteAccountData(id: AAGUID): Observable<{ tasks: string, active: string, ended: string, won: string }> {
         return this.get(`deleteUserAccountConfirm/${id}`);
     }

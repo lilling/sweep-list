@@ -36,6 +36,7 @@ import { SweepActionsComponent } from './sweep-actions/sweep-actions.component';
 import { WinPopupComponent } from './win-popup/win-popup.component';
 import { TextPopupComponent } from './text-popup/text-popup.component';
 import { SettingsComponent } from './components/settings/settings.component';
+import { ForgotPasswordComponent } from './components/forgot-password/forgot-password.component';
 
 const fbLoginOptions: LoginOpt = {
     scope: 'public_profile , email',
@@ -80,6 +81,7 @@ const SOCIAL_CONFIG = new AuthServiceConfig([
         WinPopupComponent,
         TextPopupComponent,
         SettingsComponent,
+        ForgotPasswordComponent,
         //SocialMediaLoginErrorComponent,
     ],
     imports: [
