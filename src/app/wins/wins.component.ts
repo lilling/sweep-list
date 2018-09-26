@@ -1,16 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { MatDialog } from '@angular/material';
-import { Router } from '@angular/router';
 //
 import { Observable } from 'rxjs/Observable';
-import { NgRedux, select } from '@angular-redux/store';
-import { combineLatest } from 'rxjs/observable/combineLatest';
+import { select } from '@angular-redux/store';
 //
-import { AddSweepComponent } from '../add-sweep/add-sweep.component';
-import { user_sweep, user_account, Win } from '../../../shared/classes';
+import { Win } from '../../../shared/classes';
 import { AppState } from '../state/store';
-import { SweepsActions } from '../state/sweeps/sweeps.actions';
-import { SweepsMode } from '../state/sweeps/sweeps.state';
 import { SweepsService } from '../services/sweeps.service';
 import { LocalStorageKeys } from '../models/local-storage-keys.enum';
 import { Subscriber } from '../classes/subscriber';

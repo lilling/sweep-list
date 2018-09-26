@@ -83,8 +83,7 @@ const SOCIAL_CONFIG = new AuthServiceConfig([
         TextPopupComponent,
         SettingsComponent,
         WinsComponent,
-        ForgotPasswordComponent,
-        //SocialMediaLoginErrorComponent,
+        ForgotPasswordComponent
     ],
     imports: [
         StateModule,

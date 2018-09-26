@@ -16,7 +16,7 @@ export class ForgotPasswordComponent {
 
     changePassword(password: string) {
         this.inProcess = true;
-        this.userService.changePassword(this.route.snapshot.params.id, password).subscribe(result => {
+        this.userService.changePassword(this.route.snapshot.params.id, password).subscribe(() => {
             this.passwordChanged = true;
             this.inProcess = false;
         });
