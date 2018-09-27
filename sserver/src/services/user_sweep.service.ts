@@ -19,7 +19,6 @@ export class UserSweepService extends BaseService<user_sweep> {
 
     async GetSweeps(user_sweep_search: Search, status: string): Promise<user_sweep[]> {
         const db = DbGetter.getDB();
-        var lastSweep = ``;
         const q =
             `SELECT *\n` +
             `  FROM sweepimp.user_sweep\n` +
