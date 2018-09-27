@@ -6,6 +6,7 @@ import { AppState } from '../store';
 import { user_sweep, Search } from '../../../../shared/classes';
 import { SweepsMode } from './sweeps.state';
 import { SocialMedia } from '../../../../shared/models/social-media.enum';
+import { LocalStorageKeys } from '../../models/local-storage-keys.enum';
 
 @Injectable()
 export class SweepsActions {

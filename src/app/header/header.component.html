@@ -2,7 +2,7 @@
     <table class="header-table">
         <tr>
             <td class="header-td">
-                <button mat-icon-button (click)="toggleSideNav()">
+                <button mat-icon-button (click)="commonActions.toggleSideNav()">
                     <mat-icon>menu</mat-icon>
                 </button>
             </td>
@@ -18,13 +18,12 @@
                     </button>
                 </span>
             </td>
-            <!--td class="header-td">
-                <span class="buttons">
-                    <button mat-icon-button>
-                        <mat-icon>search</mat-icon>
-                    </button>
+            <td class="header-td">
+                <span class="search" (keypress)="search(searchText, $event.keyCode === 13)">
+                    <input matInput placeholder="search" [(ngModel)]="searchText"/>
+                    <mat-icon matSuffix>search</mat-icon>
                 </span>
-            </td-->
+            </td>
         </tr>
     </table>
 </div>
