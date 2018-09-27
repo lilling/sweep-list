@@ -1,34 +1,20 @@
 <div class="header">
-    <table class="header-table">
-        <tr>
-            <td class="header-td">
-                <button mat-icon-button (click)="commonActions.toggleSideNav()">
-                    <mat-icon>menu</mat-icon>
-                </button>
-            </td>
-            <td class="header-td">
-                <span mat-dialog-title>{{title}}</span>
-            </td>
-            <td style="width: 100%">
-            </td>
-            <td class="header-td">
-                <span class="buttons">
-                    <button mat-icon-button (click)="sendMail()">
-                        <mat-icon svgIcon="feedback"></mat-icon>
-                    </button>
-                </span>
-            </td>
-            <td class="header-td search-td">
-                <span class="buttons">
-                    <button class="open-search-button" mat-icon-button (click)="openSearch = !openSearch">
-                        <mat-icon> {{ openSearch ? 'close' : 'search' }}</mat-icon>
-                    </button>
-                </span>
-            </td>
-        </tr>
-    </table>
+    <span>
+        <button mat-icon-button (click)="commonActions.toggleSideNav()">
+            <mat-icon>menu</mat-icon>
+        </button>
+        <span class="title">{{title}}</span>
+    </span>
+    <span class="buttons">
+        <button mat-icon-button (click)="sendMail()">
+            <mat-icon svgIcon="feedback"></mat-icon>
+        </button>
+        <button class="open-search-button" mat-icon-button (click)="openSearch = !openSearch">
+            <mat-icon> {{ openSearch ? 'close' : 'search' }}</mat-icon>
+        </button>
+    </span>
     <span *ngIf="openSearch" class="search-field" (keypress)="search(searchText, $event.keyCode === 13)" (clickOutside)="openSearch = false"
-    [exclude]="'.open-search-button'">
+          [exclude]="'.open-search-button'">
         <input matInput placeholder="search" [(ngModel)]="searchText"/>
     </span>
 </div>
