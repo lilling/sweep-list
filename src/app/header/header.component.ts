@@ -16,6 +16,7 @@ import { SweepsMode } from '../state/sweeps/sweeps.state';
 })
 export class HeaderComponent extends Subscriber {
     @Input() title: string;
+    openSearch: boolean;
     mode: SweepsMode;
     user: user_account;
 
@@ -34,6 +35,7 @@ export class HeaderComponent extends Subscriber {
     search(nameSearch: string, isEnterKeyPressed: boolean) {
         if (isEnterKeyPressed) {
             this.sweepsActions.getSweeps({ nameSearch, user_account_id: this.user.user_account_id, enabled_social_media_bitmap: this.user.enabled_social_media_bitmap }, this.mode);
+            this.openSearch = false;
         }
     }
 }

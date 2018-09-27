@@ -6,6 +6,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 //
 import { ShareButtonModule } from '@ngx-share/button';
 import { AngularDateTimePickerModule } from 'angular2-datetimepicker';
+import { ClickOutsideModule } from 'ng-click-outside';
 import { NgReduxModule } from '@angular-redux/store';
 //
 import { AppComponent } from './app.component';
@@ -92,6 +93,7 @@ export function provideConfig() {
     imports: [
         StateModule,
         NgReduxModule,
+        ClickOutsideModule,
         RouterModule.forRoot(appRoutes),
         BrowserModule,
         HttpClientModule,

@@ -18,12 +18,17 @@
                     </button>
                 </span>
             </td>
-            <td class="header-td">
-                <span class="search" (keypress)="search(searchText, $event.keyCode === 13)">
-                    <input matInput placeholder="search" [(ngModel)]="searchText"/>
-                    <mat-icon matSuffix>search</mat-icon>
+            <td class="header-td search-td">
+                <span class="buttons">
+                    <button class="open-search-button" mat-icon-button (click)="openSearch = !openSearch">
+                        <mat-icon> {{ openSearch ? 'close' : 'search' }}</mat-icon>
+                    </button>
                 </span>
             </td>
         </tr>
     </table>
+    <span *ngIf="openSearch" class="search-field" (keypress)="search(searchText, $event.keyCode === 13)" (clickOutside)="openSearch = false"
+    [exclude]="'.open-search-button'">
+        <input matInput placeholder="search" [(ngModel)]="searchText"/>
+    </span>
 </div>

@@ -19,15 +19,11 @@
     padding-left: 10px;
     padding-right: 10px;
     white-space: nowrap;
+  }
 
-    .search {
-      position: relative;
-
-      mat-icon {
-        position: absolute;
-        color: gray;
-        right: 0px;
-      }
-    }
+  .search-field {
+    position: absolute;
+    right: 70px;
+    top: 10px;
   }
 }
