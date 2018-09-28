@@ -9,7 +9,7 @@
         <button mat-icon-button (click)="sendMail()">
             <mat-icon svgIcon="feedback"></mat-icon>
         </button>
-        <button class="open-search-button" mat-icon-button (click)="openSearch = !openSearch">
+        <button *ngIf="showSearch" class="open-search-button" mat-icon-button (click)="openSearch = !openSearch">
             <mat-icon> {{ openSearch ? 'close' : 'search' }}</mat-icon>
         </button>
     </span>

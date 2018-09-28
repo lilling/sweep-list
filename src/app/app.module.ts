@@ -39,6 +39,7 @@ import { TextPopupComponent } from './text-popup/text-popup.component';
 import { SettingsComponent } from './components/settings/settings.component';
 import { ForgotPasswordComponent } from './components/forgot-password/forgot-password.component';
 import { WinsComponent } from './wins/wins.component';
+import { PaymentsComponent } from './components/payments/payments.component';
 
 const fbLoginOptions: LoginOpt = {
     scope: 'public_profile , email',
@@ -88,7 +89,8 @@ export function provideConfig() {
         TextPopupComponent,
         SettingsComponent,
         WinsComponent,
-        ForgotPasswordComponent
+        ForgotPasswordComponent,
+        PaymentsComponent
     ],
     imports: [
         StateModule,

@@ -16,6 +16,7 @@ import { SweepsMode } from '../state/sweeps/sweeps.state';
 })
 export class HeaderComponent extends Subscriber {
     @Input() title: string;
+    @Input() showSearch = true;
     openSearch: boolean;
     mode: SweepsMode;
     user: user_account;
