@@ -25,6 +25,8 @@ export class LoginComponent extends Subscriber implements OnInit {
     SocialMedia = SocialMedia;
     EnumValues = EnumValues;
     phaseTwo: boolean;
+    forgotPassword: boolean;
+    sendMailForChangePassword: boolean;
     isRegister = false;
     password: string;
     email: string;
@@ -65,6 +67,11 @@ export class LoginComponent extends Subscriber implements OnInit {
 
     isEmail(email: string) {
         return /\S+@\S+\.\S+/.test(email);
+    }
+
+    forgotMail(email: string) {
+        this.loginActions.forgotMail(email);
+        this.sendMailForChangePassword = true;
     }
 
     toggleRegister() {

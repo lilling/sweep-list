@@ -1,36 +1,41 @@
 import { Component, Input } from '@angular/core';
+//
+import { NgRedux } from '@angular-redux/store';
+//
 import { CommonActions } from '../state/common/common.actions';
-import { DomSanitizer } from '@angular/platform-browser';
-import { MatIconRegistry } from '@angular/material';
-
+import { SweepsActions } from '../state/sweeps/sweeps.actions';
+import { AppState } from '../state/store';
+import { Subscriber } from '../classes/subscriber';
+import { user_account } from '../../../shared/classes';
+import { SweepsMode } from '../state/sweeps/sweeps.state';
 
 @Component({
     selector: 'app-header',
     templateUrl: 'header.component.html',
     styleUrls: ['header.component.scss']
 })
-export class HeaderComponent {
-    @Input()
-    title: string;
+export class HeaderComponent extends Subscriber {
+    @Input() title: string;
+    openSearch: boolean;
+    mode: SweepsMode;
+    user: user_account;
 
-    constructor(iconRegistry: MatIconRegistry,
-                sanitizer: DomSanitizer,
-                private commonActions: CommonActions) {
-        iconRegistry.addSvgIcon('calendar', sanitizer.bypassSecurityTrustResourceUrl('assets/icons/calendar.svg'));
-        iconRegistry.addSvgIcon('gift', sanitizer.bypassSecurityTrustResourceUrl('assets/icons/gift.svg'));
-        iconRegistry.addSvgIcon('win', sanitizer.bypassSecurityTrustResourceUrl('assets/icons/win.svg'));
-        iconRegistry.addSvgIcon('settings', sanitizer.bypassSecurityTrustResourceUrl('assets/icons/settings.svg'));
-        iconRegistry.addSvgIcon('feedback', sanitizer.bypassSecurityTrustResourceUrl('assets/icons/feedback.svg'));
-        iconRegistry.addSvgIcon('power', sanitizer.bypassSecurityTrustResourceUrl('assets/icons/power.svg'));
-        iconRegistry.addSvgIcon('star', sanitizer.bypassSecurityTrustResourceUrl('assets/icons/star.svg'));
-        iconRegistry.addSvgIcon('star-list', sanitizer.bypassSecurityTrustResourceUrl('assets/icons/star-list.svg'));
+    constructor(private ngRedux: NgRedux<AppState>, private commonActions: CommonActions, private sweepsActions: SweepsActions) {
+        super();
+        this.subscriptions = {
+            sweepsMode: this.ngRedux.select(state => state.sweepsState.mode).subscribe(mode => this.mode = mode),
+            user: this.ngRedux.select(state => state.loginState.user).subscribe(user => this.user = user)
+        };
     }
 
-    toggleSideNav() {
-        this.commonActions.toggleSideNav();
+    sendMail() {
+        window.location.href = 'mailto:support@sweepimp.com';
     }
 
-    sendMail(){
-        window.location.href = "mailto:support@sweepimp.com";
+    search(nameSearch: string, isEnterKeyPressed: boolean) {
+        if (isEnterKeyPressed) {
+            this.sweepsActions.getSweeps({ nameSearch, user_account_id: this.user.user_account_id, enabled_social_media_bitmap: this.user.enabled_social_media_bitmap }, this.mode);
+            this.openSearch = false;
+        }
     }
 }

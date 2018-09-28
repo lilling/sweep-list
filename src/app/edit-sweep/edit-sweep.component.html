@@ -60,11 +60,13 @@
                                           [smBitmap]="(user$ | async).enabled_social_media_bitmap"></app-thank-sweep-data>
                 </mat-expansion-panel>
             </mat-accordion>
-            <app-sweep-actions [sweep]="sweep" [smBitmap]="(user$ | async).enabled_social_media_bitmap"
-                               (sweepEnded)="sweepsActions.removeSweepFromList($event)"
-                               (sweepEntered)="sweepsActions.enterSweep(sweep.user_sweep_id)"
-                               (sweepShared)="sweepsActions.shareSweep({sweep_id: sweep.user_sweep_id, social_media: $event.media, URL: $event.URL})">
-            </app-sweep-actions>
+            <div class="sweep-actions">
+                <app-sweep-actions [sweep]="sweep" [smBitmap]="(user$ | async).enabled_social_media_bitmap"
+                    (sweepEnded)="sweepsActions.removeSweepFromList($event)"
+                    (sweepEntered)="sweepsActions.enterSweep(sweep.user_sweep_id)"
+                    (sweepShared)="sweepsActions.shareSweep({sweep_id: sweep.user_sweep_id, social_media: $event.media, URL: $event.URL})">
+                </app-sweep-actions>
+            </div>
         </form>
     </div>
 </div>

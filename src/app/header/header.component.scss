@@ -10,14 +10,10 @@
     line-height: 2.5;
   }
 
-  .header-table{
-    border-spacing: 0px;
-    width: 100%;
-  }
-
-  .header-td {
-    padding-left: 10px;
-    padding-right: 10px;
-    white-space: nowrap;
+  .search-field {
+    position: absolute;
+    right: 50px;
+    top: 11px;
+    background: white;
   }
 }

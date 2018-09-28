@@ -2,6 +2,20 @@
   height: 100%;
   background: white;
 
+  h1 {
+    text-align: center;
+
+    a {
+      background: url(../../assets/icons/appIcon.png) center top no-repeat;
+      background-size: 120px;
+      height: 120px;
+      margin: 0 auto 25px;
+      width: 120px;
+      text-indent: -9999px;
+      display: block;
+    }
+  }
+
   .mat-icon {
     width: 50px;
     text-align: center;

@@ -1,5 +1,5 @@
 import { TypedAction } from '../models/typed-action';
-import { INITIAL_SWEEPS_STATE, SweepsState } from './sweeps.state';
+import { INITIAL_SWEEPS_STATE, SweepsState, SweepsMode } from './sweeps.state';
 import { SweepsActions } from './sweeps.actions';
 import { user_sweep } from '../../../../shared/classes';
 import { HashedArray } from '../../models/hashed-array.class';
@@ -37,9 +37,40 @@ export function sweepsReducer(state: SweepsState = INITIAL_SWEEPS_STATE, action:
             };
         }
         case SweepsActions.ADD_SWEEP_COMPLETED: {
+            const sweep: user_sweep = action.payload;
+            let sweeps = state.sweeps;
+            switch (state.mode) {
+                case SweepsMode.active: {
+                    if (!sweep.is_referral && !sweep.is_frequency) {
+                        sweeps = sweeps.addItem(sweep, sort);
+                    }
+                    break;
+                }
+                case SweepsMode.today: {
+                    if (sweep.is_referral) {
+                        sweeps = sweeps.addItem(sweep, sort);
+                    }
+                    break;
+                }
+                case SweepsMode.tomorrow: {
+                    if (sweep.is_frequency && sweep.frequency_days === 1) {
+                        sweeps = sweeps.addItem(sweep, sort);
+                    }
+                    break;
+                }
+                case SweepsMode.later: {
+                    if (sweep.is_frequency && sweep.frequency_days > 1) {
+                        sweeps = sweeps.addItem(sweep, sort);
+                    }
+                    break;
+                }
+                default: {
+                    break;
+                }
+            }
             return {
                 ...state,
-                sweeps: state.sweeps.addItem(action.payload, sort),
+                sweeps,
                 isSweepsLoading: false
             };
         }
@@ -80,15 +111,19 @@ export function sweepsReducer(state: SweepsState = INITIAL_SWEEPS_STATE, action:
         }
         case SweepsActions.ENTER_SWEEP_COMPLETED: {
             const old = state.sweeps.getItem(action.payload);
-            const updated = {
-                ...old,
-                last_entry_date: new Date(),
-                total_entries: old.total_entries ? old.total_entries + 1 : 1
-            };
-            return {
-                ...state,
-                sweeps: state.sweeps.updateItem(updated)
-            };
+            if (old) {
+                const updated = {
+                    ...old,
+                    last_entry_date: new Date(),
+                    total_entries: old.total_entries ? old.total_entries + 1 : 1
+                };
+                return {
+                    ...state,
+                    sweeps: state.sweeps.updateItem(updated)
+                };
+            } else {
+                return state;
+            }
         }
         case SweepsActions.DELETE_SWEEP_COMPLETED: {
             return {

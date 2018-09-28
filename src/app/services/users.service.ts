@@ -23,6 +23,10 @@ export class UsersService extends BaseService {
         return this.post<{ user: user_account, isNew?: boolean }>(`create_user`, model);
     }
 
+    forgotMail(email: string) {
+        return this.get(`forgot_password/${email}`);
+    }
+
     getUserSocialAccounts(id: AAGUID): Observable<{socialMedia: SocialMedia, status: SocialMediaStatus}[]> {
         return this.get(`user_social_medias/${id}`);
     }
@@ -37,6 +41,10 @@ export class UsersService extends BaseService {
 
     updateUser(user: user_account): Observable<user_account> {
         return this.post<user_account>('update_user', user);
+    }
+
+    changePassword(id: AAGUID, password: string) {
+        return this.post<user_account>('change_password', { id, password });
     }
 
     getDeleteAccountData(id: AAGUID): Observable<{ tasks: string, active: string, ended: string, won: string }> {

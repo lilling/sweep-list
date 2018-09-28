@@ -17,30 +17,34 @@
         text-decoration: line-through;
       }
       .edit-sweep {
-        padding-left: 20px;
+        margin-left: 20px;
       }
-      .win-sweep {
-        padding-left: 20px;
+      .won-sweep {
+        margin-left: 20px;
+        height: 30px;
+        width: 30px;
         fill: $main-color;
+      }
+      .unwon-sweep {
+        margin-left: 20px;
+        height: 30px;
+        width: 30px;
       }
       .grid-container {
         display: flex;
         justify-content: space-between;
         padding: 10px;
-        text-align: center;
 
         .sweep-name {
           display: flex;
           flex-direction: column;
           font-weight: bold;
+          white-space: initial;
 
           span {
             align-self: flex-start;
           }
 
-          app-sweep-actions {
-            white-space: initial;
-          }
         }
         .sweep-data {
           color: gray;
@@ -99,7 +103,6 @@
 
     .whole-screen{
       position:fixed;
-      padding:calc(43px + 48px);
       margin:0;
       top:calc(43px + 48px);
       left:0;

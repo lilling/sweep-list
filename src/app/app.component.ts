@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router, NavigationEnd } from '@angular/router';
+import { DomSanitizer } from '@angular/platform-browser';
+import { MatIconRegistry } from '@angular/material';
 //
 import * as _ from 'lodash';
 import { NgRedux } from '@angular-redux/store';
@@ -31,13 +33,24 @@ export class AppComponent implements OnInit {
         return _.flatten(epicClasses.map(epicClass => epicClass.getEpics()));
     }
 
-    constructor(private ngRedux: NgRedux<AppState>,
+    constructor(iconRegistry: MatIconRegistry,
+                sanitizer: DomSanitizer,
+                private ngRedux: NgRedux<AppState>,
                 private router: Router,
                 private loginEpics: LoginEpics,
                 private loginActions: LoginActions,
                 private sweepsActions: SweepsActions,
                 private commonActions: CommonActions,
                 private sweepsEpics: SweepsEpics) {
+        iconRegistry.addSvgIcon('calendar', sanitizer.bypassSecurityTrustResourceUrl('assets/icons/calendar.svg'));
+        iconRegistry.addSvgIcon('gift', sanitizer.bypassSecurityTrustResourceUrl('assets/icons/gift.svg'));
+        iconRegistry.addSvgIcon('win', sanitizer.bypassSecurityTrustResourceUrl('assets/icons/win.svg'));
+        iconRegistry.addSvgIcon('settings', sanitizer.bypassSecurityTrustResourceUrl('assets/icons/settings.svg'));
+        iconRegistry.addSvgIcon('feedback', sanitizer.bypassSecurityTrustResourceUrl('assets/icons/feedback.svg'));
+        iconRegistry.addSvgIcon('power', sanitizer.bypassSecurityTrustResourceUrl('assets/icons/power.svg'));
+        iconRegistry.addSvgIcon('star', sanitizer.bypassSecurityTrustResourceUrl('assets/icons/star.svg'));
+        iconRegistry.addSvgIcon('win', sanitizer.bypassSecurityTrustResourceUrl('assets/icons/win.svg'));
+        iconRegistry.addSvgIcon('internet', sanitizer.bypassSecurityTrustResourceUrl('assets/icons/internet.svg'));
     }
 
     ngOnInit() {

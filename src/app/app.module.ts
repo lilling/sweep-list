@@ -6,6 +6,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 //
 import { ShareButtonModule } from '@ngx-share/button';
 import { AngularDateTimePickerModule } from 'angular2-datetimepicker';
+import { ClickOutsideModule } from 'ng-click-outside';
 import { NgReduxModule } from '@angular-redux/store';
 //
 import { AppComponent } from './app.component';
@@ -36,6 +37,7 @@ import { SweepActionsComponent } from './sweep-actions/sweep-actions.component';
 import { WinPopupComponent } from './win-popup/win-popup.component';
 import { TextPopupComponent } from './text-popup/text-popup.component';
 import { SettingsComponent } from './components/settings/settings.component';
+import { ForgotPasswordComponent } from './components/forgot-password/forgot-password.component';
 import { WinsComponent } from './wins/wins.component';
 
 const fbLoginOptions: LoginOpt = {
@@ -58,6 +60,10 @@ const SOCIAL_CONFIG = new AuthServiceConfig([
     //     provider: new LinkedinLoginProvider('LINKEDIN_CLIENT_ID')
     // }
 ]);
+
+export function provideConfig() {
+    return SOCIAL_CONFIG;
+}
 
 @NgModule({
     declarations: [
@@ -82,22 +88,26 @@ const SOCIAL_CONFIG = new AuthServiceConfig([
         TextPopupComponent,
         SettingsComponent,
         WinsComponent,
-        //SocialMediaLoginErrorComponent,
+        ForgotPasswordComponent
     ],
     imports: [
         StateModule,
         NgReduxModule,
+        ClickOutsideModule,
         RouterModule.forRoot(appRoutes),
         BrowserModule,
         HttpClientModule,
         FormsModule,
         ShareButtonModule.forRoot(),
         MaterialModule,
-        SocialLoginModule.initialize(SOCIAL_CONFIG),
+        SocialLoginModule,
         AngularDateTimePickerModule,
         BrowserAnimationsModule
     ],
-    providers: [UsersService, SweepsService, AuthGuard],
+    providers: [UsersService, SweepsService, AuthGuard, {
+        provide: AuthServiceConfig,
+        useFactory: provideConfig
+    }],
     bootstrap: [AppComponent],
     exports: [RouterModule],
     entryComponents: [AddSweepComponent, EditSweepComponent, DeleteAccountComponent, WinPopupComponent, TextPopupComponent]

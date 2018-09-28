@@ -10,7 +10,6 @@
                 <ng-container *ngIf="mode != 4">
                     <mat-list>
                         <mat-list-item class="auto-height" *ngFor="let sweep of sweeps" [ngClass]="{'deleted': sweep.data.deleted_yn}">
-                            <mat-icon matListIcon svgIcon="gift"></mat-icon>
                             <div mat-line class="grid-container">
                                 <div class="sweep-name">
                                     <span>{{sweep.data.sweep_name}}</span>
@@ -20,7 +19,7 @@
                                                        (sweepShared)="sweepsActions.shareSweep({sweep_id: sweep.data.user_sweep_id, social_media: $event.media, URL: $event.URL})">
                                     </app-sweep-actions>
                                 </div>
-                                <div class="frequency-data" *ngIf="sweep.data.is_frequency">
+                                <div class="frequency-data" *ngIf="sweep.data.is_frequency && mode == 1">
                                     {{ nextEntry(sweep) }}
                                 </div>
                             </div>
@@ -32,7 +31,6 @@
                 <ng-container *ngIf="mode == 4">
                     <mat-list>
                         <mat-list-item *ngFor="let sweep of sweeps" [ngClass]="{'deleted': sweep.data.deleted_yn}">
-                            <mat-icon matListIcon svgIcon="gift"></mat-icon>
                             <div mat-line class="list-item-first">
                                 <span class="sweep-name"> {{sweep.data.sweep_name}}</span>
                                 <span class="sweep-data"> {{sweep.text}} </span>
@@ -43,9 +41,11 @@
                             <div mat-line class="list-item-third-ended" *ngIf="sweep.data.is_referral">
                                 Total shares: {{sweep.data.total_shares ? sweep.data.total_shares : 0}}
                             </div>
-                            <mat-icon *ngIf="sweep.data.won_yn" class="win-sweep" (click)="unwinSweep(sweep.data.user_sweep_id)" svgIcon="win"></mat-icon>
-                            <mat-icon *ngIf="!sweep.data.won_yn" class="edit-sweep" (click)="winSweep(sweep.data.user_sweep_id)" svgIcon="star"></mat-icon>
-                            <mat-icon class="edit-sweep" (click)="router.navigate(['edit', sweep.data.user_sweep_id])">edit</mat-icon>
+                            <mat-icon *ngIf="sweep.data.won_yn" class="won-sweep clickable" (click)="unwinSweep(sweep.data.user_sweep_id)"
+                                      svgIcon="win"></mat-icon>
+                            <mat-icon *ngIf="!sweep.data.won_yn" class="unwon-sweep clickable" (click)="winSweep(sweep.data.user_sweep_id)"
+                                      svgIcon="star"></mat-icon>
+                            <mat-icon class="edit-sweep clickable" (click)="router.navigate(['edit', sweep.data.user_sweep_id])">edit</mat-icon>
                         </mat-list-item>
                     </mat-list>
                 </ng-container>
