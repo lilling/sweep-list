@@ -48,6 +48,7 @@ export class AppComponent implements OnInit {
         iconRegistry.addSvgIcon('settings', sanitizer.bypassSecurityTrustResourceUrl('assets/icons/settings.svg'));
         iconRegistry.addSvgIcon('feedback', sanitizer.bypassSecurityTrustResourceUrl('assets/icons/feedback.svg'));
         iconRegistry.addSvgIcon('power', sanitizer.bypassSecurityTrustResourceUrl('assets/icons/power.svg'));
+        iconRegistry.addSvgIcon('credit-card', sanitizer.bypassSecurityTrustResourceUrl('assets/icons/credit-card.svg'));
         iconRegistry.addSvgIcon('star', sanitizer.bypassSecurityTrustResourceUrl('assets/icons/star.svg'));
         iconRegistry.addSvgIcon('win', sanitizer.bypassSecurityTrustResourceUrl('assets/icons/win.svg'));
         iconRegistry.addSvgIcon('internet', sanitizer.bypassSecurityTrustResourceUrl('assets/icons/internet.svg'));
