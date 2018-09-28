@@ -25,9 +25,6 @@ export class UserSweepService extends BaseService<user_sweep> {
             `  FROM sweepimp.user_sweep\n` +
             ` WHERE user_account_id = $<user_account_id>\n`;
         let where = ``;
-        if (user_sweep_search.nameSearch) {
-            where = where + `   AND upper(sweep_name) like '%' || upper($<nameSearch>) || '%'\n`;
-        }
         let order_by = ``;
         switch (status) {
             case `today`:
@@ -53,6 +50,10 @@ export class UserSweepService extends BaseService<user_sweep> {
                 break;
             }
         }
+        if (user_sweep_search.nameSearch) {
+//console.log(user_sweep_search.nameSearch);
+            where = where + `   AND upper(sweep_name) like '%' || upper($<nameSearch>) || '%'\n`;
+        }            
         order_by = order_by + `LIMIT 20;`
         return db.manyOrNone(q + where + order_by, user_sweep_search);
     }
