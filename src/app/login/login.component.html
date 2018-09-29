@@ -17,13 +17,15 @@
                     <input id="name" type="text" [(ngModel)]="name"/>
                 </label>
                 <label for="email">
-                    <span>E-Mail</span><span class="error-message" *ngIf="email?.length > 0 && !isEmail(email)"> not an E-Mail</span>
+                    <span>E-Mail</span>
+                    <span class="error-message" *ngIf="email?.length > 0 && !isEmail(email)"> not an E-Mail</span>
                     <input id="email" type="text" [(ngModel)]="email"/>
                 </label>
                 <app-password [(password)]="password"></app-password>
             </ng-container>
             <ng-container *ngIf="phaseTwo">
-                <span>Which social medias do you use for sweeping? (don't worry, you can change this later in the settings menu).</span>
+                <h2>Select Social Media</h2>
+                <p>Which social medias do you use for sweeping? (don't worry, you can change this later in the settings menu).</p>
                 <div class="stacked-div">
                     <mat-slide-toggle *ngFor="let sm of EnumValues.getValues(SocialMedia)" [checked]="selectedSMs.get(+sm)" [color]="'primary'"
                                       (change)="selectedSMs.has(+sm) ? selectedSMs.delete(+sm) : selectedSMs.set(+sm, $event.checked)">

@@ -110,13 +110,7 @@
       height: calc(100vh - 40px - 48px);
 
       .no-sweeps {
-        position: absolute;
-        top: 10%;
-        left: 50%;
-        display: flex;
-        flex-direction: column;
-        align-content: space-around;
-        transform: translate(-50%, 0%);
+        margin: 15% 10%;
       }
     }
   }

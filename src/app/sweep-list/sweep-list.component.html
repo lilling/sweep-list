@@ -26,9 +26,10 @@
             </mat-list-item>
         </mat-list>
         <div class="no-sweeps" *ngIf="!(isSweepsLoading$ | async) && sweeps.length == 0">
-            <span>May I serve you please? Add a sweep so I can!</span>
-            <br>
-            <button mat-raised-button class="main-button" (click)="addSweep()"> ADD SWEEP </button>
+            <h2>No Active Sweeps :(</h2>
+            <p>May I serve you please?</p>
+            Sign up for sweeps and I'll manage them for you.<br>
+            <span style="font-size: 0.75em; font-weight: bold;">(just add them here using the '+' button below!)</span>
         </div>
         <button mat-fab (click)="addSweep()">
             <mat-icon>add</mat-icon>

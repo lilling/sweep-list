@@ -51,11 +51,11 @@
                 </ng-container>
                 <div class="whole-screen" *ngIf="!(isSweepsLoading$ | async) && sweeps.length == 0">
                     <div class="no-sweeps" *ngIf="mode == 1">
-                        <h2>Great job!</h2>
+                        <h2>Great Job!</h2>
                         You have completed all your shares and entries for today!
                         <p>
-                            <span>Now go ahead and sign up for more sweeps, I'll manage them for you.</span>
-                            <span style="font-size: 0.75em; font-weight: bold;">(Don't forget to add them here using the '+' button below!)</span>
+                            <span>Now go ahead and sign up for more sweeps, I'll manage them for you.</span><br>
+                            <span style="font-size: 0.75em; font-weight: bold;">(just add them here using the '+' button below!)</span>
                         </p>
                     </div>
                     <div class="no-sweeps" *ngIf="!(isSweepsLoading$ | async) && sweeps.length == 0 && mode == 2">

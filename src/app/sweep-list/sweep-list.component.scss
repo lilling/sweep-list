@@ -64,13 +64,7 @@
     }
 
     .no-sweeps {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      display: flex;
-      flex-direction: column;
-      align-content: space-around;
-      transform: translate(-50%, -50%);
+      margin: 15% 10%;
     }
 
     .mat-fab {

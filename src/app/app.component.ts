@@ -51,6 +51,8 @@ export class AppComponent implements OnInit {
         iconRegistry.addSvgIcon('star', sanitizer.bypassSecurityTrustResourceUrl('assets/icons/star.svg'));
         iconRegistry.addSvgIcon('win', sanitizer.bypassSecurityTrustResourceUrl('assets/icons/win.svg'));
         iconRegistry.addSvgIcon('internet', sanitizer.bypassSecurityTrustResourceUrl('assets/icons/internet.svg'));
+        iconRegistry.addSvgIcon('visibility', sanitizer.bypassSecurityTrustResourceUrl('assets/icons/visibility.svg'));
+        iconRegistry.addSvgIcon('visibility_off', sanitizer.bypassSecurityTrustResourceUrl('assets/icons/visibility_off.svg'));
     }
 
     ngOnInit() {
