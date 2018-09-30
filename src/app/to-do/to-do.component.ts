@@ -13,7 +13,6 @@ import { SweepsActions } from '../state/sweeps/sweeps.actions';
 import { SweepsMode } from '../state/sweeps/sweeps.state';
 import { AppState } from '../state/store';
 import { AddSweepComponent } from '../add-sweep/add-sweep.component';
-import { WinPopupComponent } from '../win-popup/win-popup.component';
 import { Subscriber } from '../classes/subscriber';
 
 @Component({
@@ -31,7 +30,6 @@ export class ToDoComponent extends Subscriber implements OnInit, AfterViewInit {
     }[];
     mode: SweepsMode;
     user: user_account;
-    userAccountId: AAGUID;
 
     constructor(private ngRedux: NgRedux<AppState>,
                 public dialog: MatDialog,
@@ -43,7 +41,6 @@ export class ToDoComponent extends Subscriber implements OnInit, AfterViewInit {
     }
 
     ngOnInit() {
-        this.userAccountId = localStorage.getItem(LocalStorageKeys.loggedUser);
         this.sweepsActions.goToSweeps(+this.activatedRoute.snapshot.params['mode']);
 
         this.subscriptions = {
@@ -56,7 +53,7 @@ export class ToDoComponent extends Subscriber implements OnInit, AfterViewInit {
                 this.mode = mode;
 
                 if (!this.ngRedux.getState().sweepsState.sweeps.length()) {
-                    const search = { user_account_id: this.userAccountId, enabled_social_media_bitmap: user.enabled_social_media_bitmap };
+                    const search = { user_account_id: user.user_account_id, enabled_social_media_bitmap: user.enabled_social_media_bitmap };
                     this.sweepsActions.getSweeps(search, mode);
                 }
             }),
@@ -107,14 +104,6 @@ export class ToDoComponent extends Subscriber implements OnInit, AfterViewInit {
         this.dialog.open(AddSweepComponent);
     }
 
-    winSweep(user_sweep_id: number) {
-        this.dialog.open(WinPopupComponent, {width: '270px', data:{winAction: 'win', userSweepId: user_sweep_id}});
-    }
-
-    unwinSweep(user_sweep_id: number) {
-        this.dialog.open(WinPopupComponent, {data:{winAction: 'unwin', userSweepId: user_sweep_id}});
-    }
-
     private addScrollEventHandler(): void {
         const tablesBody = document.getElementsByClassName('body');
 
@@ -132,13 +121,8 @@ export class ToDoComponent extends Subscriber implements OnInit, AfterViewInit {
                             lastScroll = currentScroll;
                             return;
                         }
-                        const search = {
-                            user_account_id: this.userAccountId,
-                            lastUserSweep: this.sweeps[this.sweeps.length - 1],
-                            enabled_social_media_bitmap: this.user.enabled_social_media_bitmap
-                        };
                         this.sweepsActions.getSweeps({
-                            user_account_id: this.userAccountId,
+                            user_account_id: this.user.user_account_id,
                             enabled_social_media_bitmap: this.user.enabled_social_media_bitmap,
                             lastUserSweep: this.sweeps[this.sweeps.length - 1].data
                         }, this.mode);

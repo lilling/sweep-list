@@ -42,6 +42,7 @@ import { WinsComponent } from './wins/wins.component';
 import { SearchResultsComponent } from './components/search-results/search-results.component';
 import { DefaultListComponent } from './components/default-list/default-list.component';
 import { WithSmActionsListComponent } from './components/with-sm-actions-list/with-sm-actions-list.component';
+import { EndedListComponent } from './components/ended-list/ended-list.component';
 
 const fbLoginOptions: LoginOpt = {
     scope: 'public_profile , email',
@@ -94,7 +95,8 @@ export function provideConfig() {
         ForgotPasswordComponent,
         SearchResultsComponent,
         DefaultListComponent,
-        WithSmActionsListComponent
+        WithSmActionsListComponent,
+        EndedListComponent
     ],
     imports: [
         StateModule,

@@ -1,0 +1,36 @@
+@import '../../../sass/styles';
+
+mat-list-item {
+  &.deleted {
+    text-decoration: line-through;
+  }
+  .edit-sweep {
+    margin-left: 20px;
+  }
+  .won-sweep {
+    margin-left: 20px;
+    height: 30px;
+    width: 30px;
+    fill: $main-color;
+  }
+  .unwon-sweep {
+    margin-left: 20px;
+    height: 30px;
+    width: 30px;
+  }
+  .list-item-second {
+    display: flex !important;
+    justify-content: flex-end;
+    color: gray;
+  }
+  .list-item-third {
+    display: flex !important;;
+    justify-content: flex-start;
+    color: gray;
+  }
+  .list-item-third-ended {
+    display: flex !important;;
+    justify-content: flex-end;
+    color: gray;
+  }
+}

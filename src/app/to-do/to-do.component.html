@@ -8,27 +8,7 @@
                     <i class="fa fa-spinner fa-spin centered"></i>
                 </ng-container>
                 <app-with-sm-actions-list *ngIf="mode != 4" [user]="user" [mode]="mode" [sweeps]="sweeps"></app-with-sm-actions-list>
-
-
-                <mat-list *ngIf="mode == 4">
-                    <mat-list-item *ngFor="let sweep of sweeps" [ngClass]="{'deleted': sweep.data.deleted_yn}">
-                        <div mat-line class="list-item-first">
-                            <span class="sweep-name"> {{sweep.data.sweep_name}}</span>
-                            <span class="sweep-data"> {{sweep.text}} </span>
-                        </div>
-                        <div mat-line class="list-item-second" *ngIf="sweep.data.is_frequency">
-                            Total entries: {{sweep.data.total_entries ? sweep.data.total_entries : 0}}
-                        </div>
-                        <div mat-line class="list-item-third-ended" *ngIf="sweep.data.is_referral">
-                            Total shares: {{sweep.data.total_shares ? sweep.data.total_shares : 0}}
-                        </div>
-                        <mat-icon *ngIf="sweep.data.won_yn" class="won-sweep clickable" (click)="unwinSweep(sweep.data.user_sweep_id)"
-                                  svgIcon="win"></mat-icon>
-                        <mat-icon *ngIf="!sweep.data.won_yn" class="unwon-sweep clickable" (click)="winSweep(sweep.data.user_sweep_id)"
-                                  svgIcon="star"></mat-icon>
-                        <mat-icon class="edit-sweep clickable" (click)="router.navigate(['edit', sweep.data.user_sweep_id])">edit</mat-icon>
-                    </mat-list-item>
-                </mat-list>
+                <app-ended-list *ngIf="mode == 4" [sweeps]="sweeps"></app-ended-list>
                 <div class="whole-screen" *ngIf="!(isSweepsLoading$ | async) && sweeps.length == 0">
                     <div class="no-sweeps" *ngIf="mode == 1">
                         <h2>Great Job!</h2>
