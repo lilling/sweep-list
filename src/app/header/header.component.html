@@ -1,7 +1,10 @@
 <div class="header">
     <span>
-        <button mat-icon-button (click)="commonActions.toggleSideNav()">
+        <button *ngIf="!showBackButton" mat-icon-button (click)="commonActions.toggleSideNav()">
             <mat-icon>menu</mat-icon>
+        </button>
+        <button *ngIf="showBackButton" mat-icon-button (click)="location.back()">
+            <mat-icon fontSet="fa" fontIcon="fa-arrow-left"></mat-icon>
         </button>
         <span class="title">{{title}}</span>
     </span>
@@ -9,7 +12,7 @@
         <button mat-icon-button (click)="sendMail()">
             <mat-icon svgIcon="feedback"></mat-icon>
         </button>
-        <button class="open-search-button" mat-icon-button (click)="openSearch = !openSearch">
+        <button *ngIf="showSearch" class="open-search-button" mat-icon-button (click)="openSearch = !openSearch; searchText = ''">
             <mat-icon> {{ openSearch ? 'close' : 'search' }}</mat-icon>
         </button>
     </span>

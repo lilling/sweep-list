@@ -8,6 +8,7 @@ import { ToDoComponent } from './to-do/to-do.component';
 import { SettingsComponent } from './components/settings/settings.component';
 import { ForgotPasswordComponent } from './components/forgot-password/forgot-password.component';
 import { WinsComponent } from './wins/wins.component';
+import { SearchResultsComponent } from './components/search-results/search-results.component';
 
 export const appRoutes: Routes = [
     { path: 'forgotPassword/:id', component: ForgotPasswordComponent },
@@ -22,6 +23,7 @@ export const appRoutes: Routes = [
             { path: 'todo/:mode',  component: ToDoComponent, canActivate: [AuthGuard]},
             { path: 'edit/:id', component: EditSweepComponent, canActivate: [AuthGuard] },
             { path: 'wins', component: WinsComponent, canActivate: [AuthGuard] },
+            { path: 'search/:searchString', component: SearchResultsComponent, canActivate: [AuthGuard] },
         ]
     }
 ];
