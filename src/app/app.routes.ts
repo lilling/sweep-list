@@ -23,7 +23,7 @@ export const appRoutes: Routes = [
             { path: 'todo/:mode',  component: ToDoComponent, canActivate: [AuthGuard]},
             { path: 'edit/:id', component: EditSweepComponent, canActivate: [AuthGuard] },
             { path: 'wins', component: WinsComponent, canActivate: [AuthGuard] },
-            { path: 'search/:searchString', component: SearchResultsComponent, canActivate: [AuthGuard] },
+            { path: 'search/:searchString/:mode', component: SearchResultsComponent, canActivate: [AuthGuard] },
         ]
     }
 ];

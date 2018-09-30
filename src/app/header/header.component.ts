@@ -6,6 +6,7 @@ import { CommonActions } from '../state/common/common.actions';
 import { AppState } from '../state/store';
 import { Location } from '@angular/common';
 import { Router } from '@angular/router';
+import { SweepsMode } from '../state/sweeps/sweeps.state';
 
 @Component({
     selector: 'app-header',
@@ -16,6 +17,7 @@ export class HeaderComponent {
     @Input() title: string;
     @Input() showBackButton = false;
     @Input() showSearch = true;
+    @Input() mode: SweepsMode;
 
     openSearch: boolean;
 
@@ -31,7 +33,7 @@ export class HeaderComponent {
 
     search(nameSearch: string, isEnterKeyPressed: boolean) {
         if (isEnterKeyPressed) {
-            this.router.navigate(['search', nameSearch]);
+            this.router.navigate(['search', nameSearch, this.mode]);
         }
     }
 }

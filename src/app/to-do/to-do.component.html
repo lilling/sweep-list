@@ -1,5 +1,5 @@
 <div class="container">
-    <app-header [title]="'Sweep Actions'"></app-header>
+    <app-header [title]="'Sweep Actions'" [mode]="mode"></app-header>
     <mat-tab-group (selectedIndexChange)="selectedIndexChanged($event)" [selectedIndex]="mode - 1">
         <mat-tab [label]="label" *ngFor="let label of ['Today', 'Tomorrow', 'Upcoming', 'Ended']">
             <div class="body">

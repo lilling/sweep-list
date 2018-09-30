@@ -29,6 +29,7 @@ export class SweepListComponent extends Subscriber implements OnInit {
         text: string
     }[];
     Date = Date;
+    SweepsMode = SweepsMode;
     userAccountId: AAGUID;
 
     constructor(public dialog: MatDialog,

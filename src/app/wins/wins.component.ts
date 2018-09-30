@@ -7,21 +7,21 @@ import { Win } from '../../../shared/classes';
 import { AppState } from '../state/store';
 import { SweepsService } from '../services/sweeps.service';
 import { LocalStorageKeys } from '../models/local-storage-keys.enum';
-import { Subscriber } from '../classes/subscriber';
+import { SweepsMode } from '../state/sweeps/sweeps.state';
 
 @Component({
     selector: 'app-wins',
     templateUrl: 'wins.component.html',
     styleUrls: ['wins.component.scss']
 })
-export class WinsComponent extends Subscriber implements OnInit {
+export class WinsComponent implements OnInit {
     @select((state: AppState) => state.sweepsState.isSweepsLoading)
     isSweepsLoading$: Observable<boolean>;
     userAccountId: AAGUID;
     userWins: Win[];
+    SweepsMode = SweepsMode;
 
     constructor(public sweepsService: SweepsService) {
-        super();
     }
 
     ngOnInit() {
@@ -29,7 +29,7 @@ export class WinsComponent extends Subscriber implements OnInit {
         this.sweepsService.getUserWins(this.userAccountId).subscribe(wins => this.userWins = wins);
     }
 
-    getWinValueText(wins: number):string{
+    getWinValueText(wins: number): string {
         if (wins > 0) {
             return `$${wins} total`;
         }
