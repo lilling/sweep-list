@@ -12,36 +12,6 @@
     max-height: calc(100vh - 40px);
     overflow-y: auto;
 
-    mat-list-item {
-      &.deleted {
-        text-decoration: line-through;
-      }
-      .edit-sweep {
-        padding-left: 20px;
-      }
-      .list-item-first {
-        .sweep-name {
-          font-weight: bold;
-          display: inline-flex;
-          align-items: center;
-        }
-        .sweep-data {
-          color: gray;
-        }
-      }
-      .list-item-second {
-        display: flex;
-        justify-content: flex-end;
-        color: gray;
-        white-space: initial;
-      }
-      .list-item-third {
-        display: flex;
-        justify-content: flex-start;
-        color: gray;
-      }
-    }
-
     .blocker {
       position: fixed;
       top: 0;

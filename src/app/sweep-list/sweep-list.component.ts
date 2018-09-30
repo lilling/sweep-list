@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material';
-import { Router } from '@angular/router';
 //
 import { Observable } from 'rxjs/Observable';
 import { NgRedux, select } from '@angular-redux/store';
@@ -11,8 +10,6 @@ import { user_sweep, user_account } from '../../../shared/classes';
 import { AppState } from '../state/store';
 import { SweepsActions } from '../state/sweeps/sweeps.actions';
 import { SweepsMode } from '../state/sweeps/sweeps.state';
-import { SweepsService } from '../services/sweeps.service';
-import { LocalStorageKeys } from '../models/local-storage-keys.enum';
 import { Subscriber } from '../classes/subscriber';
 
 @Component({
@@ -28,20 +25,15 @@ export class SweepListComponent extends Subscriber implements OnInit {
         data: user_sweep,
         text: string
     }[];
-    Date = Date;
     SweepsMode = SweepsMode;
-    userAccountId: AAGUID;
 
     constructor(public dialog: MatDialog,
-                public router: Router,
-                public sweepsService: SweepsService,
                 public sweepsActions: SweepsActions,
                 private ngRedux: NgRedux<AppState>) {
         super();
     }
 
     ngOnInit() {
-        this.userAccountId = localStorage.getItem(LocalStorageKeys.loggedUser);
         this.sweepsActions.goToSweeps(SweepsMode.active);
 
         this.subscriptions = {
@@ -53,18 +45,17 @@ export class SweepListComponent extends Subscriber implements OnInit {
                 this.user = user;
                 if (mode === SweepsMode.active && !this.ngRedux.getState().sweepsState.sweeps.length()) {
                     this.sweepsActions.getSweeps({
-                        user_account_id: this.userAccountId,
+                        user_account_id: user.user_account_id,
                         enabled_social_media_bitmap: user.enabled_social_media_bitmap
                     }, mode);
                 }
             }),
             sweeps: this.ngRedux.select(state => state.sweepsState.sweeps).subscribe(sweeps => {
                 this.sweeps = sweeps.array.reduce((result, current) => {
-                    const element = {
+                    result.push({
                         data: current,
                         text: `${this.getTimeToEnd(new Date(current.end_date).getTime())}`
-                    };
-                    result.push(element);
+                    });
                     return result;
                 }, []);
             })
@@ -74,33 +65,6 @@ export class SweepListComponent extends Subscriber implements OnInit {
 
     addSweep() {
         this.dialog.open(AddSweepComponent);
-    }
-
-    nextVisit(sweep: user_sweep) {
-        const nextVisit = sweep.frequency_days * 864e5 - (Date.now() - sweep.last_entry_date.getTime());
-
-        if (nextVisit < 0) {
-            return 'You should enter right now';
-        }
-
-        let returnValue = '';
-
-        const days = nextVisit / 864e5;
-
-        if (days > 1) {
-            returnValue = `${days.toFixed(0)} days`;
-        } else {
-            const hours = nextVisit / 36e5;
-            if (hours > 1) {
-                returnValue = `${hours.toFixed(0)} hours`;
-            } else {
-                const minutes = nextVisit / 6e4;
-
-                returnValue = `${minutes.toFixed(0)} minutes`;
-            }
-        }
-
-        return `${returnValue} left to next visit.`;
     }
 
     private getTimeToEnd(endDate: number): string {
@@ -140,7 +104,7 @@ export class SweepListComponent extends Subscriber implements OnInit {
                         return;
                     }
                     this.sweepsActions.getSweeps({
-                        user_account_id: this.userAccountId,
+                        user_account_id: this.user.user_account_id,
                         enabled_social_media_bitmap: this.user.enabled_social_media_bitmap,
                         lastUserSweep: this.sweeps[this.sweeps.length - 1].data
                     }, SweepsMode.active);

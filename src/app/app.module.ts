@@ -40,6 +40,7 @@ import { SettingsComponent } from './components/settings/settings.component';
 import { ForgotPasswordComponent } from './components/forgot-password/forgot-password.component';
 import { WinsComponent } from './wins/wins.component';
 import { SearchResultsComponent } from './components/search-results/search-results.component';
+import { DefaultListComponent } from './components/default-list/default-list.component';
 
 const fbLoginOptions: LoginOpt = {
     scope: 'public_profile , email',
@@ -90,7 +91,8 @@ export function provideConfig() {
         SettingsComponent,
         WinsComponent,
         ForgotPasswordComponent,
-        SearchResultsComponent
+        SearchResultsComponent,
+        DefaultListComponent
     ],
     imports: [
         StateModule,
