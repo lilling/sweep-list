@@ -83,35 +83,6 @@ export class ToDoComponent extends Subscriber implements OnInit, AfterViewInit {
         this.router.navigate([`../${index + 1}`], { relativeTo: this.activatedRoute });
     }
 
-    nextEntry(sweep: {data: user_sweep, text: string}) {
-        const nextEntry = sweep.data.frequency_days * 864e5 - (Date.now() - sweep.data.last_entry_date.getTime());
-
-        if (nextEntry < 0) {
-            const entriesMissed = -1 * nextEntry / (sweep.data.frequency_days * 864e5);
-            return `${entriesMissed.toFixed(0)} entries missed, you should enter right now`;
-// TODO: if there are missed entries, popup: "What a shame, you missed some entries. Please check in more frequently to let me serve you better."
-        }
-
-        let returnValue = '';
-
-        const days = nextEntry / 864e5;
-
-        if (days > 1) {
-            returnValue = `${days.toFixed(0)} days`;
-        } else {
-            const hours = nextEntry / 36e5;
-            if (hours > 1) {
-                returnValue = `${hours.toFixed(0)} hours`;
-            } else {
-                const minutes = nextEntry / 6e4;
-
-                returnValue = `${minutes.toFixed(0)} minutes`;
-            }
-        }
-
-        return `${returnValue} left to next entry.`;
-    }
-
     private getTimeSinceEnd(endDate: number): string {
         const diff = Date.now() - endDate;
         let returnValue = '';

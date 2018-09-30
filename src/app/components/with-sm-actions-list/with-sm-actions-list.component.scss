@@ -1,0 +1,31 @@
+mat-list-item {
+  &.deleted {
+    text-decoration: line-through;
+  }
+  .edit-sweep {
+    margin-left: 20px;
+  }
+
+  .grid-container {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px;
+
+    .sweep-name {
+      display: flex;
+      flex-direction: column;
+      font-weight: bold;
+      white-space: initial;
+
+      span {
+        align-self: flex-start;
+      }
+
+    }
+
+    .frequency-data {
+      align-self: center;
+      white-space: initial;
+    }
+  }
+}
