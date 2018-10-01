@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
 //
 import { ActionsObservable } from 'redux-observable';
+import { NgRedux } from '@angular-redux/store';
 import { catchError, map } from 'rxjs/operators';
 import { of } from 'rxjs/observable/of';
-import * as _ from 'lodash';
 //
 import { TypedAction } from '../models/typed-action';
 import { BaseEpic } from '../models/base-epic';
@@ -14,6 +14,7 @@ import { SweepsService } from '../../services/sweeps.service';
 import { user_sweep, Search } from '../../../../shared/classes';
 import { SweepsMode } from './sweeps.state';
 import { SocialMedia } from '../../../../shared/models/social-media.enum';
+import { AppState } from '../store';
 
 @Injectable()
 export class SweepsEpics extends BaseEpic {
@@ -23,17 +24,33 @@ export class SweepsEpics extends BaseEpic {
     }
 
     @Epic
-    getUserSweeps(action$: ActionsObservable<TypedAction<{search: Search, mode: SweepsMode}>>) {
-        return action$.ofType(SweepsActions.GET_SWEEPS)
+    updateFilter(action$: ActionsObservable<TypedAction<{ search: Search, mode: SweepsMode }>>) {
+        return action$.ofType(SweepsActions.UPDATE_FILTER)
             .switchMap(action => {
                 return this.sweepsService.getSweeps(action.payload.search, action.payload.mode).pipe(
+                    map((res: user_sweep[]) => {
+                        return { type: SweepsActions.UPDATE_FILTER_COMPLETED, payload: res };
+                    }),
+                    catchError(err => {
+                        return of(generateError(err, SweepsActions.UPDATE_FILTER));
+                    }));
+            });
+    }
+
+    @Epic
+    getUserSweeps(action$: ActionsObservable<TypedAction<{ search: Search, mode: SweepsMode }>>, ngRedux: NgRedux<AppState>) {
+        return action$.ofType(SweepsActions.GET_SWEEPS)
+            .switchMap(action => {
+                return this.sweepsService.getSweeps({
+                    ...action.payload.search,
+                    nameSearch: ngRedux.getState().sweepsState.filter
+                }, action.payload.mode).pipe(
                     map((res: user_sweep[]) => {
                         return { type: SweepsActions.GET_SWEEPS_COMPLETED, payload: res };
                     }),
                     catchError(err => {
                         return of(generateError(err, SweepsActions.GET_SWEEPS));
                     }));
-
             });
     }
 
@@ -66,7 +83,7 @@ export class SweepsEpics extends BaseEpic {
     }
 
     @Epic
-    shareSweep(action$: ActionsObservable<TypedAction<{sweep_id: number, social_media: SocialMedia, URL: string}>>) {
+    shareSweep(action$: ActionsObservable<TypedAction<{ sweep_id: number, social_media: SocialMedia, URL: string }>>) {
         return action$.ofType(SweepsActions.SHARE_SWEEP)
             .switchMap(action => {
                 return this.sweepsService.shareSweep(action.payload.sweep_id, action.payload.social_media, action.payload.URL).pipe(
@@ -110,7 +127,7 @@ export class SweepsEpics extends BaseEpic {
     }
 
     @Epic
-    winOrUnwinSweep(action$: ActionsObservable<TypedAction<{win_action: string, sweep_id: number, prize_value?: number}>>) {
+    winOrUnwinSweep(action$: ActionsObservable<TypedAction<{ win_action: string, sweep_id: number, prize_value?: number }>>) {
         return action$.ofType(SweepsActions.WIN_OR_UNWIN_SWEEP)
             .switchMap(action => {
                 return this.sweepsService.winOrUnwinSweep(action.payload.win_action, action.payload.sweep_id, action.payload.prize_value).pipe(

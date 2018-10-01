@@ -5,7 +5,7 @@ import { NgRedux } from '@angular-redux/store';
 import { CommonActions } from '../state/common/common.actions';
 import { AppState } from '../state/store';
 import { Location } from '@angular/common';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { SweepsMode } from '../state/sweeps/sweeps.state';
 
 @Component({
@@ -20,11 +20,14 @@ export class HeaderComponent {
     @Input() mode: SweepsMode;
 
     openSearch: boolean;
+    searchText: string;
 
     constructor(private ngRedux: NgRedux<AppState>,
                 private router: Router,
+                private route: ActivatedRoute,
                 private commonActions: CommonActions,
                 private location: Location) {
+        this.searchText = route.snapshot.params.searchString;
     }
 
     sendMail() {

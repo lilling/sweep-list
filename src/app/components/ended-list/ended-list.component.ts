@@ -15,7 +15,7 @@ export class EndedListComponent {
     @Input() sweeps: {
         data: user_sweep,
         text: string
-    };
+    }[];
 
     constructor(private router: Router, public dialog: MatDialog) {
     }

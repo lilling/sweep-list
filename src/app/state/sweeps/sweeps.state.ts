@@ -6,13 +6,15 @@ export interface SweepsState {
     isSweepsLoading: boolean;
     isAllSweepsLoaded: boolean;
     mode: SweepsMode;
+    filter: string;
 }
 
 export const INITIAL_SWEEPS_STATE: SweepsState = {
     sweeps: new HashedArray<user_sweep>([], 'user_sweep_id'),
     isSweepsLoading: true,
     isAllSweepsLoaded: false,
-    mode: undefined
+    mode: undefined,
+    filter: ''
 };
 
 export enum SweepsMode {
