@@ -1,0 +1,30 @@
+mat-list-item {
+  &.deleted {
+    text-decoration: line-through;
+  }
+
+  .edit-sweep {
+    margin-left: 20px;
+  }
+  .list-item-first {
+    .sweep-name {
+      font-weight: bold;
+      display: inline-flex;
+      align-items: center;
+    }
+    .sweep-data {
+      color: gray;
+    }
+  }
+  .list-item-second {
+    display: flex;
+    justify-content: flex-end;
+    color: gray;
+    white-space: initial;
+  }
+  .list-item-third {
+    display: flex;
+    justify-content: flex-start;
+    color: gray;
+  }
+}

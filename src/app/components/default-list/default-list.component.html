@@ -1,0 +1,21 @@
+<mat-list>
+    <mat-list-item *ngFor="let sweep of sweeps" [ngClass]="{'deleted': sweep.data.deleted_yn}">
+        <div mat-line class="list-item-first">
+            <span class="sweep-name"> {{sweep.data.sweep_name}}</span>
+            <span class="sweep-data"> {{sweep.text}} </span>
+        </div>
+        <div mat-line class="list-item-second">
+            <ng-container *ngIf="sweep.data.is_frequency">
+                Last visit was {{ sweepsService.getTimePassedSinceLastVisit(sweep.data) }} ago.
+                {{ sweep.data.total_entries }} total visits.
+                {{ nextVisit(sweep.data) }}
+            </ng-container>
+            <ng-container *ngIf="sweep.data.is_referral">
+                {{sweep.data.total_shares ? sweep.data.total_shares : 0}} shares
+            </ng-container>
+        </div>
+        <button class="edit-sweep" mat-icon-button (click)="router.navigate(['edit', sweep.data.user_sweep_id])">
+            <mat-icon>edit</mat-icon>
+        </button>
+    </mat-list-item>
+</mat-list>

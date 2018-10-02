@@ -7,11 +7,26 @@ import { SocialMedia } from '../../../../shared/models/social-media.enum';
 
 export function sweepsReducer(state: SweepsState = INITIAL_SWEEPS_STATE, action: TypedAction<any>) {
     switch (action.type) {
+        case SweepsActions.UPDATE_FILTER: {
+            return {
+                ...state,
+                isSweepsLoading: true,
+                filter: action.payload.search.nameSearch
+            };
+        }
+        case SweepsActions.UPDATE_FILTER_COMPLETED: {
+            return {
+                ...state,
+                isSweepsLoading: false,
+                sweeps: new HashedArray<user_sweep>(action.payload, 'user_sweep_id')
+            };
+        }
         case SweepsActions.GO_TO_SWEEPS: {
             const sweeps = state.mode !== action.payload ? new HashedArray<user_sweep>([], 'user_sweep_id') : state.sweeps;
             return {
                 ...state,
                 sweeps,
+                filter: INITIAL_SWEEPS_STATE.filter,
                 mode: action.payload
             };
         }

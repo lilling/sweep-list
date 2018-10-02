@@ -12,66 +12,6 @@
     max-height: calc(100vh - 43px - 48px);
     overflow-y: auto;
 
-    mat-list-item {
-      &.deleted {
-        text-decoration: line-through;
-      }
-      .edit-sweep {
-        margin-left: 20px;
-      }
-      .won-sweep {
-        margin-left: 20px;
-        height: 30px;
-        width: 30px;
-        fill: $main-color;
-      }
-      .unwon-sweep {
-        margin-left: 20px;
-        height: 30px;
-        width: 30px;
-      }
-      .grid-container {
-        display: flex;
-        justify-content: space-between;
-        padding: 10px;
-
-        .sweep-name {
-          display: flex;
-          flex-direction: column;
-          font-weight: bold;
-          white-space: initial;
-
-          span {
-            align-self: flex-start;
-          }
-
-        }
-        .sweep-data {
-          color: gray;
-        }
-
-        .frequency-data {
-          align-self: center;
-          white-space: initial;
-        }
-      }
-      .list-item-second {
-        display: flex;
-        justify-content: flex-end;
-        color: gray;
-      }
-      .list-item-third {
-        display: flex;
-        justify-content: flex-start;
-        color: gray;
-      }
-      .list-item-third-ended {
-        display: flex;
-        justify-content: flex-end;
-        color: gray;
-      }
-    }
-
     .blocker {
       position: fixed;
       top: 0;

@@ -1,0 +1,20 @@
+<mat-list>
+  <mat-list-item class="auto-height" *ngFor="let sweep of sweeps" [ngClass]="{'deleted': sweep.data.deleted_yn}">
+    <div mat-line class="grid-container">
+      <div class="sweep-name">
+        <span>{{sweep.data.sweep_name}}</span>
+        <app-sweep-actions *ngIf="mode === 1" [sweep]="sweep.data" [smBitmap]="user.enabled_social_media_bitmap"
+                           (sweepTasksCompleted)="sweepsActions.removeSweepFromList($event)"
+                           (sweepEntered)="sweepsActions.enterSweep(sweep.data.user_sweep_id)"
+                           (sweepShared)="sweepsActions.shareSweep({sweep_id: sweep.data.user_sweep_id, social_media: $event.media, URL: $event.URL})">
+        </app-sweep-actions>
+      </div>
+      <div class="frequency-data" *ngIf="sweep.data.is_frequency && mode == 1">
+        <span style="font-size: 0.75em; font-weight: bold;">{{ nextEntry(sweep) }}</span>
+      </div>
+    </div>
+    <button class="edit-sweep" mat-icon-button (click)="router.navigate(['edit', sweep.data.user_sweep_id])">
+      <mat-icon>edit</mat-icon>
+    </button>
+  </mat-list-item>
+</mat-list>

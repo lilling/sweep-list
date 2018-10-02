@@ -6,11 +6,12 @@ import { AppState } from '../store';
 import { user_sweep, Search } from '../../../../shared/classes';
 import { SweepsMode } from './sweeps.state';
 import { SocialMedia } from '../../../../shared/models/social-media.enum';
-import { LocalStorageKeys } from '../../models/local-storage-keys.enum';
 
 @Injectable()
 export class SweepsActions {
 
+    static UPDATE_FILTER = '[SweepsActions] UPDATE_FILTER';
+    static UPDATE_FILTER_COMPLETED = '[SweepsActions] UPDATE_FILTER_COMPLETED';
     static GO_TO_SWEEPS = '[SweepsActions] GO_TO_SWEEPS';
     static GET_SWEEPS = '[SweepsActions] GET_SWEEPS';
     static GET_SWEEPS_COMPLETED = '[SweepsActions] GET_SWEEPS_COMPLETED';
@@ -31,6 +32,10 @@ export class SweepsActions {
     constructor(private ngRedux: NgRedux<AppState>) {
     }
 
+    updateFilter(search: Search, mode: SweepsMode) {
+        this.ngRedux.dispatch({ type: SweepsActions.UPDATE_FILTER, payload: { search, mode } });
+    }
+
     goToSweeps(mode: SweepsMode) {
         this.ngRedux.dispatch({ type: SweepsActions.GO_TO_SWEEPS, payload: mode });
     }
@@ -43,7 +48,7 @@ export class SweepsActions {
         this.ngRedux.dispatch({ type: SweepsActions.ENTER_SWEEP, payload: sweep_id });
     }
 
-    shareSweep(payload: {sweep_id: number, social_media: SocialMedia, URL: string}) {
+    shareSweep(payload: { sweep_id: number, social_media: SocialMedia, URL: string }) {
         this.ngRedux.dispatch({ type: SweepsActions.SHARE_SWEEP, payload });
     }
 

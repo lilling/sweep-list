@@ -1,0 +1,11 @@
+<app-header [showBackButton]="true" [title]="'Search Results'" [mode]="mode"></app-header>
+
+<ng-container *ngIf="mode && user" [ngSwitch]="mode">
+    <ng-container *ngIf="isSweepsLoading$ | async">
+        <div class="blocker"></div>
+        <i class="fa fa-spinner fa-spin centered"></i>
+    </ng-container>
+    <app-ended-list *ngSwitchCase="SweepsMode.ended" [sweeps]="sweeps" [user]="user"></app-ended-list>
+    <app-with-sm-actions-list *ngSwitchCase="SweepsMode.today" [sweeps]="sweeps" [mode]="SweepsMode.today" [user]="user"></app-with-sm-actions-list>
+    <app-default-list *ngSwitchDefault [sweeps]="sweeps"></app-default-list>
+</ng-container>

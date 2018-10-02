@@ -13,7 +13,6 @@ import { SweepsActions } from '../state/sweeps/sweeps.actions';
 import { SweepsMode } from '../state/sweeps/sweeps.state';
 import { AppState } from '../state/store';
 import { AddSweepComponent } from '../add-sweep/add-sweep.component';
-import { WinPopupComponent } from '../win-popup/win-popup.component';
 import { Subscriber } from '../classes/subscriber';
 import { SocialMedia } from '../../../shared/models/social-media.enum';
 
@@ -32,7 +31,6 @@ export class ToDoComponent extends Subscriber implements OnInit, AfterViewInit {
     }[];
     mode: SweepsMode;
     user: user_account;
-    userAccountId: AAGUID;
 
     constructor(private ngRedux: NgRedux<AppState>,
                 public dialog: MatDialog,
@@ -44,7 +42,6 @@ export class ToDoComponent extends Subscriber implements OnInit, AfterViewInit {
     }
 
     ngOnInit() {
-        this.userAccountId = localStorage.getItem(LocalStorageKeys.loggedUser);
         this.sweepsActions.goToSweeps(+this.activatedRoute.snapshot.params['mode']);
 
         this.subscriptions = {
@@ -57,7 +54,7 @@ export class ToDoComponent extends Subscriber implements OnInit, AfterViewInit {
                 this.mode = mode;
 
                 if (!this.ngRedux.getState().sweepsState.sweeps.length()) {
-                    const search = { user_account_id: this.userAccountId, enabled_social_media_bitmap: user.enabled_social_media_bitmap };
+                    const search = { user_account_id: user.user_account_id, enabled_social_media_bitmap: user.enabled_social_media_bitmap };
                     this.sweepsActions.getSweeps(search, mode);
                 }
             }),
@@ -84,35 +81,6 @@ export class ToDoComponent extends Subscriber implements OnInit, AfterViewInit {
         this.router.navigate([`../${index + 1}`], { relativeTo: this.activatedRoute });
     }
 
-    nextEntry(sweep: {data: user_sweep, text: string}) {
-        const nextEntry = sweep.data.frequency_days * 864e5 - (Date.now() - sweep.data.last_entry_date.getTime());
-
-        if (nextEntry < 0) {
-            const entriesMissed = -1 * nextEntry / (sweep.data.frequency_days * 864e5);
-            return `${entriesMissed.toFixed(0)} entries missed, you should enter right now`;
-// TODO: if there are missed entries, popup: "What a shame, you missed some entries. Please check in more frequently to let me serve you better."
-        }
-
-        let returnValue = '';
-
-        const days = nextEntry / 864e5;
-
-        if (days > 1) {
-            returnValue = `${days.toFixed(0)} days`;
-        } else {
-            const hours = nextEntry / 36e5;
-            if (hours > 1) {
-                returnValue = `${hours.toFixed(0)} hours`;
-            } else {
-                const minutes = nextEntry / 6e4;
-
-                returnValue = `${minutes.toFixed(0)} minutes`;
-            }
-        }
-
-        return `${returnValue} left to next entry.`;
-    }
-
     private getTimeSinceEnd(endDate: number): string {
         const diff = Date.now() - endDate;
         let returnValue = '';
@@ -137,22 +105,6 @@ export class ToDoComponent extends Subscriber implements OnInit, AfterViewInit {
         this.dialog.open(AddSweepComponent);
     }
 
-    winOrUnwinSweep(winAction:string, user_sweep: user_sweep) {
-        this.dialog.open(WinPopupComponent, {data:{
-            winAction,
-            user_sweep_id: user_sweep.user_sweep_id,
-            thanks_to: user_sweep.thanks_to,
-            thanks_social_media_id: user_sweep.thanks_social_media_id
-        }});
-    }
-
-    ThankReferrer(sweep: user_sweep){
-        if (!sweep.thanked_yn){
-            sweep.thanked_yn = true;
-            this.sweepsActions.updateSweep(sweep);
-        }
-    }
-
     private addScrollEventHandler(): void {
         const tablesBody = document.getElementsByClassName('body');
 
@@ -170,13 +122,8 @@ export class ToDoComponent extends Subscriber implements OnInit, AfterViewInit {
                             lastScroll = currentScroll;
                             return;
                         }
-                        const search = {
-                            user_account_id: this.userAccountId,
-                            lastUserSweep: this.sweeps[this.sweeps.length - 1],
-                            enabled_social_media_bitmap: this.user.enabled_social_media_bitmap
-                        };
                         this.sweepsActions.getSweeps({
-                            user_account_id: this.userAccountId,
+                            user_account_id: this.user.user_account_id,
                             enabled_social_media_bitmap: this.user.enabled_social_media_bitmap,
                             lastUserSweep: this.sweeps[this.sweeps.length - 1].data
                         }, this.mode);

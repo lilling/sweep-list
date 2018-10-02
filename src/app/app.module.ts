@@ -39,6 +39,10 @@ import { TextPopupComponent } from './text-popup/text-popup.component';
 import { SettingsComponent } from './components/settings/settings.component';
 import { ForgotPasswordComponent } from './components/forgot-password/forgot-password.component';
 import { WinsComponent } from './wins/wins.component';
+import { SearchResultsComponent } from './components/search-results/search-results.component';
+import { DefaultListComponent } from './components/default-list/default-list.component';
+import { WithSmActionsListComponent } from './components/with-sm-actions-list/with-sm-actions-list.component';
+import { EndedListComponent } from './components/ended-list/ended-list.component';
 
 const fbLoginOptions: LoginOpt = {
     scope: 'public_profile , email',
@@ -88,7 +92,11 @@ export function provideConfig() {
         TextPopupComponent,
         SettingsComponent,
         WinsComponent,
-        ForgotPasswordComponent
+        ForgotPasswordComponent,
+        SearchResultsComponent,
+        DefaultListComponent,
+        WithSmActionsListComponent,
+        EndedListComponent
     ],
     imports: [
         StateModule,
