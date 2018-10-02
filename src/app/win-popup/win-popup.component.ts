@@ -44,6 +44,10 @@ export class WinPopupComponent {
         this.sweepsActions.winOrUnwinSweep(this.data.winAction, this.data.user_sweep_id, +this.prize, thanked);
         this.dialogRef.close();
     }
+
+    step2back(){
+        --this.step;
+    }
     
     @Input() get prizeValue() { return this.prize; }
     set prizeValue(val: string) {
