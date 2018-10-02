@@ -14,6 +14,8 @@
               svgIcon="win"></mat-icon>
     <mat-icon *ngIf="!sweep.data.won_yn" class="unwon-sweep clickable" (click)="winSweep(sweep.data.user_sweep_id)"
               svgIcon="star"></mat-icon>
-    <mat-icon class="edit-sweep clickable" (click)="router.navigate(['edit', sweep.data.user_sweep_id])">edit</mat-icon>
+    <button class="edit-sweep" mat-icon-button (click)="router.navigate(['edit', sweep.data.user_sweep_id])">
+      <mat-icon>edit</mat-icon>
+    </button>
   </mat-list-item>
 </mat-list>
