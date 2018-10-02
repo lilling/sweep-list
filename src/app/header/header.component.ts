@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, ViewChild, ElementRef } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 //
 import { NgRedux } from '@angular-redux/store';
@@ -17,6 +17,7 @@ export class HeaderComponent {
     @Input() showBackButton = false;
     @Input() showSearch = true;
     @Input() mode: SweepsMode;
+    @ViewChild('searchInput') input: ElementRef;
 
     openSearch: boolean;
     searchText: string;
@@ -44,5 +45,10 @@ export class HeaderComponent {
         } else {
             this.router.navigate(['todo', this.mode]);
         }
+    }
+
+    toggleSearchInput() {
+        this.openSearch = !this.openSearch;
+        setTimeout(() => this.input.nativeElement.focus(), 10);
     }
 }
