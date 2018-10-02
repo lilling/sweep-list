@@ -1,11 +1,10 @@
 import { Component, Input } from '@angular/core';
+import { Router, ActivatedRoute } from '@angular/router';
 //
 import { NgRedux } from '@angular-redux/store';
 //
 import { CommonActions } from '../state/common/common.actions';
 import { AppState } from '../state/store';
-import { Location } from '@angular/common';
-import { Router, ActivatedRoute } from '@angular/router';
 import { SweepsMode } from '../state/sweeps/sweeps.state';
 
 @Component({
@@ -25,8 +24,7 @@ export class HeaderComponent {
     constructor(private ngRedux: NgRedux<AppState>,
                 private router: Router,
                 private route: ActivatedRoute,
-                private commonActions: CommonActions,
-                private location: Location) {
+                private commonActions: CommonActions) {
         this.searchText = route.snapshot.params.searchString;
     }
 
@@ -37,6 +35,14 @@ export class HeaderComponent {
     search(nameSearch: string, isEnterKeyPressed: boolean) {
         if (isEnterKeyPressed) {
             this.router.navigate(['search', nameSearch, this.mode]);
+        }
+    }
+
+    backClicked() {
+        if (this.mode === SweepsMode.active) {
+            this.router.navigate(['list']);
+        } else {
+            this.router.navigate(['todo', this.mode]);
         }
     }
 }

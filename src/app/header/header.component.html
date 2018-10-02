@@ -3,7 +3,7 @@
         <button *ngIf="!showBackButton" mat-icon-button (click)="commonActions.toggleSideNav()">
             <mat-icon>menu</mat-icon>
         </button>
-        <button *ngIf="showBackButton" mat-icon-button (click)="location.back()">
+        <button *ngIf="showBackButton" mat-icon-button (click)="backClicked()">
             <mat-icon fontSet="fa" fontIcon="fa-arrow-left"></mat-icon>
         </button>
         <span class="title">{{title}}</span>
