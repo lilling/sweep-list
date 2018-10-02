@@ -5,6 +5,7 @@ import { ShareButtons } from '@ngx-share/core';
 //
 import { user_sweep } from '../../../shared/classes';
 import { SocialMedia } from '../../../shared/models/social-media.enum';
+import { SweepsService } from '../services/sweeps.service';
 
 @Component({
     selector: 'app-sweep-actions',
@@ -17,17 +18,23 @@ export class SweepActionsComponent {
     @Output() sweepEntered = new EventEmitter();
     @Output() sweepShared = new EventEmitter<{media: SocialMedia, URL: string}>();
     @Output() sweepTasksCompleted = new EventEmitter<number>();
+    @Output() sweepThanked = new EventEmitter();
     SocialMedia = SocialMedia;
     EnumValues = EnumValues;
     currentDate: Date;
 
-    constructor(public share: ShareButtons) {
+    constructor(public share: ShareButtons,
+                public sweepsService: SweepsService) {
         this.currentDate = new Date();
     }
 
     isVisitUrlEnabled() {
         return this.sweep.is_frequency &&
             (!this.sweep.last_entry_date || this.sweep.last_entry_date.toDateString() !== this.currentDate.toDateString());
+    }
+
+    isSweepEnded(){
+        return (Date.now() - this.sweep.end_date.getTime()) > 0 || this.sweep.won_yn;
     }
 
     openUrl(urlToOpen: string) {
@@ -50,6 +57,10 @@ export class SweepActionsComponent {
     shareSweep(SM: SocialMedia) {
         this.sweepShared.emit({media: SM, URL: this.fixURL(this.sweep.sweep_url)});
         this.firesweepTasksCompletedIfNeeded(SM);
+    }
+
+    markThanked() {
+        this.sweepThanked.emit();
     }
 
     firesweepTasksCompletedIfNeeded(selectedSM?: SocialMedia) {

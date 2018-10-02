@@ -15,6 +15,7 @@ import { AppState } from '../state/store';
 import { AddSweepComponent } from '../add-sweep/add-sweep.component';
 import { WinPopupComponent } from '../win-popup/win-popup.component';
 import { Subscriber } from '../classes/subscriber';
+import { SocialMedia } from '../../../shared/models/social-media.enum';
 
 @Component({
     selector: 'app-to-do',
@@ -136,12 +137,20 @@ export class ToDoComponent extends Subscriber implements OnInit, AfterViewInit {
         this.dialog.open(AddSweepComponent);
     }
 
-    winSweep(user_sweep_id: number) {
-        this.dialog.open(WinPopupComponent, {width: '270px', data:{winAction: 'win', userSweepId: user_sweep_id}});
+    winOrUnwinSweep(winAction:string, user_sweep: user_sweep) {
+        this.dialog.open(WinPopupComponent, {data:{
+            winAction,
+            user_sweep_id: user_sweep.user_sweep_id,
+            thanks_to: user_sweep.thanks_to,
+            thanks_social_media_id: user_sweep.thanks_social_media_id
+        }});
     }
 
-    unwinSweep(user_sweep_id: number) {
-        this.dialog.open(WinPopupComponent, {data:{winAction: 'unwin', userSweepId: user_sweep_id}});
+    ThankReferrer(sweep: user_sweep){
+        if (!sweep.thanked_yn){
+            sweep.thanked_yn = true;
+            this.sweepsActions.updateSweep(sweep);
+        }
     }
 
     private addScrollEventHandler(): void {

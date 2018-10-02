@@ -74,6 +74,7 @@ export class AddSweepComponent {
             won_yn: null,
             prize_value: null,
             deleted_yn: null,
+            thanked_yn: null,
             created: null,
             updated: null,
         };

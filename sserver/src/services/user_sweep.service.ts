@@ -104,7 +104,7 @@ export class UserSweepService extends BaseService<user_sweep> {
         return result;
     }
 
-    async ToggleSweepState(column: string, user_sweep_id: number, state: boolean, prize_value?:number): Promise<user_sweep> {
+    async ToggleSweepState(column: string, user_sweep_id: number, state: boolean, thanked?:boolean, prize_value?:number): Promise<user_sweep> {
         const db = DbGetter.getDB();
         // build new sweep
         const new_user_sweep = await this.getItem(user_sweep_id, `user_sweep_id`);
@@ -116,6 +116,7 @@ export class UserSweepService extends BaseService<user_sweep> {
             case `won_yn`: {
                 new_user_sweep.won_yn = state;
                 new_user_sweep.prize_value = state ? prize_value : null;
+                new_user_sweep.thanked_yn = state ? thanked : false;
                 break;
             }
         }
@@ -406,6 +407,7 @@ export class UserSweepService extends BaseService<user_sweep> {
             `    ,won_yn\n` +
             `    ,prize_value\n` +
             `    ,deleted_yn\n` +
+            `    ,thanked_yn\n` +
             `    ,created\n` +
             `    ,updated)\n` +
             `VALUES \n` +
@@ -432,6 +434,7 @@ export class UserSweepService extends BaseService<user_sweep> {
             `    ,$<thanks_social_media_id>\n` +
             `    ,false\n` +
             `    ,$<prize_value>\n` +
+            `    ,false\n` +
             `    ,false\n` +
             `    ,current_timestamp\n` +
             `    ,current_timestamp\n` +
@@ -462,6 +465,7 @@ export class UserSweepService extends BaseService<user_sweep> {
             won_yn: false,
             prize_value: false,
             deleted_yn: false,
+            thanked_yn: false,
         };
         // convert strings to types for better comparison
         old_user_sweep.end_date = old_user_sweep.end_date ? new Date(old_user_sweep.end_date) : null;

@@ -50,6 +50,7 @@ export interface user_sweep {
     won_yn: boolean | null;
     prize_value: number | null;
     deleted_yn: boolean | null;
+    thanked_yn: boolean | null;
     created: Date;
     updated: Date;
 }

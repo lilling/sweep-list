@@ -110,10 +110,10 @@ export class SweepsEpics extends BaseEpic {
     }
 
     @Epic
-    winOrUnwinSweep(action$: ActionsObservable<TypedAction<{win_action: string, sweep_id: number, prize_value?: number}>>) {
+    winOrUnwinSweep(action$: ActionsObservable<TypedAction<{win_action: string, sweep_id: number, prize_value?: number, thanked?: boolean}>>) {
         return action$.ofType(SweepsActions.WIN_OR_UNWIN_SWEEP)
             .switchMap(action => {
-                return this.sweepsService.winOrUnwinSweep(action.payload.win_action, action.payload.sweep_id, action.payload.prize_value).pipe(
+                return this.sweepsService.winOrUnwinSweep(action.payload.win_action, action.payload.sweep_id, action.payload.prize_value, action.payload.thanked).pipe(
                     map(res => {
                         return { type: SweepsActions.WIN_OR_UNWIN_SWEEP_COMPLETED, payload: res };
                     }),
