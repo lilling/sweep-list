@@ -3,7 +3,7 @@
         <button *ngIf="!showBackButton" mat-icon-button (click)="commonActions.toggleSideNav()">
             <mat-icon>menu</mat-icon>
         </button>
-        <button *ngIf="showBackButton" mat-icon-button (click)="location.back()">
+        <button *ngIf="showBackButton" mat-icon-button (click)="backClicked()">
             <mat-icon fontSet="fa" fontIcon="fa-arrow-left"></mat-icon>
         </button>
         <span class="title">{{title}}</span>
@@ -12,12 +12,12 @@
         <button mat-icon-button (click)="sendMail()">
             <mat-icon svgIcon="feedback"></mat-icon>
         </button>
-        <button *ngIf="showSearch" class="open-search-button" mat-icon-button (click)="openSearch = !openSearch">
+        <button *ngIf="showSearch" class="open-search-button" mat-icon-button (click)="toggleSearchInput()">
             <mat-icon> {{ openSearch ? 'close' : 'search' }}</mat-icon>
         </button>
     </span>
     <span *ngIf="openSearch" class="search-field" (keypress)="search(searchText, $event.keyCode === 13)" (clickOutside)="openSearch = false"
           [exclude]="'.open-search-button'">
-        <input matInput placeholder="search" [(ngModel)]="searchText"/>
+        <input #searchInput matInput placeholder="search" [(ngModel)]="searchText"/>
     </span>
 </div>

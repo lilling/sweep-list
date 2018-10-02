@@ -22,7 +22,8 @@ export function sweepsReducer(state: SweepsState = INITIAL_SWEEPS_STATE, action:
             };
         }
         case SweepsActions.GO_TO_SWEEPS: {
-            const sweeps = state.mode !== action.payload ? new HashedArray<user_sweep>([], 'user_sweep_id') : state.sweeps;
+            const isNewList = state.mode !== action.payload || state.filter !== INITIAL_SWEEPS_STATE.filter;
+            const sweeps = isNewList ? new HashedArray<user_sweep>([], 'user_sweep_id') : state.sweeps;
             return {
                 ...state,
                 sweeps,
