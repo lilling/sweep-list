@@ -68,7 +68,7 @@ export class SweepsActions {
         this.ngRedux.dispatch({ type: SweepsActions.UPDATE_SWEEP, payload: sweep });
     }
 
-    winOrUnwinSweep(win_action: string, sweep_id: number, prize_value?: number) {
-        this.ngRedux.dispatch({ type: SweepsActions.WIN_OR_UNWIN_SWEEP, payload: { win_action, sweep_id, prize_value } });
+    winOrUnwinSweep(win_action: string, sweep_id: number, prize_value?: number, thanked?: boolean) {
+        this.ngRedux.dispatch({ type: SweepsActions.WIN_OR_UNWIN_SWEEP, payload: {win_action, sweep_id, prize_value, thanked} });
     }
 }

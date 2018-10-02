@@ -1,7 +1,6 @@
 <div class="basic-container">
     <mat-form-field>
-        <input matInput placeholder="Referrer name" name="referrerName" id="referrerName" [(ngModel)]="thanksTo" required
-               #referrerName="ngModel" [disabled]="disabled">
+        <input matInput placeholder="Referrer name" name="referrerName" id="referrerName" [(ngModel)]="thanksTo" required #referrerName="ngModel" [disabled]="disabled">
         <mat-error *ngIf="referrerName.invalid && (referrerName.dirty || referrerName.touched) && referrerName.errors.required">
             referrer name is required.
         </mat-error>

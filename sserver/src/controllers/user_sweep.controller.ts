@@ -81,9 +81,9 @@ export class SweepController {
         return this.UserSweepService.ToggleSweepState(`deleted_yn`, params.user_sweep_id, false);
     }
 
-    @Get('win_sweep/:user_sweep_id/:prize_value')
+    @Get('win_sweep/:user_sweep_id/:thanked/:prize_value')
     WinSweep(@Param() params): Promise<user_sweep> {
-        return this.UserSweepService.ToggleSweepState(`won_yn`, params.user_sweep_id, true, params.prize_value);
+        return this.UserSweepService.ToggleSweepState(`won_yn`, params.user_sweep_id, true, params.thanked, params.prize_value);
     }
 
     @Get('unwin_sweep/:user_sweep_id')

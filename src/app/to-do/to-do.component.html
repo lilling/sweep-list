@@ -7,8 +7,8 @@
                     <div class="blocker"></div>
                     <i class="fa fa-spinner fa-spin centered"></i>
                 </ng-container>
-                <app-with-sm-actions-list *ngIf="mode != 4" [user]="user" [mode]="mode" [sweeps]="sweeps"></app-with-sm-actions-list>
-                <app-ended-list *ngIf="mode == 4" [sweeps]="sweeps"></app-ended-list>
+                <app-with-sm-actions-list *ngIf="mode !== 4" [user]="user" [mode]="mode" [sweeps]="sweeps"></app-with-sm-actions-list>
+                <app-ended-list *ngIf="mode === 4" [sweeps]="sweeps" [user]="user"></app-ended-list>
                 <div class="whole-screen" *ngIf="!(isSweepsLoading$ | async) && sweeps.length == 0">
                     <div class="no-sweeps" *ngIf="mode == 1">
                         <h2>Great Job!</h2>

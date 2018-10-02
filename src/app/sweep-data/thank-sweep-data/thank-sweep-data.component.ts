@@ -14,7 +14,7 @@ export class ThankSweepDataComponent implements OnInit {
     @Input() smBitmap: number;
     @Input() disabled: boolean;
     @Output() thanksSocialMediaIdChange = new EventEmitter();
-    @Output() thankToChange = new EventEmitter();
+    @Output() thanksToChange = new EventEmitter();
     @Output() isValidChange = new EventEmitter<boolean>();
     smList: SocialMedia[];
     SocialMedia = SocialMedia;
@@ -28,7 +28,7 @@ export class ThankSweepDataComponent implements OnInit {
     set thanksTo(val: string) {
         this.thanks_To = val;
         this.changeIsValid();
-        this.thankToChange.emit(this.thanks_To);
+        this.thanksToChange.emit(this.thanks_To);
     }
 
     @Input() get thanksSocialMediaId() {

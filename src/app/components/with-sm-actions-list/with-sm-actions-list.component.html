@@ -10,7 +10,7 @@
         </app-sweep-actions>
       </div>
       <div class="frequency-data" *ngIf="sweep.data.is_frequency && mode == 1">
-        {{ nextEntry(sweep) }}
+        <span style="font-size: 0.75em; font-weight: bold;">{{ nextEntry(sweep) }}</span>
       </div>
     </div>
     <button class="edit-sweep" mat-icon-button (click)="router.navigate(['edit', sweep.data.user_sweep_id])">

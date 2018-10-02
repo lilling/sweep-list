@@ -1,24 +1,44 @@
-<div mat-dialog-title *ngIf="data.winAction=='win'">Awsome! You Won!</div>
-<div mat-dialog-title *ngIf="data.winAction=='unwin'">What a Shame...</div>
+<div mat-dialog-title *ngIf="data.winAction=='win' && step === 1">Awsome! You Won!</div>
+<div mat-dialog-title *ngIf="data.winAction=='unwin' && step === 1">What a Shame...</div>
+<div mat-dialog-title *ngIf="step === 2 && data.winAction=='win'">Thank Referrer</div>
 <mat-dialog-content>
     <form class="form" #addSweepForm="ngForm">
-        <mat-form-field *ngIf="data.winAction=='win'">
+        <mat-form-field *ngIf="data.winAction=='win' && step === 1">
             <input matInput placeholder="Prize value" name="sprize" id="sprize" [(ngModel)]="prizeValue" #sprize="ngModel" pattern="^[1-9]\d*?$">
             <mat-error>Prize value should be a whole positive number</mat-error>
             <mat-hint class="clickable" (click)="showExplanation()">What do my Sweep Imp use it for?</mat-hint>
         </mat-form-field>
-        <div *ngIf="data.winAction=='unwin'">
+        <div *ngIf="data.winAction=='unwin' && step === 1">
             Are you sure you didn't win?
+        </div>
+        <div *ngIf="step === 2 && data.winAction=='win' && !data.thanks_to">
+            This is the perfect time to go ahead and thank your referrer!
+            <br>
+            Unfortunately, I don't have the referrer name or on which social media to thank them.
+            <span style="font-size: 0.75em; font-weight: bold;">(Enter them on your next sweep, and I'll help you thank them!)</span>
+        </div>
+        <div *ngIf="step === 2 && data.winAction=='win' && data.thanks_to">
+            This is the perfect time to thank {{this.data.thanks_to}}:
+            <share-button theme="circles-dark" [button]="SocialMedia[data.thanks_social_media_id].toLowerCase()" url="http://www.sweepimp.com"
+                        [size]="-8" (opened)="step2done(true)">
+            </share-button>
         </div>
     </form>
 </mat-dialog-content>
 <mat-dialog-actions>
-    <div *ngIf="data.winAction=='win'">
+    <div *ngIf="data.winAction=='win' && step === 1">
         <button mat-button mat-dialog-close>CANCEL</button>
-        <button mat-raised-button color="primary" [disabled]="!isValidChange" (click)="updateSweep()">OH YEAH!</button>
+        <button mat-raised-button color="primary" [disabled]="!isValidChange" (click)="step1done()">OH YEAH!</button>
     </div>
-    <div *ngIf="data.winAction=='unwin'">
+    <div *ngIf="data.winAction=='unwin' && step === 1">
         <button mat-button mat-dialog-close>OOPS, I DID WIN!</button>
-        <button mat-raised-button color="primary" (click)="updateSweep()">YES</button>
+        <button mat-raised-button color="primary" (click)="step1done()">YES</button>
     </div>
+    <div *ngIf="step === 2 && data.winAction=='win' && !this.data.thanks_to">
+        <button mat-raised-button color="primary" (click)="step2done(false)">OK</button>
+    </div>
+    <div *ngIf="step === 2 && data.winAction=='win' && this.data.thanks_to">
+        <button mat-raised-button color="primary" (click)="step2done(false)">THANK THEM LATER</button>
+    </div>
+    <!--TODO: add back button from thank referrer. -->
 </mat-dialog-actions>

@@ -4,6 +4,7 @@ import { MatDialogRef, MAT_DIALOG_DATA, MatDialog } from '@angular/material';
 //
 import { SweepsActions } from '../state/sweeps/sweeps.actions';
 import { TextPopupComponent } from '../text-popup/text-popup.component';
+import { SocialMedia } from '../../../shared/models/social-media.enum';
 
 @Component({
     selector: 'app-win-popup',
@@ -13,6 +14,8 @@ import { TextPopupComponent } from '../text-popup/text-popup.component';
 export class WinPopupComponent {
     prize: string;
     isValidChange: boolean;
+    step: number;
+    SocialMedia = SocialMedia;
 
     prizeValueChange = new EventEmitter();
 
@@ -20,6 +23,7 @@ export class WinPopupComponent {
                 public dialog: MatDialog,
                 private sweepsActions: SweepsActions,
                 @Inject(MAT_DIALOG_DATA) public data: any) {
+        this.step = 1;
     }
 
     ngOnInit() {
@@ -27,8 +31,17 @@ export class WinPopupComponent {
         this.prize = null;
     }
 
-    updateSweep() {
-        this.sweepsActions.winOrUnwinSweep(this.data.winAction, this.data.userSweepId, +this.prize)
+    step1done() {
+        if (this.data.winAction=='win'){
+            ++this.step;
+        } else {
+            this.sweepsActions.winOrUnwinSweep(this.data.winAction, this.data.user_sweep_id);
+            this.dialogRef.close();
+        }
+    }
+
+    step2done(thanked: boolean){
+        this.sweepsActions.winOrUnwinSweep(this.data.winAction, this.data.user_sweep_id, +this.prize, thanked);
         this.dialogRef.close();
     }
     
@@ -44,7 +57,6 @@ export class WinPopupComponent {
     }
 
     showExplanation(){
-        //this.dialog.open();
         this.dialog.open(TextPopupComponent, {width: '300px', data:{text: `Entering a prize value will let me help you with your annual tax decleration (1040 form in USA). You don't have to.`}});
     }
 }

@@ -55,7 +55,8 @@
                                           (change)="changeIsThank($event, thankPanel)">
                         </mat-slide-toggle>
                     </mat-expansion-panel-header>
-                    <app-thank-sweep-data (isValidChange)="step4Valid = $event" [disabled]="!thankReferrer" [(thanksTo)]="sweep.thanks_to"
+                    <app-thank-sweep-data (isValidChange)="step4Valid = $event" [disabled]="!thankReferrer"
+                                          [(thanksTo)]="sweep.thanks_to"
                                           [(thanksSocialMediaId)]="sweep.thanks_social_media_id"
                                           [smBitmap]="(user$ | async).enabled_social_media_bitmap"></app-thank-sweep-data>
                 </mat-expansion-panel>

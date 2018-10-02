@@ -1,10 +1,17 @@
-<button mat-icon-button *ngIf="isVisitUrlEnabled()" (click)="openUrl(sweep.sweep_url)" title="visit sweep">
+<button mat-icon-button *ngIf="isVisitUrlEnabled() && !isSweepEnded()" (click)="openUrl(sweep.sweep_url)" title="visit sweep">
     <mat-icon matListIcon svgIcon="internet"></mat-icon>
 </button>
-<ng-container *ngIf="sweep.is_referral">
+<ng-container *ngIf="sweep.is_referral && !isSweepEnded()">
     <ng-container *ngFor="let sm of EnumValues.getNames(SocialMedia)">
         <share-button *ngIf="getUserSocialMediaEnabled(SocialMedia[sm])" theme="circles-dark" [button]="sm.toLowerCase()" [url]="fixURL(sweep.sweep_url)"
                       [size]="-8" (opened)="shareSweep(SocialMedia[sm])">
         </share-button>
     </ng-container>
+</ng-container>
+<ng-container *ngIf="sweep.won_yn && sweep.thanks_to">
+    Thank {{this.sweep.thanks_to}}:
+    <share-button theme="circles-dark" [button]="SocialMedia[this.sweep.thanks_social_media_id].toLowerCase()" url="http://www.sweepimp.com"
+                [size]="-8" (opened)="markThanked()">
+    </share-button>
+    <span style="font-size: 0.75em; font-weight: bold;" *ngIf="sweep.thanked_yn"> (You already did)</span>
 </ng-container>

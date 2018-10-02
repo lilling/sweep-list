@@ -14,6 +14,7 @@ import { SweepsMode } from '../state/sweeps/sweeps.state';
 import { AppState } from '../state/store';
 import { AddSweepComponent } from '../add-sweep/add-sweep.component';
 import { Subscriber } from '../classes/subscriber';
+import { SocialMedia } from '../../../shared/models/social-media.enum';
 
 @Component({
     selector: 'app-to-do',
