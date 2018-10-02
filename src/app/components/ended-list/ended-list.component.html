@@ -1,4 +1,4 @@
-<mat-list>
+<mat-list  *ngIf="sweeps">
 	<mat-list-item class="auto-height" *ngFor="let sweep of sweeps" [ngClass]="{'deleted': sweep.data.deleted_yn}">
 		<div mat-line class="grid-container">
 			<div class="sweep-name">
